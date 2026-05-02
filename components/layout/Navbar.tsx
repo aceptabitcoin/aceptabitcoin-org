@@ -39,13 +39,18 @@ export default function Navbar() {
           
           {/* LOGO: Componente Matrix + Texto */}
           <Link href="/" className="flex items-center gap-3 group z-50">
-            {/* Usamos el componente creado arriba */}
-            <MatrixLogo />
+            {/* Logo ligeramente más grande con efecto hover */}
+            <MatrixLogo className="w-10 h-10 md:w-12 md:h-12 transition-transform group-hover:scale-105" />
             
-            {/* Texto del Marca */}
-            <div className="flex flex-col">
-              <span className="font-serif font-bold text-xl md:text-2xl text-white tracking-tight leading-none">
+            {/* Texto de Marca + Dominio */}
+            <div className="flex flex-col leading-tight">
+              {/* Línea 1: Marca Principal (font-serif institucional) */}
+              <span className="font-serif font-bold text-lg md:text-xl text-white tracking-tight">
                 Acepta <span className="text-bitcoin">Bitcoin</span>
+              </span>
+              {/* Línea 2: Dominio (font-mono técnico) con .org en verde Matrix */}
+              <span className="font-mono text-[10px] md:text-xs text-gray-400 tracking-wide">
+                aceptabitcoin<span className="text-matrix">.org</span>
               </span>
             </div>
           </Link>
@@ -102,6 +107,11 @@ export default function Navbar() {
           >
             AGENDAR CITA
           </Link>
+          
+          {/* Dominio en mobile para reforzar marca */}
+          <span className="font-mono text-xs text-gray-500">
+            aceptabitcoin<span className="text-matrix">.org</span>
+          </span>
         </div>
       )}
     </nav>

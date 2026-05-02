@@ -2,22 +2,29 @@
 
 import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
-import { Activity, RefreshCw, Bitcoin, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Activity, RefreshCw, Bitcoin, TrendingUp, TrendingDown, Minus, ExternalLink } from "lucide-react";
 import { useMarketMood, type Timeframe } from "@/hooks/useMarketMood";
 import { formatPrice } from "@/lib/market/binance";
+import MarketMoodInfoPopover from "./MarketMoodInfoPopover";
 
 // ============================================================
-// MARKET MOOD WIDGET — Bitcoin Matrix Edition
-// Stochastic Heat Map Indicator for Homepage
-// Acepta Bitcoin México | Oracle System v2.0
+// MARKET MOOD WIDGET — Bitcoin Matrix Edition v2.3
+// Oracle System • Con Instructivo + Sponsor AureoBitcoin
+// Compliance: design-system.md, MANTENIMIENTO.md
 // ============================================================
 
+// 🔹 TIMEFRAMES LIMITADOS: Solo 1H y 4H para mayor frecuencia en eventos
 const TIMEFRAMES: { value: Timeframe; label: string }[] = [
   { value: "1h", label: "1H" },
   { value: "4h", label: "4H" },
-  { value: "1d", label: "1D" },
-  { value: "1w", label: "1W" },
 ];
+
+// 🔹 CONFIGURACIÓN DE AUREOBITCOIN (Sponsor)
+const SPONSOR_CONFIG = {
+  name: "AureoBitcoin",
+  url: "https://app.aureobitcoin.com/es/auth/signup?ref=Aldar1",
+  ctaText: "Operar en AureoBitcoin",
+};
 
 interface MoodConfig {
   status: string;
@@ -27,48 +34,70 @@ interface MoodConfig {
   recommendation: string;
   emoji: string;
   icon: React.ElementType;
-  borderColor: string;
+  borderColor: string; // ← Agregado para consistencia
 }
 
 function getMoodConfig(value: number): MoodConfig {
   if (value >= 80) {
     return {
-      status: "SOBRECOMPRA",
-      color: "#ef4444",
+      status: "ZONA DE CODICIA",
+      color: "#ef4444", // ← red-500 aprobado en design-system.md (NO #ff2a6d)
       bgGlow: "rgba(239, 68, 68, 0.3)",
-      message: "Zona de riesgo alto\nEvita comprar ahora",
-      recommendation: "⚠️ Espera corrección",
-      emoji: "🔴",
+      message: "Los débiles venden.\nLos fuertes acumulan en silencio.",
+      recommendation: "🛡️ HODL o vende a fiat slaves",
+      emoji: "☠️",
       icon: TrendingUp,
       borderColor: "border-red-500/30",
     };
   }
   if (value <= 25) {
     return {
-      status: "DIP DETECTADO",
-      color: "#00FF41",
-      bgGlow: "rgba(0, 255, 65, 0.4)",
-      message: "¡Buen momento para comprar!\nUpside potencial fuerte",
-      recommendation: "🟢 Acumula en el dip",
-      emoji: "💎",
+      status: "DIP BENDICIÓN",
+      color: "#00FF41", // matrix green ✓
+      bgGlow: "rgba(0, 255, 65, 0.45)",
+      message: "El mercado ofrece bitcoin barato.\nSatoshi sonríe.",
+      recommendation: "💎 Acumula como si el fiat muriera mañana",
+      emoji: "🪙",
       icon: TrendingDown,
       borderColor: "border-matrix/30",
     };
   }
   return {
     status: "RANGO NEUTRAL",
-    color: "#F7931A",
-    bgGlow: "rgba(247, 147, 26, 0.3)",
-    message: "Mercado lateral\nMantén calma y observa",
-    recommendation: "🟠 Espera señal clara",
+    color: "#F7931A", // bitcoin orange ✓
+    bgGlow: "rgba(247, 147, 26, 0.35)",
+    message: "Mercado lateral.\nMantén calma y observa.",
+    recommendation: "🟠 Espera señal clara del sistema",
     emoji: "⚖️",
     icon: Minus,
     borderColor: "border-bitcoin/30",
   };
 }
 
+// 🔹 SPONSOR BADGE — Componente reutilizable
+function SponsorBadge() {
+  return (
+    <div className="pt-3 border-t border-white/5">
+      <span className="font-mono text-[10px] text-gray-500">
+        Señal por{" "}
+        <a
+          href={SPONSOR_CONFIG.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-matrix hover:text-bitcoin transition-colors inline-flex items-center gap-0.5"
+          aria-label="Crear cuenta en AureoBitcoin"
+        >
+          {SPONSOR_CONFIG.name}
+          <ExternalLink className="h-2.5 w-2.5" />
+        </a>
+      </span>
+    </div>
+  );
+}
+
 export default function MarketMoodWidget() {
-  const { result, loading, error, timeframe, setTimeframe, refresh, btcPrice } = useMarketMood("1w");
+  // 🔹 TIMEFRAME POR DEFECTO: 4h (más estable para eventos)
+  const { result, loading, error, timeframe, setTimeframe, refresh, btcPrice } = useMarketMood("4h");
 
   const mood = useMemo(() => {
     if (!result) return null;
@@ -77,15 +106,15 @@ export default function MarketMoodWidget() {
 
   if (error) {
     return (
-      <Card className="bg-black/60 border border-red-500/30 p-6 backdrop-blur-md">
-        <div className="text-center text-red-400 space-y-2">
-          <Activity className="h-8 w-8 mx-auto" />
-          <p className="font-mono text-xs">Error cargando indicador</p>
+      <Card className="bg-black/80 border border-red-500/30 p-6 backdrop-blur-md">
+        <div className="text-center text-red-400 space-y-3">
+          <Activity className="h-8 w-8 mx-auto opacity-70" />
+          <p className="font-mono text-xs">ERROR EN LA MATRIZ</p>
           <button
             onClick={refresh}
-            className="text-[10px] font-mono text-matrix hover:text-bitcoin transition-colors"
+            className="px-4 py-2 text-xs font-mono border border-matrix/50 hover:bg-matrix/10 text-matrix transition-all"
           >
-            Reintentar →
+            REINTENTAR CONEXIÓN →
           </button>
         </div>
       </Card>
@@ -93,66 +122,66 @@ export default function MarketMoodWidget() {
   }
 
   return (
-    <Card
-      className="relative overflow-hidden bg-black/60 backdrop-blur-md border border-white/10 transition-all duration-500"
-      style={mood ? {
-        borderColor: `${mood.color}40`,
-        boxShadow: `0 0 40px ${mood.bgGlow}, inset 0 0 20px ${mood.bgGlow}20`,
-      } : {}}
-    >
-      {/* Scanline */}
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-bitcoin/40 to-transparent animate-scanline pointer-events-none" />
+    <Card className="relative overflow-hidden bg-black/70 backdrop-blur-md border border-white/10 transition-all duration-700 group">
+      {/* Scanlines y efectos CRT */}
+      <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,#00ff4122_0px,#00ff4122_1px,transparent_1px,transparent_4px)] pointer-events-none opacity-40" />
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-matrix to-transparent animate-scanline" />
 
       {/* Corner Accents */}
-      <div className="absolute top-0 left-0 w-6 h-6 border-t border-l border-matrix/20" />
-      <div className="absolute top-0 right-0 w-6 h-6 border-t border-r border-matrix/20" />
-      <div className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-matrix/20" />
-      <div className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-matrix/20" />
+      <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-matrix/30" />
+      <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-matrix/30" />
+      <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-matrix/30" />
+      <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-matrix/30" />
 
-      <div className="p-6 space-y-4">
+      <div className="p-6 space-y-5 relative">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Activity className="h-4 w-4 text-matrix" />
-            <span className="font-mono text-[10px] text-matrix uppercase tracking-[0.2em] font-bold">
-              Market Mood
+          <div className="flex items-center gap-2.5">
+            <div className="w-2 h-2 rounded-full bg-matrix animate-pulse" />
+            <span className="font-mono text-[10px] text-matrix uppercase tracking-[0.125em] font-bold">
+              ORACLE • MARKET MOOD
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            {/* Timeframe Selector */}
-            <div className="flex gap-1">
+
+          <div className="flex items-center gap-3">
+            {/* Timeframe Selector — Solo 1H y 4H */}
+            <div className="flex gap-1 bg-black/50 p-1 rounded border border-white/10">
               {TIMEFRAMES.map((tf) => (
                 <button
                   key={tf.value}
                   onClick={() => setTimeframe(tf.value)}
-                  className={`px-2 py-1 text-[9px] font-mono font-bold rounded border transition-all duration-200 ${
+                  className={`px-3 py-1 text-[10px] font-mono font-bold rounded transition-all duration-200 ${
                     timeframe === tf.value
-                      ? "bg-bitcoin text-black border-bitcoin"
-                      : "bg-white/5 text-gray-500 border-white/10 hover:border-white/30 hover:text-white"
+                      ? "bg-bitcoin text-black shadow-[0_0_10px_rgba(247,147,26,0.5)]"
+                      : "text-gray-400 hover:text-white hover:border-white/30"
                   }`}
                 >
                   {tf.label}
                 </button>
               ))}
             </div>
+
+            {/* Help Button */}
+            <MarketMoodInfoPopover />
+
+            {/* Refresh Button */}
             <button
               onClick={refresh}
               disabled={loading}
-              className="p-1 text-gray-500 hover:text-matrix transition-colors disabled:opacity-50"
+              className="p-2 text-gray-400 hover:text-matrix transition-colors disabled:opacity-50"
+              title="Actualizar Oracle"
             >
-              <RefreshCw className={`h-3 w-3 ${loading ? "animate-spin" : ""}`} />
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </button>
           </div>
         </div>
 
         {/* Loading State */}
         {loading && !result ? (
-          <div className="space-y-3 animate-pulse">
-            <div className="flex items-center justify-center py-4">
-              <div className="w-16 h-16 rounded-full bg-white/5" />
-            </div>
-            <div className="h-6 bg-white/5 rounded w-32 mx-auto" />
-            <div className="h-4 bg-white/5 rounded w-48 mx-auto" />
+          <div className="space-y-6 py-8 animate-pulse">
+            <div className="mx-auto w-20 h-20 rounded-full border border-white/10" />
+            <div className="h-6 bg-white/5 rounded w-40 mx-auto" />
+            <div className="h-4 bg-white/5 rounded w-52 mx-auto" />
           </div>
         ) : mood && result ? (
           <>
@@ -160,89 +189,93 @@ export default function MarketMoodWidget() {
             {btcPrice && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2">
-                  <Bitcoin className="h-4 w-4 text-bitcoin" />
-                  <span className="font-vt323 text-2xl text-white">
+                  <Bitcoin className="h-5 w-5 text-bitcoin" />
+                  <span className="font-vt323 text-3xl md:text-4xl text-white tracking-wider">
                     {formatPrice(btcPrice)}
                   </span>
                 </div>
-                <span className="text-[9px] font-mono text-gray-600 uppercase tracking-wider">
-                  BTC/USD · Binance
-                </span>
+                <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest mt-1">
+                  BTC/USD • BINANCE • LIVE
+                </p>
               </div>
             )}
 
-            {/* Mood Gauge */}
-            <div className="text-center space-y-3">
-              {/* Icon */}
+            {/* Mood Core */}
+            <div className="text-center space-y-4">
               <div className="flex justify-center">
                 <div
-                  className="w-20 h-20 rounded-full border-2 flex items-center justify-center transition-all duration-500"
+                  className="relative w-24 h-24 rounded-full flex items-center justify-center border-4 transition-all duration-500"
                   style={{
                     borderColor: mood.color,
-                    boxShadow: `0 0 30px ${mood.bgGlow}`,
+                    boxShadow: `0 0 50px ${mood.bgGlow}, inset 0 0 25px ${mood.bgGlow}`,
                   }}
                 >
-                  <mood.icon className="h-10 w-10" style={{ color: mood.color }} />
+                  <mood.icon
+                    className="h-12 w-12 transition-all"
+                    style={{ color: mood.color }}
+                  />
                 </div>
               </div>
 
-              {/* Status */}
               <div
-                className="font-serif text-xl font-bold tracking-wider"
+                className="font-serif text-2xl md:text-3xl font-bold tracking-[0.08em] uppercase drop-shadow-lg"
                 style={{ color: mood.color }}
               >
                 {mood.status}
               </div>
 
-              {/* Value */}
-              <div className="flex items-center justify-center gap-2">
-                <span className="font-vt323 text-4xl text-white">
+              <div className="flex items-baseline justify-center gap-1.5">
+                <span className="font-vt323 text-5xl md:text-6xl text-white tabular-nums">
                   {result.value}
                 </span>
-                <span className="text-xs font-mono text-gray-500">/100</span>
+                <span className="font-mono text-sm text-gray-500">/100</span>
               </div>
 
-              {/* Message */}
-              <p className="font-mono text-xs text-gray-400 whitespace-pre-line leading-relaxed">
+              <p className="font-mono text-sm text-gray-300 whitespace-pre-line leading-relaxed max-w-[280px] mx-auto">
                 {mood.message}
               </p>
 
-              {/* Recommendation */}
               <div
-                className="inline-block px-4 py-2 rounded-full border text-xs font-mono font-bold tracking-wide"
+                className="inline-block px-6 py-2.5 rounded-full border text-xs font-mono font-bold tracking-widest"
                 style={{
                   color: mood.color,
                   borderColor: `${mood.color}60`,
                   backgroundColor: `${mood.color}10`,
+                  boxShadow: `0 0 15px ${mood.color}30`,
                 }}
               >
                 {mood.recommendation}
               </div>
+
+              {/* 🔹 CTA CONTEXTUAL — Siempre visible para eventos */}
+              <a
+                href={SPONSOR_CONFIG.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 mt-2 border border-matrix/30 bg-matrix/5 text-matrix font-mono text-[10px] hover:bg-matrix/10 hover:text-bitcoin transition-all duration-200 rounded-sm mx-auto"
+              >
+                <span>{SPONSOR_CONFIG.ctaText}</span>
+                <ExternalLink className="h-3 w-3" />
+              </a>
             </div>
 
             {/* Sparkline */}
             {result.historicalValues.length > 1 && (
-              <div className="pt-4 border-t border-white/5">
-                <p className="text-[9px] font-mono text-gray-600 uppercase tracking-wider mb-2">
-                  Tendencia {result.historicalValues.length} muestras
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest mb-3">
+                  HISTÓRICO • ÚLTIMAS {result.historicalValues.length} LECTURAS
                 </p>
-                <div className="h-8 flex items-end gap-px">
-                  {result.historicalValues.slice(-30).map((val, i) => {
-                    const isExtreme = val >= 80 || val <= 25;
-                    const barColor = val >= 80
-                      ? "#ef4444"
-                      : val <= 25
-                      ? "#00FF41"
-                      : "#F7931A";
-                    
+                <div className="h-12 flex items-end gap-px px-1">
+                  {result.historicalValues.slice(-36).map((val, i) => {
+                    const barColor = val >= 80 ? "#ef4444" : val <= 25 ? "#00FF41" : "#F7931A";
                     return (
                       <div
                         key={i}
-                        className={`flex-1 rounded-t-sm transition-all duration-300 ${isExtreme ? "animate-pulse" : ""}`}
+                        className="flex-1 rounded-t transition-all duration-300 hover:opacity-100"
                         style={{
-                          height: `${Math.max(10, val)}%`,
+                          height: `${Math.max(12, val * 0.95)}%`,
                           backgroundColor: barColor,
-                          opacity: 0.3 + (i / 30) * 0.7,
+                          opacity: 0.35 + (i / 36) * 0.65,
                         }}
                         title={`${val.toFixed(1)}`}
                       />
@@ -252,12 +285,21 @@ export default function MarketMoodWidget() {
               </div>
             )}
 
-            {/* Last Update */}
-            <div className="text-center pt-2">
+            {/* 🔹 Last Update — Timezone México */}
+            <div className="text-center">
               <span className="text-[9px] font-mono text-gray-700">
-                Actualizado: {new Date(result.lastUpdate).toLocaleTimeString("es-MX")}
+                Última sincronización:{" "}
+                {new Date(result.lastUpdate).toLocaleTimeString("es-MX", {
+                  timeZone: "America/Mexico_City",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}{" "}
+                CST
               </span>
             </div>
+
+            {/* 🔹 SPONSOR BADGE — Atribución persistente */}
+            <SponsorBadge />
           </>
         ) : null}
       </div>
