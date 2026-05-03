@@ -1,0 +1,65 @@
+[
+  {
+    "id": "mariachi-vs-inflation",
+    "nombre": "Mariachi vs Inflation",
+    "tipo": "arcade",
+    "descripcion": "Arcade educativo estilo Fruit Ninja sobre el cambio del sistema monetario y Bitcoin como infraestructura descentralizada. Corta la inflación, guarda Bitcoin y aprende sobre soberanía financiera.",
+    "descripcionCorta": "¡Corta la inflación, guarda Bitcoin! Aprende soberanía financiera jugando.",
+    "url": "https://mariachi-vs-inflation.vercel.app",
+    "repoUrl": "https://github.com/valentecreativo/mariachi-vs-inflation",
+    "logo": "/juegos/mariachi.svg",
+    "imagen": "/juegos/mariachi-preview.jpg",
+    "categoria": "economia",
+    "dificultad": "facil",
+    "duracion": "5-10 mins",
+    "premio": "🌮 100 sats de conocimiento",
+    "stack": ["Kaplay", "Vite", "Vanilla JS", "Vercel"],
+    "hackathon": {
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
+      "año": 2024
+    },
+    "equipo": [
+      { "nombre": "ValeCreativo & Pantera", "rol": "Developers", "ubicacion": "México" }
+    ],
+    "features": [
+      "Mecánica Fruit Ninja mobile-first",
+      "Mensajes de consciencia cada ~15s",
+      "Powerups educativos: ⚡ Lightning, 🟧 Bloque, 🌱 Ahorro, 🔷 Nodo"
+    ],
+    "estado": "active",
+    "destacado": true,
+    "orden": 1,
+    "fecha": "2024-04-20"
+  },
+  {
+    "id": "bitcoin-visionary-academy",
+    "nombre": "Bitcoin Visionary Academy",
+    "tipo": "plataforma",
+    "descripcion": "Plataforma educativa completa de Bitcoin con laboratorios interactivos, simuladores y rutas de aprendizaje estructuradas.",
+    "descripcionCorta": "Domina Bitcoin con educación estructurada y práctica.",
+    "url": "https://bitcoin.visionaryai.lat",
+    "repoUrl": null,
+    "logo": "/juegos/visionary.svg",
+    "imagen": "/juegos/visionary-preview.jpg",
+    "categoria": "educacion",
+    "dificultad": "avanzado",
+    "duracion": "Ilimitado",
+    "premio": "🎓 Certificación de conocimiento",
+    "stack": ["Next.js", "TypeScript", "Bitcoin Core"],
+    "hackathon": null,
+    "equipo": [
+      { "nombre": "Acepta Bitcoin Dev Team", "rol": "Core Team", "ubicacion": "México" }
+    ],
+    "features": [
+      "Rutas de aprendizaje progresivas",
+      "Laboratorios interactivos",
+      "Simuladores de Lightning Network",
+      "Seguimiento de progreso"
+    ],
+    "estado": "active",
+    "destacado": true,
+    "orden": 0,
+    "fecha": "2026-05-03"
+  }
+]
