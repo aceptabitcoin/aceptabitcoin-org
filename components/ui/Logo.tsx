@@ -1,10 +1,12 @@
 "use client";
 
+"use client";
+
 import React from "react";
 
-export default function MatrixLogo() {
+export default function MatrixLogo({ className = "" }: { className?: string }) {
   return (
-    <div className="relative flex h-12 w-12 items-center justify-center rounded bg-bitcoin text-black shadow-[0_0_20px_rgba(247,147,26,0.5)] transition-transform group-hover:scale-105 border border-white/10 overflow-hidden">
+    <div className={`relative flex h-12 w-12 items-center justify-center rounded bg-bitcoin text-black shadow-[0_0_20px_rgba(247,147,26,0.5)] transition-transform group-hover:scale-105 border border-white/10 overflow-hidden ${className}`}>
       <span className="text-2xl font-bold relative z-10">₿</span>
       
       {/* Efecto de lluvia de código Matrix en el fondo del logo */}

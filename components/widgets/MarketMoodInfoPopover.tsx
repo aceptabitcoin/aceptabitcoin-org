@@ -175,7 +175,3 @@ export default function MarketMoodInfoPopover() {
     </>
   );
 }
-
-<environment_details>
-Current time: 2026-05-02T01:11:49-06:00
-</environment_details>
