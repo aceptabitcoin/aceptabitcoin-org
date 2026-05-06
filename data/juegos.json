@@ -1,38 +1,5 @@
 [
   {
-    "id": "mariachi-vs-inflation",
-    "nombre": "Mariachi vs Inflation",
-    "tipo": "arcade",
-    "descripcion": "Arcade educativo estilo Fruit Ninja sobre el cambio del sistema monetario y Bitcoin como infraestructura descentralizada. Corta la inflación, guarda Bitcoin y aprende sobre soberanía financiera.",
-    "descripcionCorta": "¡Corta la inflación, guarda Bitcoin! Aprende soberanía financiera jugando.",
-    "url": "https://mariachi-vs-inflation.vercel.app",
-    "repoUrl": "https://github.com/valentecreativo/mariachi-vs-inflation",
-    "logo": "/juegos/mariachi.svg",
-    "imagen": "/juegos/mariachi-preview.jpg",
-    "categoria": "economia",
-    "dificultad": "facil",
-    "duracion": "5-10 mins",
-    "premio": "🌮 100 sats de conocimiento",
-    "stack": ["Kaplay", "Vite", "Vanilla JS", "Vercel"],
-    "hackathon": {
-      "evento": "Hackathon Bitcoin México",
-      "lugar": "participant",
-      "año": 2024
-    },
-    "equipo": [
-      { "nombre": "ValeCreativo & Pantera", "rol": "Developers", "ubicacion": "México" }
-    ],
-    "features": [
-      "Mecánica Fruit Ninja mobile-first",
-      "Mensajes de consciencia cada ~15s",
-      "Powerups educativos: ⚡ Lightning, 🟧 Bloque, 🌱 Ahorro, 🔷 Nodo"
-    ],
-    "estado": "active",
-    "destacado": true,
-    "orden": 1,
-    "fecha": "2024-04-20"
-  },
-  {
     "id": "bitcoin-visionary-academy",
     "nombre": "Bitcoin Visionary Academy",
     "tipo": "plataforma",
@@ -61,5 +28,374 @@
     "destacado": true,
     "orden": 0,
     "fecha": "2026-05-03"
+  },
+  {
+    "id": "mariachi-vs-inflation",
+    "nombre": "Mariachi vs Inflation",
+    "tipo": "arcade",
+    "descripcion": "Arcade educativo estilo Fruit Ninja sobre el cambio del sistema monetario y Bitcoin como infraestructura descentralizada. Corta la inflación, guarda Bitcoin y aprende sobre soberanía financiera.",
+    "descripcionCorta": "¡Corta la inflación, guarda Bitcoin! Aprende soberanía financiera jugando.",
+    "url": "https://mariachi-vs-inflation.vercel.app",
+    "repoUrl": "https://github.com/valentecreativo/mariachi-vs-inflation",
+    "logo": "/juegos/mariachi.svg",
+    "imagen": "/juegos/mariachi-preview.jpg",
+    "categoria": "economia",
+    "dificultad": "facil",
+    "duracion": "5-10 mins",
+    "premio": "🌮 100 sats de conocimiento",
+    "stack": ["Kaplay", "Vite", "Vanilla JS", "Vercel"],
+    "hackathon": {
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
+      "año": 2024
+    },
+    "equipo": [
+      { "nombre": "ValeCreativo & Pantera", "rol": "Developers", "ubicacion": "México" }
+    ],
+    "features": [
+      "Mecánica Fruit Ninja mobile-first",
+      "Mensajes de consciencia cada ~15s",
+      "Powerups educativos: ⚡ Lightning, 🟧 Bloque, 🌱 Ahorro, 🔷 Nodo"
+    ],
+    "notas": {
+      "nivel": "🎮 Arcade Puro — Acción rápida",
+      "estetica": "Matrix Native",
+      "publico_objetivo": "Todos los niveles, ideal para onboarding viral",
+      "diferenciador": "Estética Matrix perfecta + mecánica adictiva"
+    },
+    "estado": "active",
+    "destacado": true,
+    "orden": 1,
+    "fecha": "2024-04-20"
+  },
+  {
+    "id": "don-memo-y-los-sats",
+    "nombre": "Don Memo y los Sats",
+    "tipo": "comunidad",
+    "descripcion": "Curso interactivo tipo RPG con narrativa mexicana: Don Memo, un abuelo oaxaqueño que vivió 20 años en Chicago, te enseña Bitcoin a través de su historia real. 5 módulos con diálogos, ejercicios de inflación/remesas, exámenes con vidas, logros y certificado descargable.",
+    "descripcionCorta": "👴🏽 Aprende Bitcoin con la historia de Don Memo — sin tecnicismos, solo verdad",
+    "url": "https://zadqui.github.io/HackathonBitcoin/",
+    "repoUrl": "https://github.com/zadqui/HackathonBitcoin",
+    "logo": "/juegos/don-memo.svg",
+    "imagen": "/juegos/don-memo-preview.jpg",
+    "categoria": "educacion",
+    "dificultad": "facil",
+    "duracion": "35-90 mins",
+    "premio": "🎓 Certificado descargable + 6 insignias de logro",
+    "stack": ["HTML5", "Vanilla JS", "CSS3", "GitHub Pages"],
+    "hackathon": {
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "Zadquiel Chan", "rol": "Desarrollo", "ubicacion": "Mérida, Yucatán" },
+      { "nombre": "Armando Lara", "rol": "Diseño & Frontend", "ubicacion": "Mérida, Yucatán" }
+    ],
+    "features": [
+      "Narrativa RPG con 65 diálogos y elecciones del jugador",
+      "Tarjetas de datos verificables con fuentes (Banxico, Binance)",
+      "Ejercicios interactivos: cálculo de inflación y comisiones de remesas",
+      "Exámenes por módulo con sistema de vidas y respuestas aleatorizadas",
+      "Glosario de 18 términos con búsqueda en tiempo real",
+      "Certificado personalizado descargable al completar"
+    ],
+    "metricas": [
+      { "label": "Módulos completados", "valor": "5/5" },
+      { "label": "Diálogos totales", "valor": "65" },
+      { "label": "Términos en glosario", "valor": "18" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Narrativa emocional que conecta con realidad mexicana",
+        "Pedagogía validada: leer → reflexionar → aplicar → evaluar",
+        "Contenido técnico preciso sin sacrificar accesibilidad",
+        "Funciona 100% offline — ideal para zonas con conectividad limitada"
+      ],
+      "oportunidades": [
+        "Integrar modo 'Matrix' opcional para alineación visual con el Oracle",
+        "Agregar analytics anónimos para medir impacto educativo",
+        "Versión móvil optimizada (pendiente en roadmap)"
+      ],
+      "impacto": "Puente emocional y educativo perfecto para onboarding de jóvenes mexicanos a Bitcoin"
+    },
+    "notas": {
+      "nivel": "🌱 Semillero - Proyecto hackathon completado",
+      "estetica": "Pixel art mexicano / narrativa visual nostálgica",
+      "publico_objetivo": "Jóvenes 13-17 años, sin conocimiento previo",
+      "portabilidad": "Funciona offline, sin dependencias, en cualquier navegador moderno"
+    },
+    "estado": "active",
+    "destacado": true,
+    "orden": 2,
+    "fecha": "2026-04-15"
+  },
+  {
+    "id": "bquiz-live",
+    "nombre": "BQuiz Live",
+    "tipo": "arcade",
+    "descripcion": "Arena de conocimiento Bitcoin en tiempo real: compite contra otros jugadores respondiendo preguntas rápidas sobre Bitcoin, Lightning Network y soberanía financiera. Sistema de puntos, leaderboard global y modo multijugador. ¡Demuestra quién sabe más de Bitcoin!",
+    "descripcionCorta": "⚡ Arena de trivia Bitcoin en tiempo real — compite y demuestra tu conocimiento",
+    "url": "https://www.bquiz.fun",
+    "repoUrl": "https://github.com/ca-ruz/BQuizLive",
+    "logo": "/juegos/bquiz.svg",
+    "imagen": "/juegos/bquiz-preview.jpg",
+    "categoria": "educacion",
+    "dificultad": "variable",
+    "duracion": "3-5 mins por partida",
+    "premio": "🏆 Puntos de ranking + gloria eterna",
+    "stack": ["Next.js 14", "TypeScript", "Tailwind CSS", "Supabase", "Real-time"],
+    "hackathon": null,
+    "equipo": [
+      { "nombre": "ca-ruz", "rol": "Developer", "ubicacion": "México" }
+    ],
+    "features": [
+      "Modo multijugador en tiempo real",
+      "Preguntas sobre Bitcoin, Lightning y soberanía",
+      "Sistema de puntos y leaderboard global",
+      "Partidas rápidas 3-5 minutos",
+      "Dificultad progresiva",
+      "Interfaz gaming moderna"
+    ],
+    "metricas": [
+      { "label": "Jugadores activos", "valor": "En tiempo real" },
+      { "label": "Preguntas disponibles", "valor": "100+" },
+      { "label": "Tiempo promedio", "valor": "3-5 mins" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Mecánica arcade perfecta para la sala de juegos",
+        "Competencia sana que motiva el aprendizaje",
+        "Stack técnico escalable y moderno",
+        "Experiencia multijugador engaging"
+      ],
+      "oportunidades": [
+        "Integrar estética Matrix opcional (modo 'Cypherpunk Arena')",
+        "Agregar preguntas específicas de contexto mexicano",
+        "Sistema de torneos semanales con premios en sats"
+      ],
+      "impacto": "Perfecto para la sala arcade: gamificación pura que convierte el aprendizaje en competencia divertida"
+    },
+    "notas": {
+      "nivel": "🕹️ Arcade Puro — Competencia en tiempo real",
+      "estetica": "Gaming moderno (adaptable a Matrix)",
+      "publico_objetivo": "Todos los niveles, ideal para competir con amigos",
+      "diferenciador": "Único con modo multijugador real-time en la sección"
+    },
+    "estado": "active",
+    "destacado": true,
+    "orden": 4,
+    "fecha": "2026-04-20"
+  },
+  {
+    "id": "el-tesoro-del-pueblo",
+    "nombre": "El Tesoro del Pueblo",
+    "tipo": "comunidad",
+    "descripcion": "Novela visual interactiva ambientada en la Época de Oro del cine mexicano: aprende Bitcoin a través de una historia con personajes icónicos, elecciones narrativas y mini-juegos. Cada decisión te acerca al 'tesoro' de la soberanía financiera mientras descubres conceptos clave de Bitcoin de forma orgánica y emocional.",
+    "descripcionCorta": "🎬 Aprende Bitcoin con las estrellas del Cine de Oro mexicano",
+    "url": "https://el-tesoro-del-pueblo.vercel.app",
+    "repoUrl": "https://github.com/godin-001/el-tesoro-del-pueblo",
+    "logo": "/juegos/tesoro-pueblo.svg",
+    "imagen": "/juegos/tesoro-pueblo-preview.jpg",
+    "categoria": "educacion",
+    "dificultad": "facil",
+    "duracion": "25-40 mins",
+    "premio": "🎬 Certificado 'Actor del Bitcoin' + sats simbólicos",
+    "stack": ["HTML5", "Vanilla JS", "CSS3", "Vercel"],
+    "hackathon": {
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "godin-001 & Aureo", "rol": "Narrativa & Desarrollo", "ubicacion": "México" }
+    ],
+    "features": [
+      "Narrativa interactiva con elecciones del jugador",
+      "Estética inspirada en el Cine de Oro mexicano",
+      "Mini-juegos 'catch' para reforzar conceptos",
+      "Sistema de sats acumulables como progreso",
+      "Personajes icónicos como guías educativos",
+      "Final múltiple según decisiones financieras"
+    ],
+    "metricas": [
+      { "label": "Actos disponibles", "valor": "4" },
+      { "label": "Elecciones narrativas", "valor": "15+" },
+      { "label": "Conceptos Bitcoin enseñados", "valor": "8" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Narrativa emocional que conecta con cultura mexicana",
+        "Aprendizaje orgánico sin lecciones técnicas abrumadoras",
+        "Estética visual única y memorable",
+        "Accesible: funciona en cualquier navegador moderno"
+      ],
+      "oportunidades": [
+        "Agregar modo 'Matrix' opcional para alineación visual con Oracle",
+        "Integrar sistema de progreso guardado en localStorage",
+        "Expandir con actos adicionales sobre Lightning Network"
+      ],
+      "impacto": "Puente cultural perfecto para onboarding de usuarios que aprenden mejor mediante historias que mediante manuales técnicos"
+    },
+    "notas": {
+      "nivel": "🎭 Novela Visual — Aprendizaje narrativo",
+      "estetica": "Cine de Oro mexicano + UI moderna",
+      "publico_objetivo": "Principiantes, amantes del cine, aprendizaje visual/narrativo",
+      "diferenciador": "Único proyecto que usa narrativa cinematográfica para enseñar Bitcoin"
+    },
+    "estado": "active",
+    "destacado": true,
+    "orden": 5,
+    "fecha": "2026-03-08"
+  },
+  {
+    "id": "loteria-bitcoin",
+    "nombre": "Lotería Bitcoin",
+    "tipo": "comunidad",
+    "descripcion": "La Lotería mexicana tradicional reinventada para enseñar Bitcoin: 54 cartas con conceptos clave (Satoshi, Lightning, HODL, Nodo, etc.), cantos educativos, tablas personalizables y modo multijugador. Aprende soberanía financiera mientras gritas '¡Lotería!' con orgullo mexicano.",
+    "descripcionCorta": "🎴 ¡Lotería! Aprende Bitcoin con la tradición mexicana",
+    "url": "https://loteriabitcoin.vercel.app",
+    "repoUrl": "https://github.com/Jeronimo1567/btchackaton2",
+    "logo": "/juegos/loteria-bitcoin.svg",
+    "imagen": "/juegos/loteria-bitcoin-preview.jpg",
+    "categoria": "educacion",
+    "dificultad": "facil",
+    "duracion": "15-25 mins por partida",
+    "premio": "🎴 Carta dorada digital + orgullo mexicano",
+    "stack": ["React", "Vite", "Tailwind CSS", "Vercel"],
+    "hackathon": {
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "Jerónimo & Equipo", "rol": "Developers & Designers", "ubicacion": "México" }
+    ],
+    "features": [
+      "54 cartas Bitcoin con arte popular mexicano",
+      "Cantos educativos tradicionales adaptados",
+      "Tablas personalizables y modo multijugador local",
+      "Glosario integrado: toca una carta para aprender el concepto",
+      "Modo 'Maestro': explica conceptos mientras juegas",
+      "Exporta tu tabla ganadora como NFT simbólico (opcional)"
+    ],
+    "metricas": [
+      { "label": "Cartas educativas", "valor": "54" },
+      { "label": "Conceptos Bitcoin enseñados", "valor": "54" },
+      { "label": "Modos de juego", "valor": "3" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Fusión cultural brillante: tradición mexicana + tecnología Bitcoin",
+        "Barrera de entrada mínima: todo mexicano conoce la Lotería",
+        "Aprendizaje orgánico mediante repetición y diversión",
+        "Arte visual único y memorable"
+      ],
+      "oportunidades": [
+        "Agregar modo 'Matrix' opcional para alineación visual con Oracle",
+        "Integrar sistema de progreso guardado en localStorage",
+        "Versión móvil optimizada para jugar en familia"
+      ],
+      "impacto": "Puente cultural perfecto para onboarding masivo: convierte la educación Bitcoin en una fiesta mexicana"
+    },
+    "notas": {
+      "nivel": "🎴 Juego Cultural — Aprendizaje mediante tradición",
+      "estetica": "Arte popular mexicano / colores vibrantes / folk art",
+      "publico_objetivo": "Todos los niveles, ideal para jugar en familia o comunidad",
+      "diferenciador": "Único proyecto que usa la Lotería mexicana para enseñar Bitcoin"
+    },
+    "estado": "active",
+    "destacado": true,
+    "orden": 6,
+    "fecha": "2026-04-20"
+  },
+  {
+    "id": "expediente-xolo",
+    "nombre": "Expediente Xolo: El Enigma del Bloque",
+    "tipo": "comunidad",
+    "descripcion": "Aventura interactiva tipo detective donde un Xoloitzcuintle te guía por 5 casos educativos sobre Bitcoin en diferentes lugares de México.",
+    "descripcionCorta": "🐕‍🦔 Detectives del Bitcoin mexicano",
+    "url": "https://xolo-bitcoin-cases.lovable.app",
+    "repoUrl": "https://github.com/Axolo-Tech/xolo-bitcoin-cases",
+    "logo": "/juegos/xolo.svg",
+    "imagen": "/juegos/xolo-preview.jpg",
+    "categoria": "educacion",
+    "dificultad": "facil",
+    "duracion": "15-20 mins",
+    "premio": "🐕 Insignia de Detective Bitcoin",
+    "stack": ["Lovable", "React", "TypeScript", "Tailwind"],
+    "hackathon": null,
+    "equipo": [
+      { "nombre": "Axolo-Tech", "rol": "Developer", "ubicacion": "México" }
+    ],
+    "features": [
+      "5 casos interactivos",
+      "Temática mexicana (Xoloitzcuintle)",
+      "Recorrido por lugares de México",
+      "Educación Bitcoin gamificada"
+    ],
+    "notas": {
+      "nivel": "🌱 Semillero - Primer proyecto completado",
+      "herramienta": "Construido con Lovable (AI-assisted)",
+      "valor": "Iniciativa y completitud > perfección técnica",
+      "estetica": "UI moderna (Lovable default)"
+    },
+    "estado": "active",
+    "destacado": false,
+    "orden": 99,
+    "fecha": "2026-03-08"
+  },
+  {
+    "id": "en-busqueda-de-bitcoin",
+    "nombre": "En Búsqueda de Bitcoin",
+    "tipo": "comunidad",
+    "descripcion": "Aventura educativa tipo escape room con cómic interactivo: lee la historia de Bitcoin, responde preguntas de control y encuentra objetos ocultos para desbloquear capítulos. 5 niveles progresivos sobre dinero, Satoshi, propiedades de BTC y uso práctico.",
+    "descripcionCorta": "🔍 Aprende Bitcoin buscando objetos en una aventura cómica",
+    "url": "https://en-busqueda-de-bitcoin-olive.vercel.app",
+    "repoUrl": "https://github.com/Clawyc2/en-busqueda-de-bitcoin",
+    "logo": "/juegos/bitcoin-quest.svg",
+    "imagen": "/juegos/bitcoin-quest-preview.jpg",
+    "categoria": "educacion",
+    "dificultad": "facil",
+    "duracion": "20-30 mins (capítulo completo)",
+    "premio": "🎓 Diploma Bitcoin al completar los 5 capítulos",
+    "stack": ["HTML5", "Vanilla JS", "Vercel"],
+    "hackathon": null,
+    "equipo": [
+      { "nombre": "Clawyc2", "rol": "Developer & Educator", "ubicacion": "México" }
+    ],
+    "features": [
+      "5 capítulos progresivos (1 disponible actualmente)",
+      "Mecánica: Cómic → Quiz → Hidden Objects → Unlock",
+      "Sistema de 3 vidas por nivel (❤️❤️❤️)",
+      "Sin pistas visuales: exploración genuina",
+      "Progreso guardado localmente"
+    ],
+    "metricas": [
+      { "label": "Capítulos disponibles", "valor": "1/5" },
+      { "label": "Tiempo estimado por capítulo", "valor": "5-7 mins" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Estructura pedagógica validada (leer-verificar-aplicar)",
+        "Gamificación accesible para principiantes",
+        "Contenido progresivo y bien secuenciado"
+      ],
+      "oportunidades": [
+        "Completar los 4 capítulos restantes",
+        "Integrar estética Matrix opcional como 'modo avanzado'",
+        "Agregar métricas de aprendizaje (tiempo, intentos, precisión)"
+      ],
+      "impacto": "Puente perfecto para onboarding de nuevos usuarios Bitcoin mediante narrativa lúdica"
+    },
+    "notas": {
+      "nivel": "🌱 Semillero - Primer proyecto completado",
+      "estetica": "Estilo cómic intencional (accesibilidad > consistencia visual)",
+      "estado_contenido": "Capítulo 1 jugable; capítulos 2-5 en desarrollo"
+    },
+    "estado": "development",
+    "destacado": false,
+    "orden": 98,
+    "fecha": "2026-03-08"
   }
 ]

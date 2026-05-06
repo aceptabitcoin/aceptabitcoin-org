@@ -20,7 +20,7 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Inicio", href: "/" },
-    { name: "Aprende", href: "/aprende" },
+    { name: "🎮 Arcade", href: "/arcade" }, // ✅ CAMBIADO
     { name: "Tianguis", href: "/tianguis" },
     { name: "Proyectos", href: "/proyectos" },
     { name: "Proveedores", href: "/proveedores" },
