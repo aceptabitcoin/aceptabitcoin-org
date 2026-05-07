@@ -26,14 +26,14 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
 
   return (
     <Card
-      className={`group relative overflow-hidden bg-black/60 backdrop-blur-md border border-white/10 hover:border-bitcoin/30 transition-all duration-500 ${estadoConfig.glowColor} hover:shadow-[0_0_40px_rgba(247,147,26,0.12)]`}
+      className={`group relative overflow-hidden bg-black/80 backdrop-blur-md border border-white/10 hover:border-bitcoin/30 transition-all duration-500 ${estadoConfig.glowColor} hover:shadow-[0_0_20px_rgba(247,147,26,0.4)]`}
       style={{ animationDelay }}
     >
-      {/* Corner Accents */}
-      <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-matrix/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-matrix/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-matrix/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-matrix/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      {/* Corner Accents - Matrix style */}
+      <div className="absolute top-0 left-0 w-6 h-6 border-t border-l border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute top-0 right-0 w-6 h-6 border-t border-r border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {/* Header Image */}
       {proyecto.imagen && !imageError && (
@@ -45,12 +45,12 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
             onError={() => setImageError(true)}
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
           
           {/* Hackathon Badge */}
           {proyecto.hackathon?.lugar && (
             <div className="absolute top-3 right-3">
-              <div className={`px-3 py-1.5 rounded-full border bg-black/80 backdrop-blur-md ${HACKATHON_CONFIG[proyecto.hackathon.lugar].color} border-current`}>
+              <div className={`px-3 py-1.5 rounded-full border bg-black/90 backdrop-blur-md ${HACKATHON_CONFIG[proyecto.hackathon.lugar].color} border-current`}>
                 <span className="text-sm">{HACKATHON_CONFIG[proyecto.hackathon.lugar].icon}</span>
                 <span className="ml-1 text-[10px] font-mono font-bold uppercase tracking-wider">
                   {HACKATHON_CONFIG[proyecto.hackathon.lugar].label}
@@ -87,7 +87,7 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
               )}
             </div>
             <div>
-              <h3 className="font-serif text-xl font-bold text-white group-hover:text-bitcoin transition-colors">
+              <h3 className="font-serif text-xl font-bold text-white group-hover:text-bitcoin transition-colors drop-shadow-[0_0_8px_rgba(0,0,0,0.8)]">
                 {proyecto.nombre}
               </h3>
               <div className="flex items-center gap-2 mt-1">
@@ -110,7 +110,7 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
           {proyecto.stack.slice(0, 5).map((tech) => (
             <span
               key={tech}
-              className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-mono text-gray-500 uppercase tracking-wider"
+              className="px-2 py-0.5 bg-white/5 border border-white/10 rounded text-[9px] font-mono text-gray-500 uppercase tracking-wider hover:border-matrix/30 hover:text-matrix transition-colors cursor-default"
             >
               {tech}
             </span>
@@ -124,10 +124,10 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
 
         {/* Metrics (for internal projects) */}
         {proyecto.metricas && proyecto.metricas.length > 0 && (
-          <div className="grid grid-cols-4 gap-2 py-2 border-y border-white/5">
+          <div className="grid grid-cols-4 gap-2 py-3 border-y border-white/10">
             {proyecto.metricas.map((m) => (
               <div key={m.label} className="text-center">
-                <div className="font-vt323 text-lg text-bitcoin">{m.valor}</div>
+                <div className="font-vt323 text-lg text-bitcoin drop-shadow-[0_0_5px_rgba(247,147,26,0.3)]">{m.valor}</div>
                 <div className="text-[9px] font-mono text-gray-600 uppercase">{m.label}</div>
               </div>
             ))}
@@ -137,12 +137,12 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
         {/* Team / Location (for community projects) */}
         {proyecto.equipo && proyecto.equipo.length > 0 && (
           <div className="flex items-center gap-3 text-[10px] font-mono text-gray-500">
-            <Users className="h-3 w-3" />
+            <Users className="h-3 w-3 text-matrix" />
             <span>{proyecto.equipo[0].nombre}</span>
             {proyecto.equipo[0].ubicacion && (
               <>
                 <span className="text-gray-700">·</span>
-                <MapPin className="h-3 w-3" />
+                <MapPin className="h-3 w-3 text-bitcoin" />
                 <span>{proyecto.equipo[0].ubicacion}</span>
               </>
             )}
@@ -154,7 +154,7 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
           {hasUrl ? (
             <Button
               asChild
-              className="flex-1 h-9 bg-bitcoin hover:bg-bitcoin/90 text-black font-mono text-xs font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(247,147,26,0.2)]"
+              className="flex-1 h-9 bg-bitcoin hover:bg-bitcoin/90 text-black font-mono text-xs font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(247,147,26,0.3)] hover:shadow-[0_0_25px_rgba(247,147,26,0.5)]"
             >
               <a href={proyecto.url!} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-1.5">
                 <Zap className="h-3 w-3" />
@@ -176,9 +176,9 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
             <Button
               asChild
               variant="outline"
-              className="h-9 px-3 font-mono text-xs border-white/10 text-gray-400 hover:border-matrix/30 hover:text-matrix rounded-lg"
+              className="h-9 px-3 font-mono text-xs border-white/10 text-gray-400 hover:border-matrix/30 hover:text-matrix hover:bg-matrix/5 rounded-lg transition-all"
             >
-              <a href={proyecto.repoUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5">
+              <a href={proyecto.repoUrl!} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5">
                 <GitFork className="h-3.5 w-3.5" />
                 Repo
               </a>
@@ -189,16 +189,16 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
         {/* Expand Review Button */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full flex items-center justify-center gap-1.5 py-2 text-[10px] font-mono text-gray-500 hover:text-matrix transition-colors border-t border-white/5"
+          className="w-full flex items-center justify-center gap-1.5 py-2 text-[10px] font-mono text-gray-500 hover:text-matrix transition-colors border-t border-white/10 group/btn"
         >
           {expanded ? (
             <>
-              <ChevronUp className="h-3 w-3" />
+              <ChevronUp className="h-3 w-3 group-hover/btn:text-matrix transition-colors" />
               Ocultar Review
             </>
           ) : (
             <>
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="h-3 w-3 group-hover/btn:text-matrix transition-colors" />
               Ver Review
             </>
           )}
@@ -214,7 +214,7 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
                 <span className="text-[10px] font-mono text-matrix uppercase tracking-wider font-bold">Fortalezas</span>
               </div>
               <ul className="space-y-1.5">
-                {proyecto.review.fortalezas.map((f, i) => (
+                {proyecto.review?.fortalezas?.map((f, i) => (
                   <li key={i} className="text-xs text-gray-400 font-mono leading-relaxed flex gap-2">
                     <span className="text-matrix flex-shrink-0">❯</span>
                     {f}
@@ -230,7 +230,7 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
                 <span className="text-[10px] font-mono text-bitcoin uppercase tracking-wider font-bold">Oportunidades</span>
               </div>
               <ul className="space-y-1.5">
-                {proyecto.review.oportunidades.map((o, i) => (
+                {proyecto.review?.oportunidades?.map((o, i) => (
                   <li key={i} className="text-xs text-gray-400 font-mono leading-relaxed flex gap-2">
                     <span className="text-bitcoin flex-shrink-0">→</span>
                     {o}
@@ -246,7 +246,7 @@ export default function ProjectCard({ proyecto, index }: ProjectCardProps) {
                 <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider font-bold">Impacto</span>
               </div>
               <p className="text-xs text-gray-500 font-mono leading-relaxed italic">
-                "{proyecto.review.impacto}"
+                "{proyecto.review?.impacto}"
               </p>
             </div>
           </div>

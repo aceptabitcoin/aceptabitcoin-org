@@ -1,159 +1,404 @@
 [
   {
-    "id": "bob-hotel",
-    "nombre": "BOB Hotel",
-    "tipo": "interno",
-    "descripcion": "Sistema de gestión hotelera sovereign construido sobre Bitcoin. Integra Lightning Network para pagos instantáneos, multisig para treasury corporativa, RGB para tokens de fidelidad, CashU para privacidad, y WDK para wallets descentralizadas. Incluye 5 agentes de IA autónomos (concierge, housekeeping, maintenance, predictive, treasury) y gestión IoT para habitaciones inteligentes.",
-    "descripcionCorta": "Hotel management sovereign con Bitcoin, Lightning, AI agents e IoT.",
-    "url": null,
-    "repoUrl": "https://github.com/aceptabitcoin/bob-hotel",
-    "logo": "/proyectos/bob-hotel.svg",
-    "imagen": "/proyectos/bob-hotel-preview.svg",
-    "stack": ["Next.js", "TypeScript", "Prisma", "Bitcoin", "Lightning", "RGB", "CashU", "WDK", "AI Agents", "IoT"],
-    "estado": "development",
-    "features": [
-      "Pagos Lightning instantáneos",
-      "Treasury multisig corporativa",
-      "Tokens de fidelidad RGB",
-      "5 agentes de IA autónomos",
-      "Gestión IoT de habitaciones",
-      "Docker + Turborepo monorepo"
-    ],
-    "metricas": [
-      { "label": "Apps", "valor": "3" },
-      { "label": "Agentes IA", "valor": "5" },
-      { "label": "Servicios", "valor": "4" },
-      { "label": "Paquetes", "valor": "6" }
-    ],
-    "review": {
-      "fortalezas": [
-        "Arquitectura monorepo con Turborepo y pnpm workspaces",
-        "Integración completa del stack Bitcoin: Lightning, Multisig, RGB, CashU, WDK",
-        "Sistema de agentes de IA autónomos con memoria y runtime propio",
-        "Infraestructura Dockerizada para dev y producción",
-        "Documentación multilingüe (EN, ES, PT)"
-      ],
-      "oportunidades": [
-        "Implementar tests E2E con Playwright",
-        "Agregar dashboard de analytics para hoteleros",
-        "Integrar con sistemas PMS existentes (Opera, Cloudbeds)"
-      ],
-      "impacto": "Redefine la gestión hotelera para la era Bitcoin. Sin intermediarios financieros, sin custodia de terceros, soberanía total sobre los fondos del hotel."
-    },
-    "fecha": "2026-04-01"
-  },
-  {
-    "id": "don-memo-sats",
-    "nombre": "Don Memo y los Sats",
+    "id": "corriente-satoshi",
+    "nombre": "Corriente Satoshi",
     "tipo": "comunidad",
-    "descripcion": "Curso interactivo gamificado de educación Bitcoin protagonizado por Don Memo, un abuelo oaxaqueño que trabajó 20 años en Chicago. A través de su historia personal, el usuario aprende sobre inflación, remesas, y soberanía financiera. Incluye trivia por módulo, examen final, logros desbloqueables, calculadora de precios históricos y conversor en vivo.",
-    "descripcionCorta": "Curso interactivo gamificado de Bitcoin con Don Memo, un abuelo oaxaqueño.",
-    "url": "https://zadqui.github.io/HackathonBitcoin/",
-    "repoUrl": "https://github.com/zadqui/HackathonBitcoin",
-    "logo": "/proyectos/don-memo.svg",
-    "imagen": "/proyectos/don-memo-preview.svg",
-    "stack": ["React", "JavaScript", "Pixel Art", "Gamification", "Binance API"],
+    "descripcion": "Herramienta educativa interactiva que enseña Bitcoin a trabajadores del sector eléctrico en México mediante analogías técnicas: la red eléctrica nacional como la red Bitcoin, generadores como mineros, capacitores como cold wallets. Incluye calculadora DCA para retiro, quiz interactivo y tutor IA 'Ohm' que responde en lenguaje eléctrico.",
+    "descripcionCorta": "⚡ Aprende Bitcoin en el idioma de la energía — para quienes construyen el futuro",
+    "url": "https://corriente-satoshi.vercel.app",
+    "repoUrl": "https://github.com/godin-001/corriente-satoshi",
+    "logo": "/proyectos/corriente-satoshi.svg",
+    "imagen": "/proyectos/corriente-satoshi-preview.jpg",
+    "stack": ["Next.js 14", "TypeScript", "Tailwind CSS", "Recharts", "CoinGecko API"],
     "estado": "active",
     "hackathon": {
-      "evento": "Hackathon Bitcoin México 2026",
-      "lugar": "winner",
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
       "año": 2026
     },
     "equipo": [
-      { "nombre": "Blood Angels", "rol": "Equipo", "ubicacion": "Mérida, Yucatán" }
+      { "nombre": "godin-001 & Aureo", "rol": "Desarrollo & Pedagogía", "ubicacion": "México" }
     ],
-    "review": {
-      "fortalezas": [
-        "Narrativa gamificada con personaje memorable (Don Memo)",
-        "Pixel art original y consistente",
-        "Calculadora de precios históricos con datos reales",
-        "Trivia interactiva por módulo con retroalimentación",
-        "Diseño mobile-first accesible",
-        "Enfoque en problemas reales de México: inflación y remesas"
-      ],
-      "oportunidades": [
-        "Migrar a TypeScript para mejor mantenibilidad",
-        "Agregar backend para persistencia de progreso",
-        "Integrar Lightning Network para micropagos por módulo"
-      ],
-      "impacto": "Democratiza la educación Bitcoin en México a través de una narrativa culturalmente relevante. Don Memo no es un personaje ficticio — es tu abuelo, tu vecino, tu papá."
-    },
-    "fecha": "2026-04-15"
-  },
-  {
-    "id": "pizza-sats",
-    "nombre": "Pizza Sats",
-    "tipo": "interno",
-    "descripcion": "Sistema de punto de venta (POS) para pizzerías con pagos Lightning Network. Incluye gestión de órdenes, inventario, reparto con tracking GPS, y dashboard de ventas en tiempo real. Diseñado para pizzerías familiares que quieren aceptar Bitcoin sin complicaciones.",
-    "descripcionCorta": "POS para pizzerías con Lightning Network, inventario y reparto.",
-    "url": null,
-    "repoUrl": "https://github.com/aceptabitcoin/pizza-sats",
-    "logo": "/proyectos/pizza-sats.svg",
-    "imagen": "/proyectos/pizza-sats-preview.svg",
-    "stack": ["Next.js", "TypeScript", "Prisma", "Lightning", "Maps API"],
-    "estado": "development",
     "features": [
-      "POS con QR Lightning",
-      "Gestión de órdenes en tiempo real",
-      "Tracking de repartidores GPS",
-      "Inventario automático",
-      "Dashboard de ventas"
+      "15 analogías eléctricas → Bitcoin con flip cards interactivas",
+      "Calculadora DCA con escenarios de retiro vs AFORE",
+      "Guía paso a paso: 'Tu Primer Satoshi' con wallet setup",
+      "Tutor IA 'Ohm': responde preguntas en lenguaje eléctrico",
+      "Quiz de 5 preguntas con scoring y retroalimentación",
+      "Precio BTC en tiempo real vía CoinGecko API"
     ],
     "metricas": [
-      { "label": "Módulos", "valor": "5" },
-      { "label": "Integraciones", "valor": "3" }
+      { "label": "Módulos educativos", "valor": "4" },
+      { "label": "Analogías interactivas", "valor": "15" },
+      { "label": "Preguntas en quiz", "valor": "5" }
     ],
     "review": {
       "fortalezas": [
-        "Interfaz simple para personal no técnico",
-        "Integración nativa con Lightning Network",
-        "Sistema de reparto con tracking GPS"
+        "Innovación pedagógica: puente cognitivo para nicho técnico específico",
+        "Contenido Bitcoin preciso sin sacrificar accesibilidad",
+        "Stack profesional escalable y mantenible",
+        "Contexto mexicano auténtico: sector eléctrico, AFORE, retiro"
       ],
       "oportunidades": [
-        "Agregar soporte multi-sucursal",
-        "Integrar con impresoras térmicas",
-        "App nativa para repartidores"
+        "Integrar modo visual 'Matrix' opcional para alineación con Oracle",
+        "Agregar analytics anónimos para medir impacto educativo",
+        "Expandir analogías a Lightning Network y custodia propia"
       ],
-      "impacto": "Cada pizzería que adopta Bitcoin es un nodo más en la red. Pizza Sats hace que sea tan fácil como pedir una pizza."
+      "impacto": "Puente único para onboarding de trabajadores técnicos mexicanos a Bitcoin mediante lenguaje que ya dominan"
     },
-    "fecha": "2026-03-20"
+    "notas": {
+      "nivel": "🔌 Educativo Técnico — Nicho especializado",
+      "estetica": "UI limpia/moderna (Tailwind default + acentos eléctricos)",
+      "publico_objetivo": "Trabajadores del sector eléctrico, técnicos, ingenieros en México",
+      "diferenciador": "Único proyecto que usa analogías del sector energía para enseñar Bitcoin"
+    },
+    "destacado": true,
+    "orden": 1,
+    "fecha": "2026-05-07"
   },
   {
-    "id": "cosmetica-satoshi",
-    "nombre": "Cosmética Satoshi",
-    "tipo": "interno",
-    "descripcion": "E-commerce de productos de belleza y cuidado personal con pagos Bitcoin. Incluye catálogo dinámico, carrito, checkout con Lightning, y sistema de reseñas verificadas. Orientado a emprendedoras mexicanas del sector cosmético.",
-    "descripcionCorta": "E-commerce de cosméticos con checkout Lightning para emprendedoras.",
-    "url": null,
-    "repoUrl": "https://github.com/aceptabitcoin/cosmetica-satoshi",
-    "logo": "/proyectos/cosmetica-satoshi.svg",
-    "imagen": "/proyectos/cosmetica-satoshi-preview.svg",
-    "stack": ["Next.js", "TypeScript", "Stripe", "Lightning", "Cloudinary"],
+    "id": "hackaton-bitcoin-2026-starter",
+    "nombre": "Hackathon Bitcoin 2026 - Starter Kit",
+    "tipo": "comunidad",
+    "descripcion": "Kit de inicio para desarrolladores que participan en el Hackathon Bitcoin México: configuración de entorno, ejemplos de integración con Lightning Network, plantillas de smart contracts, y guía paso a paso para construir aplicaciones Bitcoin-first. Incluye demos funcionales y documentación en español.",
+    "descripcionCorta": "🚀 Tu punto de partida para construir en Bitcoin — documentación + código + demos",
+    "url": "https://hackatonbitcoin2026vercel.vercel.app",
+    "repoUrl": "https://github.com/chmood110/hackaton_bitcoin_2026",
+    "logo": "/proyectos/hackathon-starter.svg",
+    "imagen": "/proyectos/hackathon-starter-preview.jpg",
+    "stack": ["Next.js", "TypeScript", "Tailwind CSS", "Lightning SDK", "BTC Map API"],
     "estado": "development",
+    "hackathon": {
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "chmood110", "rol": "Developer & Documenter", "ubicacion": "México" }
+    ],
     "features": [
-      "Catálogo dinámico con filtros",
-      "Checkout Lightning + Stripe",
-      "Reseñas verificadas",
-      "Panel de administración",
-      "Notificaciones WhatsApp"
+      "Setup guiado de entorno de desarrollo Bitcoin",
+      "Ejemplos de integración con Lightning Network",
+      "Plantillas reutilizables para apps Bitcoin-first",
+      "Documentación en español con contexto mexicano",
+      "Demos funcionales embebidas",
+      "Guía de deployment en Vercel + BTC Map"
     ],
     "metricas": [
-      { "label": "Productos", "valor": "50+" },
-      { "label": "Vendedoras", "valor": "12" }
+      { "label": "Módulos de documentación", "valor": "6" },
+      { "label": "Ejemplos de código", "valor": "12+" },
+      { "label": "Demos funcionales", "valor": "4" }
     ],
     "review": {
       "fortalezas": [
-        "Diseño enfocado en emprendedoras mexicanas",
-        "Checkout dual: Lightning + tarjeta",
-        "Sistema de reseñas verificadas"
+        "Enfoque práctico: código listo para usar, no solo teoría",
+        "Documentación en español reduce barrera de entrada",
+        "Stack alineado con el Oracle System (Next.js + TS)",
+        "Ideal para onboarding de nuevos desarrolladores Bitcoin"
       ],
       "oportunidades": [
-        "Agregar suscripciones mensuales",
-        "Programa de afiliados",
-        "Integración con redes sociales"
+        "Integrar modo visual 'Matrix' opcional para alineación con Oracle",
+        "Agregar tests automatizados para los ejemplos de código",
+        "Expandir con módulos de seguridad y custodia propia"
       ],
-      "impacto": "Empodera a emprendedoras mexicanas con herramientas de e-commerce sovereign. Sin comisiones de marketplace, sin censura."
+      "impacto": "Puente técnico esencial para que más desarrolladores mexicanos construyan sobre Bitcoin"
     },
-    "fecha": "2026-02-10"
+    "notas": {
+      "nivel": "📚 Starter Kit — Documentación + Código",
+      "estetica": "UI funcional/documental (prioriza contenido sobre estética)",
+      "publico_objetivo": "Desarrolladores nuevos en Bitcoin, participantes de hackathons",
+      "diferenciador": "Único proyecto enfocado en reproducibilidad y onboarding técnico"
+    },
+    "destacado": false,
+    "orden": 99,
+    "fecha": "2026-05-07"
+  },
+  {
+    "id": "cuanto-btc-mx",
+    "nombre": "CuantoBTC",
+    "tipo": "comunidad",
+    "descripcion": "Comparador en tiempo real de exchanges de Bitcoin en México: ingresa un monto en pesos y descubre cuántos satoshis recibirías en cada plataforma, con precios actualizados desde APIs públicas. Incluye wizard personalizado que recomienda el exchange ideal según tu perfil (KYC, privacidad, Lightning, custodia) y sistema de sugerencias que abre PRs automáticos en GitHub.",
+    "descripcionCorta": "💹 Compara exchanges de Bitcoin en México — encuentra el mejor precio en segundos",
+    "url": "https://www.cuantobtc.lat",
+    "repoUrl": "https://github.com/p0x15/cuanto-btc-mx",
+    "logo": "/proyectos/cuanto-btc.svg",
+    "imagen": "/proyectos/cuanto-btc-preview.jpg",
+    "stack": ["Next.js 15", "React 19", "TypeScript 5", "Tailwind CSS v4", "Vercel"],
+    "estado": "active",
+    "hackathon": null,
+    "equipo": [
+      { "nombre": "p0x15 (Pedro Merino)", "rol": "Developer & Researcher", "ubicacion": "México" }
+    ],
+    "features": [
+      "Comparación en tiempo real de 10+ exchanges mexicanos y globales",
+      "Cálculo exacto de sats recibidos por monto en MXN",
+      "Wizard personalizado: recomienda exchange según perfil (KYC, privacidad, Lightning)",
+      "Filtros avanzados: nivel de verificación, custodia, método de pago, red Lightning",
+      "Sistema de sugerencias: abre PR automático en GitHub para agregar nuevos exchanges",
+      "Metodología transparente: conexión directa a APIs + estimaciones documentadas"
+    ],
+    "metricas": [
+      { "label": "Exchanges comparados", "valor": "10" },
+      { "label": "Actualización de precios", "valor": "45s cache" },
+      { "label": "Métodos de pago", "valor": "SPEI, Lightning, P2P" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Utilidad práctica inmediata: resuelve una pregunta real de usuarios mexicanos",
+        "Transparencia metodológica: explica claramente cómo se calculan los precios",
+        "Stack técnico moderno y escalable, alineado con el Oracle System",
+        "Educación financiera aplicada: enseña sobre fees, custodia, KYC mediante uso real"
+      ],
+      "oportunidades": [
+        "Integrar modo visual 'Matrix' opcional para alineación con Oracle",
+        "Agregar alertas de precio vía Nostr o Telegram",
+        "Expandir a comparación de cajeros Bitcoin físicos en México"
+      ],
+      "impacto": "Herramienta esencial para onboarding práctico: convierte la teoría de 'compra barato' en acción concreta y medible"
+    },
+    "notas": {
+      "nivel": "💹 Utilidad Práctica — Comparador financiero",
+      "estetica": "UI limpia/funcional (Tailwind default, prioriza usabilidad)",
+      "publico_objetivo": "Usuarios mexicanos que quieren comprar Bitcoin, desde principiantes hasta avanzados",
+      "diferenciador": "Único comparador enfocado 100% en México con metodología transparente y wizard personalizado"
+    },
+    "destacado": true,
+    "orden": 2,
+    "fecha": "2026-05-07"
+  },
+  {
+    "id": "billetera-quest",
+    "nombre": "Billetera Quest",
+    "tipo": "comunidad",
+    "descripcion": "Simulador educativo de wallet Lightning Network: practica apertura de canales, envíos, routing de pagos y gestión de liquidity sin riesgo financiero. Interfaz intuitiva que replica una wallet real pero con sats ficticios, ideal para perder el miedo antes de usar fondos reales.",
+    "descripcionCorta": "⚡ Practica Lightning Network sin riesgo — tu sandbox educativo de wallet",
+    "url": "https://billetera.quest",
+    "repoUrl": "https://github.com/Sharmaz/lightningWalletSimulator",
+    "logo": "/proyectos/billetera-quest.svg",
+    "imagen": "/proyectos/billetera-quest-preview.jpg",
+    "stack": ["React", "TypeScript", "Tailwind CSS", "Lightning SDK"],
+    "estado": "active",
+    "hackathon": {
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "Sharmaz", "rol": "Developer & Educator", "ubicacion": "México" }
+    ],
+    "features": [
+      "Simulación completa de wallet Lightning: balance, canales, transacciones",
+      "Apertura/cierre de canales con feedback educativo",
+      "Routing de pagos: entiende cómo viajan los sats por la red",
+      "Gestión de liquidity: aprende sobre inbound/outbound capacity",
+      "Modo tutorial guiado paso a paso para principiantes",
+      "Sistema de logros por completar desafíos técnicos"
+    ],
+    "metricas": [
+      { "label": "Módulos interactivos", "valor": "5" },
+      { "label": "Desafíos disponibles", "valor": "12" },
+      { "label": "Tiempo estimado", "valor": "20-30 mins" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Aprendizaje experiencial: la mejor forma de entender Lightning es usándolo",
+        "Cero riesgo financiero: elimina la barrera del miedo a perder sats",
+        "Stack técnico alineado con el Oracle System (React + TS)",
+        "Ideal como paso previo antes de usar wallets reales"
+      ],
+      "oportunidades": [
+        "Integrar modo visual 'Matrix' opcional para alineación con Oracle",
+        "Agregar contexto mexicano: ejemplos de comercios locales que aceptan Lightning",
+        "Expandir con simulación de LNURL-pay y Lightning Address"
+      ],
+      "impacto": "Puente esencial entre teoría y práctica: convierte la complejidad de Lightning en una experiencia segura y gamificada"
+    },
+    "notas": {
+      "nivel": "⚡ Simulador Técnico — Aprendizaje práctico",
+      "estetica": "UI limpia/moderna (Tailwind default, prioriza usabilidad)",
+      "publico_objetivo": "Usuarios que quieren aprender Lightning sin riesgo, desde principiantes hasta intermedios",
+      "diferenciador": "Único simulador de wallet Lightning en español con enfoque educativo gamificado"
+    },
+    "destacado": true,
+    "orden": 3,
+    "fecha": "2026-05-07"
+  },
+  {
+    "id": "bitremesas-wallet",
+    "nombre": "BitRemesas Wallet",
+    "tipo": "comunidad",
+    "descripcion": "Wallet de Bitcoin y Lightning Network diseñada para remesas en Latinoamérica: envía dinero desde EE.UU. a México, El Salvador y Centroamérica con fees <1%, confirmaciones en segundos y nombres humanos vía Unstoppable Domains (ej: tu@bitcoin). Interfaz simplificada para usuarios no técnicos, con guías paso a paso en español y soporte para retiro en efectivo vía socios locales.",
+    "descripcionCorta": "🌎 Remesas con Bitcoin: envía a LatAm en segundos, con fees mínimos y sin bancos",
+    "url": "https://bitremesas-wallet--santiago21.replit.app",
+    "repoUrl": "https://github.com/santiagovarelaa/bitremesas-Unstoppable-LatAmWallets",
+    "logo": "/proyectos/bitremesas.svg",
+    "imagen": "/proyectos/bitremesas-preview.jpg",
+    "stack": ["React", "TypeScript", "Lightning SDK", "Unstoppable Domains API", "Replit"],
+    "estado": "development",
+    "hackathon": {
+      "evento": "Hackathon Bitcoin México",
+      "lugar": "participant",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "Santiago Varela", "rol": "Developer & Product", "ubicacion": "México/LatAm" }
+    ],
+    "features": [
+      "Envío de remesas vía Lightning Network con confirmaciones en segundos",
+      "Nombres humanos con Unstoppable Domains: tu@bitcoin en lugar de direcciones largas",
+      "Interfaz simplificada para usuarios no técnicos (abuelos, migrantes, primerizos)",
+      "Guías paso a paso en español: desde crear wallet hasta retirar en efectivo",
+      "Cálculo transparente de fees: compara vs Western Union, MoneyGram, etc.",
+      "Roadmap para integración con socios de retiro en efectivo en México y Centroamérica"
+    ],
+    "metricas": [
+      { "label": "Fees estimados", "valor": "<1% vs ~10% tradicional" },
+      { "label": "Tiempo de transferencia", "valor": "<60 segundos" },
+      { "label": "Países soportados", "valor": "México, El Salvador, Guatemala, Honduras" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Impacto social masivo: resuelve un problema real de millones de migrantes",
+        "UX enfocada en no-técnicos: reduce barrera de entrada drásticamente",
+        "Stack técnico moderno y escalable, alineado con Oracle System",
+        "Contexto LatAm auténtico: español, casos de uso reales, socios locales"
+      ],
+      "oportunidades": [
+        "Pulir UI/UX para producción: migrar de Replit a Vercel/Netlify",
+        "Integrar modo visual 'Matrix' opcional para alineación con Oracle",
+        "Agregar KYC ligero opcional para cumplir regulaciones locales",
+        "Expandir a más países de LatAm y agregar soporte para stablecoins"
+      ],
+      "impacto": "Potencial para transformar el mercado de remesas en LatAm: más rápido, más barato, más soberano"
+    },
+    "notas": {
+      "nivel": "💸 Utilidad Social — Remesas con Bitcoin",
+      "estetica": "UI funcional/prototipo (Replit default, prioriza usabilidad)",
+      "publico_objetivo": "Migrantes en EE.UU. enviando dinero a LatAm, usuarios no técnicos",
+      "diferenciador": "Única wallet enfocada 100% en remesas LatAm con UX simplificada y Unstoppable Domains",
+      "estado_hosting": "Demo en Replit.app — requiere migración a producción para lanzamiento oficial"
+    },
+    "destacado": true,
+    "orden": 4,
+    "fecha": "2026-05-07"
+  },
+  {
+    "id": "bob-hotel",
+    "nombre": "Bob Hotel",
+    "tipo": "interno",
+    "descripcion": "Sistema de gestión hotelera nativo Bitcoin: plataforma monorepo con agentes de IA especializados (concierge, housekeeping, mantenimiento, tesorería), pagos vía Lightning Network (LND), contratos inteligentes RGB, tokens ecash Cashu y gestión IoT de habitaciones. Diseñado para hoteles en México y LatAm que buscan soberanía financiera, automatización inteligente y experiencia de huésped descentralizada.",
+    "descripcionCorta": "🏨⚡ Gestión hotelera con Bitcoin + IA — automatiza, cobra en sats, escala sin fronteras",
+    "url": "https://bobhotel.aceptabitcoin.org",
+    "repoUrl": "https://github.com/aceptabitcoin/bob-hotel",
+    "logo": "/proyectos/bob-hotel.svg",
+    "imagen": "/proyectos/bob-hotel-preview.jpg",
+    "stack": ["Next.js 14", "TypeScript 5.3", "Turborepo", "Prisma", "PostgreSQL", "Redis", "LND", "RGB", "Cashu", "MQTT"],
+    "estado": "development",
+    "hackathon": null,
+    "equipo": [
+      { "nombre": "Acepta Bitcoin Dev Team", "rol": "Core Architecture & Bitcoin Integration", "ubicacion": "México" }
+    ],
+    "features": [
+      "Agentes de IA especializados: concierge, housekeeping, maintenance, predictive, treasury",
+      "Pagos Lightning Network vía LND con confirmaciones en segundos",
+      "Soporte multi-protocolo: RGB (smart contracts), Cashu (ecash), Multisig (tesorería)",
+      "IoT-ready: gestión de habitaciones inteligentes vía MQTT (cerraduras, termostatos, energía)",
+      "Apps multi-plataforma: front desk, admin dashboard, guest mobile (todas en Next.js)",
+      "Analytics predictivo: ocupación, pricing dinámico, demanda estacional",
+      "Monorepo profesional con Turborepo: builds optimizados, shared packages, type safety end-to-end",
+      "Documentación trilingüe: English, Español, Português"
+    ],
+    "metricas": [
+      { "label": "Apps incluidas", "valor": "3 (front desk, admin, guest)" },
+      { "label": "Agentes de IA", "valor": "5 especializados" },
+      { "label": "Protocolos Bitcoin", "valor": "4 (Lightning, RGB, Cashu, Multisig)" },
+      { "label": "Idiomas soportados", "valor": "3 (EN/ES/PT)" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Arquitectura enterprise lista para producción: monorepo, Docker, CI/CD, type safety",
+        "Stack Bitcoin completo: no solo Lightning, sino RGB + Cashu + Multisig para soberanía real",
+        "IA aplicada con propósito: agentes que resuelven problemas operativos reales de hoteles",
+        "Modelo de negocio sostenible: open source + contribución BTC + servicios de personalización",
+        "Alineación técnica con Oracle System: Next.js + TypeScript = integración nativa"
+      ],
+      "oportunidades": [
+        "Adaptar UI a Design System 'Bitcoin Matrix' como opción de personalización para clientes",
+        "Integrar módulo de onboarding para comercios del Tianguis que quieran adoptar el sistema",
+        "Agregar webhook de confirmación de pagos en tiempo real para front desk",
+        "Desarrollar caso de estudio piloto con un hotel real en Yucatán para validación de mercado"
+      ],
+      "impacto": "Primera infraestructura hotelera soberana en LatAm: convierte hoteles en nodos económicos de la red Bitcoin, con automatización inteligente y experiencia de huésped sin fronteras"
+    },
+    "notas": {
+      "nivel": "🏨 Enterprise — Sistema completo de gestión hotelera",
+      "modelo": "Open source adoptable: contribución en BTC + servicios de personalización",
+      "adaptacion": "Personalización completa a imagen corporativa, integración con sistemas existentes, capacitación del personal",
+      "publico_objetivo": "Hoteles, hostales, resorts en México y LatAm que buscan soberanía financiera y automatización",
+      "diferenciador": "Único sistema hotelero nativo Bitcoin en LatAm con agentes de IA + multi-protocolo + IoT",
+      "stack_alignment": "100% alineado con Oracle System (Next.js + TS + Tailwind) — integración nativa garantizada"
+    },
+    "destacado": true,
+    "orden": 1,
+    "fecha": "2026-05-07"
+  },
+  {
+    "id": "mesa-aceptabitcoin",
+    "nombre": "Mesa Aceptabitcoin",
+    "tipo": "interno",
+    "descripcion": "Sistema de pagos Bitcoin para comercios mediante Mostro P2P y protocolo Nostr: acepta pagos en sats sin KYC, sin intermediarios bancarios y sin censura. Dashboard para gestionar órdenes de compra/venta, inventario de satoshis, tracking de depósitos en efectivo y actualizaciones en tiempo real. Autenticación descentralizada vía Nostr, base de datos PostgreSQL y diseño responsive para uso móvil en punto de venta.",
+    "descripcionCorta": "🪙📡 Pagos Bitcoin soberanos para comercios: P2P, sin KYC, sin censura",
+    "url": "https://mesa.aceptabitcoin.org",
+    "repoUrl": "https://github.com/aceptabitcoin/mesa-aceptabitcoin",
+    "logo": "/proyectos/mesa-aceptabitcoin.svg",
+    "imagen": "/proyectos/mesa-aceptabitcoin-preview.jpg",
+    "stack": ["Next.js 15", "TypeScript", "Tailwind CSS", "Zustand", "Prisma", "PostgreSQL", "Nostr", "Mostro P2P"],
+    "estado": "development",
+    "hackathon": null,
+    "equipo": [
+      { "nombre": "Acepta Bitcoin Dev Team", "rol": "Core Architecture & Nostr Integration", "ubicacion": "México" }
+    ],
+    "features": [
+      "Autenticación descentralizada vía protocolo Nostr (npub/nsec)",
+      "Creación de órdenes P2P en Mostro: compra/venta de Bitcoin sin KYC",
+      "Dashboard de comercio: órdenes activas, historial, estado en tiempo real",
+      "Inventario de satoshis: balance disponible, órdenes pendientes, liquidez",
+      "Tracking de depósitos en efectivo: conciliación fiat ↔ Bitcoin",
+      "Diseño responsive optimizado para móvil en punto de venta",
+      "Base de datos PostgreSQL con Prisma ORM: tipo seguro, migraciones automatizadas",
+      "Estado management con Zustand: reactividad eficiente sin boilerplate"
+    ],
+    "metricas": [
+      { "label": "Tiempo de confirmación P2P", "valor": "~10-30 mins (Mostro)" },
+      { "label": "Comisiones", "valor": "0% plataforma + fees de red Bitcoin" },
+      { "label": "Relays Nostr soportados", "valor": "Múltiples (configurable)" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Soberanía comercial real: comercios aceptan Bitcoin sin depender de exchanges centralizados",
+        "Stack 100% alineado con Oracle System: integración nativa, mantenimiento unificado",
+        "Nostr como identidad descentralizada: sin emails, sin teléfonos, sin censura",
+        "Mostro P2P: liquidez global, precios de mercado, sin custodia de terceros",
+        "Modelo de negocio sostenible: open source + contribución BTC + servicios de personalización"
+      ],
+      "oportunidades": [
+        "Adaptar UI a Design System 'Bitcoin Matrix' como opción de personalización para clientes",
+        "Integrar webhook de confirmación de pagos para notificaciones en tiempo real",
+        "Agregar módulo de reportes fiscales (CFDI) para comercios formales en México",
+        "Desarrollar caso de estudio piloto con comercios del Tianguis para validación de mercado"
+      ],
+      "impacto": "Primera infraestructura de pagos P2P para comercios mexicanos: convierte cualquier negocio en un nodo económico soberano de la red Bitcoin, sin intermediarios, sin censura, sin fronteras"
+    },
+    "notas": {
+      "nivel": "🛒 Enterprise — Sistema de pagos P2P para comercios",
+      "modelo": "Open source adoptable: contribución en BTC + servicios de personalización",
+      "adaptacion": "Personalización completa a imagen corporativa, integración con sistemas POS existentes, capacitación del personal",
+      "publico_objetivo": "Comercios, tianguis, mercados locales en México que quieren aceptar Bitcoin sin KYC ni intermediarios",
+      "diferenciador": "Único sistema de pagos P2P para comercios mexicanos con Nostr + Mostro + stack Oracle nativo",
+      "stack_alignment": "100% alineado con Oracle System (Next.js + TS + Tailwind) — integración nativa garantizada"
+    },
+    "destacado": true,
+    "orden": 2,
+    "fecha": "2026-05-07"
   }
 ]

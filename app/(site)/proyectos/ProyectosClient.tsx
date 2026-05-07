@@ -6,6 +6,7 @@ import { Code2, Zap, Users, Activity, GitBranch, Search, Sparkles } from "lucide
 import ProjectCard from "@/components/cards/ProjectCard";
 import ProjectSkeleton from "@/components/cards/ProjectSkeleton";
 import TypeFilter from "@/components/filters/TypeFilter";
+import ArcadeButton from "@/components/ui/ArcadeButton";
 import MatrixRain from "@/components/ui/MatrixRain";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -52,8 +53,9 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
     <>
       <Navbar />
       <main className="min-h-screen bg-black relative overflow-hidden">
-        {/* Background Effects */}
-        <MatrixRain className="opacity-15" speed={0.4} density={12} />
+        
+        {/* Background Effects - Bitcoin Matrix */}
+        <MatrixRain className="opacity-[0.08]" speed={0.4} density={12} />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -61,6 +63,7 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
             backgroundSize: "50px 50px",
           }}
         />
+        {/* Glow orbs - usando colores oficiales */}
         <div className="absolute top-1/3 right-0 w-[500px] h-[500px] bg-bitcoin/5 blur-[150px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-matrix/5 blur-[120px] rounded-full pointer-events-none" />
 
@@ -90,7 +93,7 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
           </div>
 
           {/* ═══════════════════════════════════════════════════════
-              STATS BAR
+              STATS BAR - Corregido: green-400 → matrix
               ═══════════════════════════════════════════════════════ */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-12">
             <Card className="bg-black/60 border border-white/10 p-4 text-center backdrop-blur-md">
@@ -114,14 +117,15 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
               </div>
               <p className="text-[10px] font-mono text-gray-500 uppercase tracking-wider">Comunidad</p>
             </Card>
-            <Card className="bg-black/60 border border-green-500/20 p-4 text-center backdrop-blur-md">
+            {/* ✅ CORREGIDO: green-400 → matrix */}
+            <Card className="bg-black/60 border border-matrix/20 p-4 text-center backdrop-blur-md">
               <div className="flex items-center justify-center gap-2 mb-1">
-                <Activity className="h-4 w-4 text-green-400" />
-                <span className="font-vt323 text-2xl text-green-400">{stats.activos}</span>
+                <Activity className="h-4 w-4 text-matrix" />
+                <span className="font-vt323 text-2xl text-matrix">{stats.activos}</span>
               </div>
               <p className="text-[10px] font-mono text-gray-500 uppercase tracking-wider">Activos</p>
             </Card>
-            <Card className="bg-black/60 border border-white/10 p-4 text-center backdrop-blur-md">
+            <Card className="bg-black/60 border border-bitcoin/20 p-4 text-center backdrop-blur-md">
               <div className="flex items-center justify-center gap-2 mb-1">
                 <GitBranch className="h-4 w-4 text-bitcoin" />
                 <span className="font-vt323 text-2xl text-bitcoin">{stats.enDesarrollo}</span>
@@ -134,7 +138,7 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
               FILTERS & SEARCH
               ═══════════════════════════════════════════════════════ */}
           <div className="space-y-6 mb-12">
-            {/* Search */}
+            {/* Search - Input con estilo Matrix */}
             <div className="relative max-w-md mx-auto">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
               <input
@@ -142,7 +146,7 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
                 placeholder="Buscar proyectos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-full pl-11 pr-4 py-3 text-sm font-mono text-white placeholder-gray-600 focus:border-bitcoin focus:ring-1 focus:ring-bitcoin/50 outline-none transition-all"
+                className="w-full bg-white/5 border border-white/20 rounded-full pl-11 pr-4 py-3 text-sm font-mono text-white placeholder-gray-600 focus:border-matrix focus:ring-1 focus:ring-matrix/50 outline-none transition-all"
               />
             </div>
 
@@ -213,7 +217,7 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
           </div>
 
           {/* ═══════════════════════════════════════════════════════
-              FOOTER CTA
+              FOOTER CTA - Usando ArcadeButton
               ═══════════════════════════════════════════════════════ */}
           <div className="mt-20 text-center space-y-4">
             <div className="inline-flex items-center gap-2 bg-matrix/10 border border-matrix/30 px-4 py-2 rounded-full">
@@ -226,13 +230,16 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
               Si estás construyendo algo con Bitcoin en México, queremos destacarlo.
               Proyectos de comunidad, open source, o iniciativas sovereign.
             </p>
-            <a
+            
+            {/* ✅ CORREGIDO: Usar ArcadeButton en lugar de link manual */}
+            <ArcadeButton
               href="mailto:proyectos@aceptabitcoin.org"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-matrix text-black font-vt323 text-lg tracking-wide rounded-lg hover:bg-matrix/90 transition-all shadow-[0_0_20px_rgba(0,255,65,0.3)]"
-            >
-              Enviar Proyecto →
-            </a>
+              label="ENVIAR PROYECTO"
+              variant="matrix"
+              className="min-w-[200px]"
+            />
           </div>
+
         </div>
       </main>
       <Footer />
