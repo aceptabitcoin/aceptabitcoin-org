@@ -2,73 +2,72 @@
 
 import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
-import { Activity, RefreshCw, Bitcoin, TrendingUp, TrendingDown, Minus, ExternalLink } from "lucide-react";
-import { useMarketMood, type Timeframe } from "@/hooks/useMarketMood";
+import { Activity, RefreshCw, Bitcoin, TrendingUp, TrendingDown, Minus, ExternalLink, HelpCircle } from "lucide-react";
+import { useMarketMood } from "@/hooks/useMarketMood";
 import { formatPrice } from "@/lib/market/binance";
-import MarketMoodInfoPopover from "./MarketMoodInfoPopover";
 
 // ============================================================
-// MARKET MOOD WIDGET — Bitcoin Matrix Edition v2.3
-// Oracle System • Con Instructivo + Sponsor AureoBitcoin
+// DCA QUALITY SIGNAL — Bitcoin Matrix Edition v3.0 (Educational)
+// Oracle System • Enfoque DCA para ahorradores principiantes
 // Compliance: design-system.md, MANTENIMIENTO.md
 // ============================================================
 
-// 🔹 TIMEFRAMES LIMITADOS: Solo 1H y 4H para mayor frecuencia en eventos
-const TIMEFRAMES: { value: Timeframe; label: string }[] = [
-  { value: "1h", label: "1H" },
-  { value: "4h", label: "4H" },
-];
+// 🔹 TIMEFRAME FIJO: Solo 4H para evitar confusión en estudiantes
+const DEFAULT_TIMEFRAME = "4h" as const;
 
 // 🔹 CONFIGURACIÓN DE AUREOBITCOIN (Sponsor)
 const SPONSOR_CONFIG = {
   name: "AureoBitcoin",
   url: "https://app.aureobitcoin.com/es/auth/signup?ref=Aldar1",
-  ctaText: "Operar en AureoBitcoin",
+  ctaText: "Comprar BTC en AureoBitcoin",
 };
 
-interface MoodConfig {
+interface DCAConfig {
   status: string;
   color: string;
   bgGlow: string;
   message: string;
-  recommendation: string;
+  dcaImpact: string;
   emoji: string;
   icon: React.ElementType;
-  borderColor: string; // ← Agregado para consistencia
+  borderColor: string;
 }
 
-function getMoodConfig(value: number): MoodConfig {
-  if (value >= 80) {
-    return {
-      status: "ZONA DE CODICIA",
-      color: "#ef4444", // ← red-500 aprobado en design-system.md (NO #ff2a6d)
-      bgGlow: "rgba(239, 68, 68, 0.3)",
-      message: "Los débiles venden.\nLos fuertes acumulan en silencio.",
-      recommendation: "🛡️ HODL o vende a fiat slaves",
-      emoji: "☠️",
-      icon: TrendingUp,
-      borderColor: "border-red-500/30",
-    };
-  }
+function getDCAConfig(value: number): DCAConfig {
+  // ≤25 = Precio "en oferta" → mejora tu DCA
   if (value <= 25) {
     return {
-      status: "DIP BENDICIÓN",
+      status: "FAVORABLE PARA DCA",
       color: "#00FF41", // matrix green ✓
       bgGlow: "rgba(0, 255, 65, 0.45)",
-      message: "El mercado ofrece bitcoin barato.\nSatoshi sonríe.",
-      recommendation: "💎 Acumula como si el fiat muriera mañana",
-      emoji: "🪙",
+      message: "Bitcoin está en zona de acumulación.\nCada sat cuenta más.",
+      dcaImpact: "😊 Esta compra MEJORA tu DCA",
+      emoji: "😊",
       icon: TrendingDown,
       borderColor: "border-matrix/30",
     };
   }
+  // ≥80 = Precio "caro" → tu DCA se diluye ligeramente
+  if (value >= 80) {
+    return {
+      status: "MENOS FAVORABLE",
+      color: "#ef4444", // red-500 aprobado en design-system.md
+      bgGlow: "rgba(239, 68, 68, 0.3)",
+      message: "Bitcoin está en zona alta.\nTu compra compra menos sats.",
+      dcaImpact: "😔 Esta compra DILUYE ligeramente tu DCA",
+      emoji: "😔",
+      icon: TrendingUp,
+      borderColor: "border-red-500/30",
+    };
+  }
+  // 26-79 = Neutral → sigue tu plan sin estrés
   return {
-    status: "RANGO NEUTRAL",
+    status: "NEUTRAL",
     color: "#F7931A", // bitcoin orange ✓
     bgGlow: "rgba(247, 147, 26, 0.35)",
-    message: "Mercado lateral.\nMantén calma y observa.",
-    recommendation: "🟠 Espera señal clara del sistema",
-    emoji: "⚖️",
+    message: "Mercado en rango.\nSigue tu plan de acumulación.",
+    dcaImpact: "😐 Sigue acumulando sin estrés",
+    emoji: "😐",
     icon: Minus,
     borderColor: "border-bitcoin/30",
   };
@@ -95,13 +94,48 @@ function SponsorBadge() {
   );
 }
 
-export default function MarketMoodWidget() {
-  // 🔹 TIMEFRAME POR DEFECTO: 4h (más estable para eventos)
-  const { result, loading, error, timeframe, setTimeframe, refresh, btcPrice } = useMarketMood("4h");
+// 🔹 EDUCATIONAL TOOLTIP — Explica DCA y por qué 4H
+function DCAInfoTooltip() {
+  return (
+    <div className="relative group">
+      <button
+        className="p-1.5 text-gray-400 hover:text-matrix transition-colors rounded"
+        aria-label="¿Qué es DCA?"
+      >
+        <HelpCircle className="h-4 w-4" />
+      </button>
+      
+      <div className="absolute right-0 top-full mt-2 w-72 p-4 bg-black/95 border border-matrix/30 rounded-lg shadow-[0_0_30px_rgba(0,255,65,0.2)] z-50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+        <div className="space-y-3 text-xs font-mono text-gray-300">
+          <p className="text-matrix font-bold">¿Qué es DCA?</p>
+          <p>DCA (Dollar Cost Averaging) es acumular Bitcoin en cantidades fijas, sin importar el precio. Así evitas el estrés de "adivinar" el momento perfecto.</p>
+          
+          <p className="text-matrix font-bold pt-2">¿Qué significa este indicador?</p>
+          <ul className="space-y-1">
+            <li><span className="text-matrix">😊 Verde</span> = Precio favorable → tu compra rinde más sats</li>
+            <li><span className="text-bitcoin">😐 Naranja</span> = Precio neutral → sigue tu plan</li>
+            <li><span className="text-red-400">😔 Rojo</span> = Precio alto → tu compra rinde menos sats</li>
+          </ul>
+          
+          <p className="text-matrix font-bold pt-2">¿Por qué solo 4 horas?</p>
+          <p>Usamos 4H porque filtra el "ruido" de minutos y da una señal más estable para aprender. No es trading, es educación.</p>
+          
+          <p className="text-[10px] text-gray-500 pt-2 border-t border-white/10">
+            ⚠️ Esto es educativo, no consejo financiero. El DCA funciona a largo plazo: lo importante es no dejar de acumular.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  const mood = useMemo(() => {
+export default function MarketMoodWidget() {
+  // 🔹 TIMEFRAME FIJO: 4h (sin toggle para evitar confusión)
+  const { result, loading, error, refresh, btcPrice } = useMarketMood(DEFAULT_TIMEFRAME);
+
+  const dca = useMemo(() => {
     if (!result) return null;
-    return getMoodConfig(result.value);
+    return getDCAConfig(result.value);
   }, [result]);
 
   if (error) {
@@ -139,37 +173,20 @@ export default function MarketMoodWidget() {
           <div className="flex items-center gap-2.5">
             <div className="w-2 h-2 rounded-full bg-matrix animate-pulse" />
             <span className="font-mono text-[10px] text-matrix uppercase tracking-[0.125em] font-bold">
-              ORACLE • MARKET MOOD
+              ORACLE • DCA QUALITY
             </span>
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Timeframe Selector — Solo 1H y 4H */}
-            <div className="flex gap-1 bg-black/50 p-1 rounded border border-white/10">
-              {TIMEFRAMES.map((tf) => (
-                <button
-                  key={tf.value}
-                  onClick={() => setTimeframe(tf.value)}
-                  className={`px-3 py-1 text-[10px] font-mono font-bold rounded transition-all duration-200 ${
-                    timeframe === tf.value
-                      ? "bg-bitcoin text-black shadow-[0_0_10px_rgba(247,147,26,0.5)]"
-                      : "text-gray-400 hover:text-white hover:border-white/30"
-                  }`}
-                >
-                  {tf.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Help Button */}
-            <MarketMoodInfoPopover />
+            {/* Help Button — Tooltip educativo */}
+            <DCAInfoTooltip />
 
             {/* Refresh Button */}
             <button
               onClick={refresh}
               disabled={loading}
               className="p-2 text-gray-400 hover:text-matrix transition-colors disabled:opacity-50"
-              title="Actualizar Oracle"
+              title="Actualizar señal"
             >
               <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             </button>
@@ -183,7 +200,7 @@ export default function MarketMoodWidget() {
             <div className="h-6 bg-white/5 rounded w-40 mx-auto" />
             <div className="h-4 bg-white/5 rounded w-52 mx-auto" />
           </div>
-        ) : mood && result ? (
+        ) : dca && result ? (
           <>
             {/* BTC Price */}
             {btcPrice && (
@@ -195,35 +212,37 @@ export default function MarketMoodWidget() {
                   </span>
                 </div>
                 <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest mt-1">
-                  BTC/USD • BINANCE • LIVE
+                  BTC/USD • BINANCE • 4H
                 </p>
               </div>
             )}
 
-            {/* Mood Core */}
+            {/* DCA Core */}
             <div className="text-center space-y-4">
+              {/* Emoji grande + glow */}
               <div className="flex justify-center">
                 <div
                   className="relative w-24 h-24 rounded-full flex items-center justify-center border-4 transition-all duration-500"
                   style={{
-                    borderColor: mood.color,
-                    boxShadow: `0 0 50px ${mood.bgGlow}, inset 0 0 25px ${mood.bgGlow}`,
+                    borderColor: dca.color,
+                    boxShadow: `0 0 50px ${dca.bgGlow}, inset 0 0 25px ${dca.bgGlow}`,
                   }}
                 >
-                  <mood.icon
-                    className="h-12 w-12 transition-all"
-                    style={{ color: mood.color }}
-                  />
+                  <span className="text-4xl" role="img" aria-label={dca.dcaImpact}>
+                    {dca.emoji}
+                  </span>
                 </div>
               </div>
 
+              {/* Status */}
               <div
                 className="font-serif text-2xl md:text-3xl font-bold tracking-[0.08em] uppercase drop-shadow-lg"
-                style={{ color: mood.color }}
+                style={{ color: dca.color }}
               >
-                {mood.status}
+                {dca.status}
               </div>
 
+              {/* Valor numérico */}
               <div className="flex items-baseline justify-center gap-1.5">
                 <span className="font-vt323 text-5xl md:text-6xl text-white tabular-nums">
                   {result.value}
@@ -231,23 +250,25 @@ export default function MarketMoodWidget() {
                 <span className="font-mono text-sm text-gray-500">/100</span>
               </div>
 
+              {/* Mensaje educativo */}
               <p className="font-mono text-sm text-gray-300 whitespace-pre-line leading-relaxed max-w-[280px] mx-auto">
-                {mood.message}
+                {dca.message}
               </p>
 
+              {/* Impacto en DCA — Badge destacado */}
               <div
-                className="inline-block px-6 py-2.5 rounded-full border text-xs font-mono font-bold tracking-widest"
+                className="inline-block px-5 py-2.5 rounded-full border text-xs font-mono font-bold tracking-wide"
                 style={{
-                  color: mood.color,
-                  borderColor: `${mood.color}60`,
-                  backgroundColor: `${mood.color}10`,
-                  boxShadow: `0 0 15px ${mood.color}30`,
+                  color: dca.color,
+                  borderColor: `${dca.color}60`,
+                  backgroundColor: `${dca.color}10`,
+                  boxShadow: `0 0 15px ${dca.color}30`,
                 }}
               >
-                {mood.recommendation}
+                {dca.dcaImpact}
               </div>
 
-              {/* 🔹 CTA CONTEXTUAL — Siempre visible para eventos */}
+              {/* CTA contextual — Siempre visible */}
               <a
                 href={SPONSOR_CONFIG.url}
                 target="_blank"
@@ -259,11 +280,11 @@ export default function MarketMoodWidget() {
               </a>
             </div>
 
-            {/* Sparkline */}
+            {/* Sparkline histórico */}
             {result.historicalValues.length > 1 && (
               <div className="pt-4 border-t border-white/10">
                 <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest mb-3">
-                  HISTÓRICO • ÚLTIMAS {result.historicalValues.length} LECTURAS
+                  HISTÓRICO • ÚLTIMAS {result.historicalValues.length} LECTURAS (4H)
                 </p>
                 <div className="h-12 flex items-end gap-px px-1">
                   {result.historicalValues.slice(-36).map((val, i) => {
@@ -285,7 +306,7 @@ export default function MarketMoodWidget() {
               </div>
             )}
 
-            {/* 🔹 Last Update — Timezone México */}
+            {/* Last Update — Timezone México */}
             <div className="text-center">
               <span className="text-[9px] font-mono text-gray-700">
                 Última sincronización:{" "}
@@ -298,7 +319,12 @@ export default function MarketMoodWidget() {
               </span>
             </div>
 
-            {/* 🔹 SPONSOR BADGE — Atribución persistente */}
+            {/* Disclaimer educativo */}
+            <p className="text-[9px] font-mono text-gray-600 text-center italic">
+              Herramienta educativa • No es consejo financiero • El DCA funciona a largo plazo
+            </p>
+
+            {/* Sponsor Badge */}
             <SponsorBadge />
           </>
         ) : null}

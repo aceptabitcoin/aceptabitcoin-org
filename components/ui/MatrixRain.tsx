@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 
 // ============================================================
 // MATRIX RAIN — The Falling Code Effect
@@ -27,6 +27,7 @@ export default function MatrixRain({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
   const dropsRef = useRef<number[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
 
   const initDrops = useCallback((columns: number) => {
     dropsRef.current = Array.from({ length: columns }, () =>
@@ -35,6 +36,12 @@ export default function MatrixRain({
   }, []);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -57,7 +64,6 @@ export default function MatrixRain({
     window.addEventListener("resize", resize);
 
     const draw = () => {
-      // Fade effect — creates trails
       ctx.fillStyle = `rgba(0, 0, 0, 0.05)`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -70,12 +76,10 @@ export default function MatrixRain({
         const x = i * fontSize;
         const y = dropsRef.current[i] * fontSize;
 
-        // Leading character is brighter
         ctx.globalAlpha = opacity * 2;
         ctx.fillText(char, x, y);
         ctx.globalAlpha = opacity;
 
-        // Random reset or continue falling
         if (y > canvas.height && Math.random() > 0.975) {
           dropsRef.current[i] = 0;
         }
@@ -91,13 +95,16 @@ export default function MatrixRain({
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationRef.current);
     };
-  }, [speed, opacity, color, initDrops]);
+  }, [speed, opacity, color, initDrops, isMounted]);
+
+  if (!isMounted) return null;
 
   return (
     <canvas
       ref={canvasRef}
       className={`absolute inset-0 pointer-events-none ${className}`}
       style={{ zIndex: 0 }}
+      suppressHydrationWarning
     />
   );
 }

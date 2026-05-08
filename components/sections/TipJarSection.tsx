@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react"; // ← Agregado useEffect
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Zap, ArrowRight, Copy, Check, Bitcoin, DollarSign, QrCode, Wallet, ExternalLink, AlertCircle } from "lucide-react";
@@ -31,6 +31,8 @@ const PRESET_AMOUNTS = {
 };
 
 export default function TipJarSection() {
+  const [isMounted, setIsMounted] = useState(false); // ← Estado de montaje para hidratación
+
   const [state, setState] = useState({
     currency: "BTC" as CurrencyMode,
     qrMode: "lnaddress" as QrMode,
@@ -42,6 +44,11 @@ export default function TipJarSection() {
     copied: false,
     error: null as string | null,
   });
+
+  // ← Efecto para marcar montaje (previene hydration mismatch)
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // ── Generate invoice via proxy ──
   const generateInvoice = useCallback(async () => {
@@ -69,11 +76,12 @@ export default function TipJarSection() {
 
   // ── Build QR value ──
   const getQrValue = useCallback(() => {
+    if (!isMounted) return "https://aceptabitcoin.mx"; // ← Placeholder seguro durante SSR
     if (state.qrMode === "lnaddress") return `lightning:${LIGHTNING_ADDRESS}`;
     if (state.qrMode === "bolt11" && state.invoice) return `lightning:${state.invoice}`;
     if (state.qrMode === "onchain" && state.onChainAddress) return `bitcoin:${state.onChainAddress}`;
     return "";
-  }, [state.qrMode, state.invoice, state.onChainAddress]);
+  }, [state.qrMode, state.invoice, state.onChainAddress, isMounted]);
 
   // ── Toggle currency ──
   const toggleCurrency = (currency: CurrencyMode) => {
@@ -260,7 +268,7 @@ export default function TipJarSection() {
                 {state.error && (
                   <div className="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-mono">
                     <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                    <span>{state.error}</span>
+                    <span suppressHydrationWarning>{state.error}</span> {/* ← Extra safety */}
                   </div>
                 )}
               </div>
@@ -274,18 +282,27 @@ export default function TipJarSection() {
                     } blur-3xl rounded-3xl pointer-events-none transition-opacity duration-500`}
                   />
                   <div className="relative bg-white p-5 rounded-3xl border border-white/30 shadow-2xl">
-                    <QRCodeSVG
-                      value={qrValue || "https://aceptabitcoin.mx"}
-                      size={260}
-                      level="H"
-                      bgColor="#ffffff"
-                      fgColor="#000000"
-                      className="rounded-2xl"
-                    />
+                    {/* ← QRCodeSVG solo se renderiza post-mount para evitar hydration mismatch */}
+                    {isMounted ? (
+                      <QRCodeSVG
+                        value={qrValue}
+                        size={260}
+                        level="H"
+                        bgColor="#ffffff"
+                        fgColor="#000000"
+                        className="rounded-2xl"
+                        suppressHydrationWarning // ← Extra: suprime warnings de atributos dinámicos
+                      />
+                    ) : (
+                      // Placeholder estático para SSR
+                      <div className="w-[260px] h-[260px] bg-gray-100 rounded-2xl flex items-center justify-center">
+                        <Zap className="h-12 w-12 text-gray-400 animate-pulse" />
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {qrValue && (
+                {qrValue && isMounted && (
                   <button
                     onClick={() =>
                       copyToClipboard(
@@ -297,7 +314,7 @@ export default function TipJarSection() {
                     className="w-full max-w-xs flex items-center justify-between bg-white/5 border border-white/10 hover:border-matrix rounded-2xl px-5 py-4 text-sm font-mono text-gray-300 hover:text-matrix transition-all duration-200"
                     aria-live="polite"
                   >
-                    <span className="truncate">
+                    <span className="truncate" suppressHydrationWarning>
                       {state.qrMode === "lnaddress"
                         ? LIGHTNING_ADDRESS
                         : state.invoice?.slice(0, 30) + "..."}
