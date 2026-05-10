@@ -38,7 +38,7 @@ export default function RegistrationForm({ defaults, className }: RegistrationFo
     handleSubmit,
     formState: { errors },
   } = useForm<RegistrationSchema>({
-    resolver: zodResolver(REGISTRATION_SCHEMA),
+    resolver: zodResolver(REGISTRATION_SCHEMA) as any,
     defaultValues: defaults || {
       teamName: "",
       teamDescription: "",
