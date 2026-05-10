@@ -25,13 +25,17 @@ const MarketMoodWidget = dynamic(
   }
 );
 
-export default function Home() {
+import { getNextEdition } from "@/lib/hackathon/editions";
+
+export default async function Home() {
+  const nextEdition = await getNextEdition();
+
   return (
     <>
       <Navbar />
       
       <main className="space-y-0">
-        <Hero />
+        <Hero nextEdition={nextEdition} />
 
         {/* --- Market Sentiment Section --- */}
         <section className="py-12 bg-black border-y border-white/5">

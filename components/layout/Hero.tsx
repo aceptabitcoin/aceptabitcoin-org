@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { ArrowRight, Terminal, Cpu } from "lucide-react";
 
-export default function Hero() {
+import { HackathonEdition } from "@/lib/hackathon/editions/types";
+
+export default function Hero({ nextEdition }: { nextEdition: HackathonEdition | null }) {
+  const hackathonTitle = nextEdition?.title.split("Challenge")[0].trim() || "Bitcoin Self-Custody UI";
+  const hackathonId = nextEdition?.id === "2026-2" ? "#2 — 2026" : (nextEdition?.id || "#2 — 2026");
+  const hackathonSlug = nextEdition?.slug || "custody-ui-2026";
+
   return (
     <section className="min-h-screen pt-20 flex items-center relative overflow-hidden bg-black">
       {/* 
@@ -43,19 +49,23 @@ export default function Hero() {
 
         {/* Botones */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          {/* Botón 1: Eventos (Bitcoin) - Se mantiene igual */}
+          {/* Botón 1: Hackathon — Dinámico */}
           <Link 
-            href="https://luma.com/lunesdebitcoinMID?k=c" 
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative group z-10 w-full sm:w-auto"
+            href={`/hackathon/${hackathonSlug}`} 
+            className="relative group w-full sm:w-auto"
           >
-            <div className="absolute -inset-1 bg-gradient-to-r from-orange-600 to-yellow-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-200"></div>
-            <div className="relative flex items-center justify-center gap-3 px-8 py-4 bg-black border border-bitcoin rounded-lg hover:bg-gray-900 transition-all">
-              <span className="font-vt323 text-2xl text-white tracking-widest">
-                EVENTOS
-              </span>
-              <ArrowRight className="text-bitcoin h-5 w-5" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-green-600 to-cyan-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-200 animate-pulse"></div>
+            <div className="relative flex items-center justify-center gap-3 px-8 py-4 bg-black border border-matrix rounded-lg hover:bg-matrix/10 transition-all">
+              <Terminal className="text-matrix h-5 w-5 animate-blink" />
+              <div className="flex flex-col items-start">
+                <span className="font-vt323 text-xl text-matrix tracking-widest leading-none">
+                  HACKATÓN {hackathonId}
+                </span>
+                <span className="font-mono text-xs text-cyan-400 tracking-wide">
+                  {hackathonTitle}
+                </span>
+              </div>
+              <ArrowRight className="text-matrix h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </div>
           </Link>
           

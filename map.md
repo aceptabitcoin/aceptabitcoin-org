@@ -6,92 +6,156 @@ A comprehensive overview of the `aceptabitcoin-org` project structure, architect
 
 ```
 aceptabitcoin-org/
-├── app/                  # Next.js App Router (Routing & Pages)
-│   ├── agenda/           # Booking & Appointments (Cal.com)
-│   ├── nuestra-historia/ # Project history and mission
-│   ├── proveedores/      # Business & Services Directory
-│   ├── (site)/           # Main website routes
-│   │   ├── aprende/      # Bitcoin Agent & Interactive Labs (Tron/Cypherpunk Style)
-│   │   ├── crea-tu-tienda/ # Business registration form
-│   │   ├── mapa/         # BTC Map integration (Standalone view)
-│   │   ├── proyectos/    # Community projects
-│   │   ├── tianguis/     # Nostr + Lightning Marketplace
-│   │   ├── layout.tsx    # Main site layout (Fonts: IBM Plex Serif, Fira Code, VT323)
-│   │   └── page.tsx      # Homepage (Cypherpunk Bank Aesthetic)
-│   ├── api/              # Backend API routes
-│   │   ├── tipjar/       # Blink Proxy API
-│   │   └── webhook/      # External webhooks
-│   ├── globals.css       # Global styles & Tailwind directives
-│   └── layout.tsx        # Root layout (Metadata, Fonts)
-├── components/           # React Components
-│   ├── common/           # Shared utility components
-│   ├── embeds/           # Bitcoin Agent, Cal.com, etc.
-│   ├── layout/           # Global wrappers (Navbar, Footer with Node Status)
-│   ├── sections/         # Feature-specific page sections (PriceConverter, TipJar, Agenda)
-│   └── ui/               # Primary UI kit (shadcn/ui + ArcadeButton + MatrixRain)
-├── lib/                  # Core Utilities & API Clients
-│   ├── blink.ts          # Blink API Client (GraphQL)
-│   ├── btcmap.ts         # BTC Map API integration
-│   └── utils.ts          # Helper functions (cn, etc.)
-├── public/               # Static assets (images, icons, etc.)
-├── docs/                 # Project documentation
-├── .env.example          # Environment variables template
-├── components.json       # shadcn/ui configuration
-├── next.config.mjs       # Next.js configuration
-├── tailwind.config.ts    # Tailwind CSS configuration (Custom animations: scanline, blink, tilt)
-└── tsconfig.json         # TypeScript configuration
+├── app/                       # Next.js 14 App Router
+│   ├── (site)/                # Main website route group (public-facing pages)
+│   │   ├── page.tsx           # Homepage — Oracle v2.0 w/ Hero, PriceConverter,
+│   │   │                       MarketMoodWidget, Aprende, Tianguis cards, TipJar
+│   │   ├── mapa/              # BTC Merchant Map (standalone, Leaflet + BTC Map API)
+│   │   │   └── page.tsx       #   → BtcMapSection
+│   │   ├── aprende/           # Bitcoin learning hub — Visionary AI arcade
+│   │   │   └── page.tsx       #   → Tron/Cypherpunk styled, 8 interactive projects
+│   │   ├── crea-tu-tienda/    # Merchant onboarding form (BTCPay Server)
+│   │   │   └── page.tsx
+│   │   ├── tianguis/          # Nostr + Lightning Marketplace
+│   │   │   └── page.tsx
+│   │   ├── proyectos/         # Community Projects Showcase
+│   │   │   ├── page.tsx
+│   │   │   └── ProyectosClient.tsx
+│   │   └── layout.tsx         # (site) layout — fonts, providers
+│   ├── agenda/                # Booking / Consultas (Cal.com iframe)
+│   │   └── page.tsx
+│   ├── nuestra-historia/      # Acepta Bitcoin history & mission
+│   │   └── page.tsx
+│   ├── proveedores/           # Sovereign Provider Directory
+│   │   ├── page.tsx           #   Server data fetching
+│   │   └── ProveedoresClient.tsx  #   Client component — MatrixRain bg,
+│   │                              #   filter/search, ProviderCard grid
+│   ├── api/
+│   │   ├── tipjar/route.ts    # Blink.sv Lightning tip-jar proxy (GraphQL)
+│   │   ├── tipjar/route.test.ts
+│   │   └── webhook/lnbits.ts  # LNbits webhook handler
+│   ├── actions/
+│   │   └── submit-onboarding.tsx  # Server action for merchant form
+│   ├── layout.tsx             # Root layout — metadata, global fonts, providers
+│   └── globals.css            # Tailwind directives + custom keyframes
+├── components/
+│   ├── layout/                # Global wrappers
+│   │   ├── Navbar.tsx         # Navigation bar (responsive)
+│   │   ├── Hero.tsx           # Homepage hero — Cypherpunk Bank aesthetic
+│   │   └── Footer.tsx         # Footer w/ Node Status simulation + terminal nav
+│   ├── sections/              # Feature sections (page-scoped)
+│   │   ├── PriceConverter.tsx # Real-time BTC↔MXN/USD converter
+│   │   ├── TipJarSection.tsx  # Lightning tip-jar w/ MatrixRain, QR, Blink
+│   │   └── BtcMapSection.tsx  # Leaflet map — BTC Map API merchants
+│   ├── widgets/               # Standalone interactive widgets
+│   │   ├── MarketMoodWidget.tsx       # DCA quality indicator (4H Binance)
+│   │   └── MarketMoodInfoPopover.tsx  # Educational DCA tooltip (localStorage)
+│   ├── ui/                    # shadcn/ui + custom components
+│   │   ├── MatrixRain.tsx     # Animated <canvas> rain effect (client-only)
+│   │   ├── ArcadeButton.tsx   # Tron-style CTA button
+│   │   ├── Logo.tsx           # Matrix-styled SVG logo
+│   │   ├── button.tsx         # shadcn Button
+│   │   ├── card.tsx           # shadcn Card
+│   │   ├── dialog.tsx         # shadcn Dialog
+│   │   ├── dropdown-menu.tsx  # shadcn DropdownMenu
+│   │   ├── input.tsx          # shadcn Input
+│   │   ├── label.tsx          # shadcn Label
+│   │   ├── navigation-menu.tsx # shadcn NavigationMenu
+│   │   ├── separator.tsx      # shadcn Separator
+│   │   ├── sheet.tsx          # shadcn Sheet
+│   │   └── textarea.tsx       # shadcn Textarea
+│   ├── common/                # (legacy / shared utilities)
+│   └── embeds/                # (Cal.com, Bitcoin Agent embeds)
+├── lib/
+│   ├── blink.ts               # Blink.sv GraphQL API client
+│   │                           #   - buildLightningAddressUrl()
+│   │                           #   - buildQrValue(), formatSats(), formatUsd()
+│   ├── btcmap.ts              # BTC Map API v1 wrapper (merchants by city)
+│   ├── market/                # Market data clients
+│   │   ├── binance.ts         # Binance BTC/USD price fetch
+│   │   └── useMarketMood.ts   # React hook: DCA ratio, price, sparkline data
+│   ├── proveedores.ts         # Provider directory types, stats, data
+│   └── utils.ts               # cn() (clsx+twMerge), formatSats, formatFiat
+├── public/                    # Static assets (images, icons)
+├── docs/                      # Documentation (map.md, mantenimiento.md, etc.)
+├── .env.local                 # Local env (never committed)
+├── .env.example               # Env var template: BTCMAP_API_KEY, TIPJAR_LN_ADDR
+├── components.json            # shadcn/ui config
+├── next.config.mjs            # Next.js config
+├── tailwind.config.ts         # Tailwind config (custom animations: scanline,
+│                              #   blink, tilt, Matrix colors)
+├── tsconfig.json              # TypeScript strict mode
+└── package.json               # Next.js 14.2.3, Vitest, Sentry, Resend
 ```
 
 ## 🗺️ Route Map
 
-| Route | Description | Component/File | Status |
-|-------|-------------|----------------|--------|
-| `/` | Homepage | `app/(site)/page.tsx` | **Oracle v2.0 Live** |
-| `/aprende` | Educational Labs | `app/(site)/aprende/page.tsx` | **Tron Style Live** |
-| `/mapa` | BTC Map Viewer | `app/(site)/mapa/page.tsx` | Standalone |
-| `/tianguis` | Marketplace | `app/(site)/tianguis/page.tsx` | Functional |
-| `/proyectos` | Community Showcase | `app/(site)/proyectos/page.tsx` | Functional |
-| `/crea-tu-tienda`| Onboarding Form | `app/(site)/crea-tu-tienda/page.tsx` | Functional |
-| `/agenda` | Booking & Consulting | `app/agenda/page.tsx` | **Integrated v2.0** |
-| `/nuestra-historia` | Project History | `app/nuestra-historia/page.tsx` | Functional |
-| `/proveedores` | Business Directory | `app/proveedores/page.tsx` | Functional |
+| Route | Description | File | Status |
+|-------|-------------|------|--------|
+| `/` | **Oracle Homepage** — Hero, MarketMood, PriceConverter, Aprende, Tianguis cards, TipJar | `app/(site)/page.tsx` | ✅ Live (v2.0) |
+| `/aprende` | **Bitcoin Arcade** — Visionary AI interactive labs, 8 hackathon projects | `app/(site)/aprende/page.tsx` | ✅ Live (Tron/Cypherpunk) |
+| `/mapa` | **BTC Map Viewer** — Leaflet map with BTC Map API merchants | `app/(site)/mapa/page.tsx` | ✅ Standalone |
+| `/tianguis` | **Lightning Marketplace** — Nostr + Lightning commerce | `app/(site)/tianguis/page.tsx` | ✅ Functional |
+| `/proyectos` | **Community Showcase** — Client-rendered project grid | `app/(site)/proyectos/page.tsx` + `ProyectosClient.tsx` | ✅ Functional |
+| `/crea-tu-tienda` | **Merchant Onboarding** — BTCPay registration form | `app/(site)/crea-tu-tienda/page.tsx` | ✅ Functional |
+| `/agenda` | **Consultas** — Cal.com booking iframe | `app/agenda/page.tsx` | ✅ Integrated v2.0 |
+| `/nuestra-historia` | Project History & Mission | `app/nuestra-historia/page.tsx` | ✅ Functional |
+| `/proveedores` | **Sovereign Directory** — Filterable provider grid w/ MatrixRain | `app/proveedores/page.tsx` + `ProveedoresClient.tsx` | ✅ Functional |
+| `/api/tipjar` | Lightning Tip-Jar API (Blink.sv proxy) | `app/api/tipjar/route.ts` | ✅ Live |
+| `/api/webhook/lnbits` | LNbits webhook handler | `app/api/webhook/lnbits.ts` | ✅ Live |
 
 ## 🛠️ Technology Stack
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **UI Components**: [shadcn/ui](https://ui.shadcn.com/) + Custom Cypherpunk components
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **QR Codes**: [qrcode.react](https://github.com/zpao/qrcode.react)
-- **Maps**: [Leaflet](https://leafletjs.com/)
-- **Bitcoin/Lightning**: BTC Map API, Blink.sv integration
-- **Booking**: Cal.com Embed
+| Layer | Technology | Version/Notes |
+|-------|-----------|---------------|
+| **Framework** | [Next.js](https://nextjs.org/) | 14.2.3 — App Router |
+| **Language** | [TypeScript](https://www.typescriptlang.org/) | Strict mode |
+| **Styling** | [Tailwind CSS](https://tailwindcss.com/) | Custom animations: `scanline`, `blink`, `tilt` |
+| **UI Kit** | [shadcn/ui](https://ui.shadcn.com/) | + custom ArcadeButton, MatrixRain, Logo |
+| **Icons** | [Lucide React](https://lucide.dev/) | — |
+| **QR Codes** | [qrcode.react](https://github.com/zpao/qrcode.react) | Client-only (`ssr: false`) |
+| **Maps** | [Leaflet](https://leafletjs.com/) + react-leaflet | `/mapa` route |
+| **Payments** | [Blink.sv](https://blink.sv) | GraphQL API — Lightning + On-chain |
+| **Market Data** | Binance API | BTC/USD via `lib/market/binance` |
+| **Booking** | [Cal.com](https://cal.com) | Embedded in `/agenda` |
+| **Testing** | [Vitest](https://vitest.dev/) | `app/api/tipjar/route.test.ts` |
+| **Monitoring** | [Sentry](https://sentry.io) | Error tracking |
+| **Email** | [Resend](https://resend.com) | Transactional email |
 
 ## 🎨 Design System: Cypherpunk Bank / Oracle System
 
-The project has transitioned to a high-contrast, technical aesthetic inspired by digital frontiers and decentralized infrastructure.
+The project uses a high-contrast, technical aesthetic inspired by digital frontiers and decentralized infrastructure.
 
-- **Typography**:
-    - **Serif**: IBM Plex Serif (High-contrast titles, institutional feel)
-    - **Mono**: Fira Code (Technical descriptions, code snippets)
-    - **Retro**: VT323 (Arcade buttons, system status, metadata)
-- **Color Palette**:
-    - **Background**: `#000000` (Pure black for OLED depth)
-    - **Primary**: `#F7931A` (Bitcoin Orange)
-    - **Accent**: `#06B6D4` (Cyan / Tron Blue)
-    - **Status**: `#22C55E` (Green / Operational)
-- **Visual Effects**:
-    - **Glassmorphism**: High-intensity backdrop blurs for cards.
-    - **Scanlines**: Technical overlay animations.
-    - **Blinking Cursors**: Retro-terminal input simulation.
-    - **Glows**: Subtle neon borders and shadow effects.
+### Typography
+- **Serif**: IBM Plex Serif — High-contrast titles, institutional feel
+- **Mono**: Fira Code — Technical descriptions, code snippets, data displays
+- **Retro**: VT323 — Arcade buttons, system status, metadata labels
 
-## 🚀 Recent Updates (v2.0)
+### Color Palette
+| Token | Hex | Usage |
+|-------|-----|-------|
+| **Background** | `#000000` | Pure black — OLED depth |
+| **Primary (Bitcoin)** | `#F7931A` | CTAs, Bitcoin branding |
+| **Accent (Cyan/Tron)** | `#06B6D4` | Interactive highlights |
+| **Matrix Green** | `#00FF41` | Status, MatrixRain, decorative |
+| **Status Green** | `#22C55E` | Operational indicators |
 
-1. **Homepage Overhaul**: Replaced the BTC Map with a more focused "Oracle" experience.
-2. **Dynamic Price Converter**: Real-time multi-currency converter with technical styling.
-3. **Integrated Booking**: Cal.com integrated directly into a "System Window" UI.
-4. **Enhanced Tip Jar**: Support for dynamic SATS amounts with live QR generation.
-5. **Interactive Footer**: Added "Node Status" simulation and terminal-style navigation.
-6. **Aprende Section**: Full visual refresh with Tron-inspired animations and "Arcade" buttons.
+### Visual Effects
+- **Glassmorphism**: High-intensity `backdrop-blur` for cards and modals
+- **Scanlines**: Animated overlay — `animate-scanline` on Card borders
+- **Blinking Cursors**: Retro-terminal input simulation via `animate-blink`
+- **Glows**: Neon `box-shadow` on hover (`shadow-[0_0_25px_rgba(...)]`)
+- **Matrix Rain**: Animated `<canvas>` background on select pages
+
+## 🚀 Recent Updates (v2.0 — Ongoing)
+
+1. **Oracle Homepage** (`:tada:`): Replaced old BTC Map with a focused "Oracle" experience — Hero, MarketMood DCA widget, PriceConverter, and dual CTA cards (Crea tu Tienda + Tianguis)
+2. **`/proveedores` Sovereign Directory** (`:tada:`): Full directory page with Matr ixRain background, stats bar, category filters, search, ProviderCard grid
+3. **Dynamic Tip Jar** (`:tada:`): Lightning + on-chain donation with real-time QR codes, `isMounted` SSR guard, Blink.sv integration
+4. **MarketMood DCA Widget** (`:sparkles:`): 4H timeframe DCA quality indicator with Binance price feed, sparkline history, color-coded tiers, and AureoBitcoin sponsorship
+5. **Bitcoin Arcade** (`/aprende`): Tron/Cypherpunk-styled learning hub with Visionary AI projects — 8 interactive hackathon projects
+6. **Agenda v2.0**: Embedded Cal.com booking within a themed "System Window" UI
+7. **Hydration Fixes** (`:bug:`): `isMounted` state guards on `MatrixRain`, `TipJarSection`, and MarketMood widgets; `suppressHydrationWarning` on dynamic elements; QR codes rendered client-only via `next/dynamic` with `ssr: false`
+8. **Blink.sv Migration**: Payment infrastructure moved from LNbits to Blink's GraphQL API
+9. **Interactive Footer**: "Node Status" simulation, terminal-style nav links
+10. **CI/CD**: Build verified passing with zero hydration errors, zero TypeScript errors

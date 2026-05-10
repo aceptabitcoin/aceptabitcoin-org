@@ -36,6 +36,16 @@ export const metadata: Metadata = {
   title: "Acepta Bitcoin México",
   description: "Educación, tiendas y adopción real de Bitcoin desde Mérida, Yucatán",
   icons: { icon: "/favicon.ico" },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Acepta Bitcoin",
+  },
+};
+
+export const viewport = {
+  themeColor: "#F7931A",
 };
 
 export default function RootLayout({

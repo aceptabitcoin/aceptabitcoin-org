@@ -1,352 +1,139 @@
-# 🔧 MANTENIMIENTO — Acepta Bitcoin México
+# Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-**Proyecto:** Acepta Bitcoin México (Oracle System v2.0)
-**Última actualización:** Abril 2026
-**Stack:** Next.js 14 + TypeScript + Tailwind CSS + shadcn/ui
+Estado actual del proyecto — última actualización: 2026-05-08
 
 ---
 
-## 📁 Estructura de Archivos
+## 📋 Estado General
 
-```
-aceptabitcoin-org/
-├── app/                          # Next.js App Router (rutas)
-│   ├── (site)/                   # Grupo de rutas del sitio principal
-│   │   ├── page.tsx              # Homepage (Oracle v2.0)
-│   │   ├── aprende/              # Labs educativos (Tron Style)
-│   │   ├── crea-tu-tienda/       # Formulario de registro
-│   │   ├── mapa/                 # BTC Map integration
-│   │   ├── proyectos/            # Showcase de proyectos
-│   │   └── tianguis/             # Nostr + Lightning Marketplace
-│   ├── agenda/                   # Cal.com booking (iframe)
-│   ├── api/                      # API routes (proxy, webhooks)
-│   │   └── tipjar/               # Blink API proxy
-│   ├── nuestra-historia/         # Historia del proyecto
-│   ├── proveedores/              # Directorio de proveedores
-│   └── globals.css               # Estilos globales + Tailwind
-│
-├── components/                   # Componentes React
-│   ├── badges/                   # Badges reutilizables
-│   │   ├── StatusBadge.tsx       # Semáforo 🟢🟡🔴
-│   │   └── TierBadge.tsx         # Tier de proveedor
-│   ├── cards/                    # Tarjetas reutilizables
-│   │   ├── ProjectCard.tsx       # Tarjeta de proyecto
-│   │   ├── ProjectSkeleton.tsx   # Skeleton de proyecto
-│   │   ├── ProviderCard.tsx      # Tarjeta de proveedor
-│   │   └── ProviderSkeleton.tsx  # Skeleton de proveedor
-│   ├── embeds/                   # Embeds de terceros
-│   │   └── CalComEmbed.tsx       # Cal.com (legacy, usar iframe)
-│   ├── filters/                  # Filtros de UI
-│   │   ├── CategoryFilter.tsx    # Filtro por categoría
-│   │   └── TypeFilter.tsx        # Filtro por tipo
-│   ├── layout/                   # Layout global
-│   │   ├── Navbar.tsx            # Navegación
-│   │   └── Footer.tsx            # Pie de página
-│   ├── sections/                 # Secciones de página
-│   │   ├── TipJarSection.tsx     # Donaciones Blink
-│   │   └── ...                   # Otras secciones
-│   ├── ui/                       # UI Kit (shadcn + custom)
-│   │   ├── MatrixRain.tsx        # Efecto código cayendo
-│   │   ├── card.tsx              # Card base (shadcn)
-│   │   ├── button.tsx            # Button base (shadcn)
-│   │   └── ...                   # Otros componentes shadcn
-│   └── widgets/                  # Widgets reutilizables
-│       └── MarketMoodWidget.tsx  # Indicador de mercado
-│
-├── data/                         # Datos estáticos (JSON)
-│   ├── proveedores.json          # Directorio de proveedores
-│   └── proyectos.json            # Showcase de proyectos
-│
-├── hooks/                        # Custom React hooks
-│   └── useMarketMood.ts          # Hook para Market Mood
-│
-├── lib/                          # Utilidades y clientes
-│   ├── market/                   # Clientes de mercado
-│   │   └── binance.ts            # Binance API + Stochastic
-│   ├── proveedores.ts            # Tipos y utilidades
-│   ├── proyectos.ts              # Tipos y utilidades
-│   └── utils.ts                  # Helpers (cn, etc.)
-│
-├── public/                       # Assets estáticos
-│   ├── proveedores/              # Logos de proveedores
-│   └── proyectos/                # Imágenes de proyectos
-│
-├── docs/                         # Documentación
-│   └── DEPLOYMENT.md             # Guía de deploy
-│
-├── design-system.md              # Design System Bitcoin Matrix
-├── MANTENIMIENTO.md              # ESTE ARCHIVO
-└── .env.example                  # Variables de entorno
-```
+| Área | Estado | Notas |
+|------|--------|-------|
+| **Build (npm run build)** | ✅ Pasando | 0 errores TypeScript, 0 warnings de hidratación |
+| **Tipado (TypeScript strict)** | ✅ Sin errores | `tsconfig.json` en modo estricto |
+| **Linting** | ✅ Sin errores bloqueadores | — |
+| **Tests (Vitest)** | ✅ `app/api/tipjar/route.test.ts` | — |
+| **Despliegue (Vercel)** | ✅ Configurado | Variables de entorno: `BTCMAP_API_KEY`, `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` |
 
 ---
 
-## 🎨 Design System
+## 🔧 Stack Técnico
 
-**NO agregar colores cyan/azul.** Usar exclusivamente:
-
-| Token | Hex | Uso |
-|-------|-----|-----|
-| `matrix` | `#00FF41` | Datos técnicos, info, bordes activos |
-| `bitcoin` | `#F7931A` | CTAs, precios, acciones principales |
-| `bg-black` | `#000000` | Fondo base (puro, no #111) |
-| `text-white` | `#FAFAFA` | Texto general |
-
-**Tipografía:**
-- **IBM Plex Serif** — Títulos, autoridad institucional
-- **Fira Code** — Datos, código, descripciones técnicas
-- **VT323** — Botones arcade, metadatos, sistema
-
-Ver `design-system.md` para detalles completos.
+- **Framework**: Next.js 14.2.3 (App Router)
+- **Lenguaje**: TypeScript (strict mode)
+- **Estilos**: Tailwind CSS con animaciones custom (`scanline`, `blink`, `tilt`)
+- **UI**: shadcn/ui + componentes custom (ArcadeButton, MatrixRain, Logo)
+- **Pagos**: Blink.sv (GraphQL API — Lightning + On-chain)
+- **Datos de mercado**: Binance API (BTC/USD, indicador DCA)
+- **QR Codes**: `qrcode.react` (client-only)
+- **Mapas**: Leaflet + react-leaflet + BTC Map API v1
+- **Reservas**: Cal.com (iframe embebido)
+- **Testing**: Vitest
+- **Monitoreo**: Sentry
+- **Email**: Resend
 
 ---
 
-## ➕ CÓMO AGREGAR PROVEEDORES
+## 🔩 Componentes Principales — Estado de Hydratación
 
-### 1. Editar `data/proveedores.json`
+Todos los componentes que renderizan datos dinámicos o dependientes del navegador incluyen protección SSR/CSR:
 
-Agregar objeto JSON con esta estructura:
-
-```json
-{
-  "id": "nombre-unico-kebab-case",
-  "nombre": "Nombre del Negocio",
-  "categoria": "exchange" | "logistica" | "educacion" | "comercio" | "servicios" | "tecnologia",
-  "tier": "patrocinador" | "partner" | "miembro",
-  "descripcion": "Descripción completa del negocio...",
-  "descripcionCorta": "Tagline de una línea...",
-  "url": "https://...",
-  "urlReferido": "https://...?ref=aceptabitcoin",
-  "logo": "/proveedores/nombre.svg",
-  "ubicacion": "Ciudad, Estado",
-  "tags": ["tag1", "tag2", "tag3"],
-  "destacado": true | false
-}
-```
-
-### 2. Agregar logo
-
-Colocar archivo SVG en `public/proveedores/nombre.svg`
-
-### 3. Reglas
-
-- `id` debe ser único, kebab-case
-- `urlReferido` solo si tienen programa de referidos
-- `tier`: patrocinadores van primero automáticamente
-- `destacado: true` solo para patrocinadores destacados
-- Máximo 5 tags por proveedor
+| Componente | Guard `isMounted` | `suppressHydrationWarning` | `dynamic ssr:false` | Estado |
+|------------|-------------------|---------------------------|---------------------|--------|
+| `MatrixRain` | ✅ | ✅ | — | ✅ OK |
+| `TipJarSection` | ✅ | ✅ | — | ✅ OK |
+| `MarketMoodWidget` | — | — | ✅ (via `next/dynamic`) | ✅ OK |
+| `MarketMoodInfoPopover` | — | ✅ (en interactive elements) | — | ✅ OK |
+| `QRCodeSVG` (en TipJar) | ✅ (renderizado condicional `isMounted`) | ✅ | — | ✅ OK |
 
 ---
 
-## ➕ CÓMO AGREGAR PROYECTOS
+## 📁 Estructura de Rutas Activas
 
-### 1. Editar `data/proyectos.json`
-
-Agregar objeto JSON:
-
-```json
-{
-  "id": "nombre-unico-kebab-case",
-  "nombre": "Nombre del Proyecto",
-  "tipo": "interno" | "comunidad",
-  "descripcion": "Descripción completa...",
-  "descripcionCorta": "Tagline de una línea...",
-  "url": "https://..." | null,
-  "repoUrl": "https://github.com/...",
-  "logo": "/proyectos/nombre.svg",
-  "imagen": "/proyectos/nombre-preview.jpg",
-  "stack": ["Next.js", "Bitcoin", "Lightning"],
-  "estado": "active" | "development" | "abandoned",
-  "hackathon": {
-    "evento": "Hackathon Bitcoin México 2026",
-    "lugar": "winner" | "second" | "third",
-    "año": 2026
-  },
-  "equipo": [
-    { "nombre": "Nombre Equipo", "rol": "Equipo", "ubicacion": "Ciudad" }
-  ],
-  "features": ["Feature 1", "Feature 2"],
-  "metricas": [
-    { "label": "Métrica", "valor": "123" }
-  ],
-  "review": {
-    "fortalezas": ["Fortaleza 1", "Fortaleza 2"],
-    "oportunidades": ["Oportunidad 1"],
-    "impacto": "Frase de impacto del proyecto..."
-  },
-  "fecha": "2026-04-27"
-}
-```
-
-### 2. Agregar assets
-
-- Logo SVG en `public/proyectos/nombre.svg`
-- Preview JPG/PNG en `public/proyectos/nombre-preview.jpg`
-
-### 3. Reglas
-
-- `tipo`: "interno" = hecho por nosotros, "comunidad" = hecho por otros
-- `estado`: manual, actualizar según actividad del repo
-- `hackathon`: opcional, solo para proyectos de hackathon
-- `url`: null si aún no está en producción
-- `fecha`: ISO 8601, ordena automáticamente (más reciente primero)
+| Ruta | Componente | Estado |
+|------|-----------|--------|
+| `/` | `app/(site)/page.tsx` | ✅ Oracle v2.0 — Homepage |
+| `/aprende` | `app/(site)/aprende/page.tsx` | ✅ Bitcoin Arcade + Visionary AI |
+| `/mapa` | `app/(site)/mapa/page.tsx` | ✅ BTC Merchant Map |
+| `/tianguis` | `app/(site)/tianguis/page.tsx` | ✅ Nostr + Lightning Marketplace |
+| `/proyectos` | `app/(site)/proyectos/page.tsx` + `ProyectosClient.tsx` | ✅ Community Projects |
+| `/crea-tu-tienda` | `app/(site)/crea-tu-tienda/page.tsx` | ✅ Merchant Onboarding |
+| `/agenda` | `app/agenda/page.tsx` | ✅ Cal.com Booking |
+| `/nuestra-historia` | `app/nuestra-historia/page.tsx` | ✅ Project History |
+| `/proveedores` | `app/proveedores/page.tsx` + `ProveedoresClient.tsx` | ✅ Sovereign Directory |
+| `/api/tipjar` | `app/api/tipjar/route.ts` | ✅ Blink.sv Proxy |
+| `/api/webhook/lnbits` | `app/api/webhook/lnbits.ts` | ✅ Webhook Handler |
 
 ---
 
-## 🔄 CÓMO ACTUALIZAR ESTADO DE PROYECTOS (SEMÁFORO)
+## 🧹 Tareas de Mantenimiento Pendientes / Sugeridas
 
-El semáforo es **manual**. Para actualizar:
+### Prioridad Alta
+- [ ] **Validar claves de API**: Confirmar que `BTCMAP_API_KEY` y `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` están configuradas en producción (Vercel env vars)
+- [ ] **Revisar dependencias**: Ejecutar `npm outdated` y actualizar parches de seguridad
+- [ ] **Backups de datos**: Verificar respaldo periódico de datos de proveedores (si aplica)
 
-1. Editar `data/proyectos.json`
-2. Cambiar campo `estado`:
-   - `"active"` — Proyecto en producción, mantenido activamente
-   - `"development"` — En construcción, repo activo
-   - `"abandoned"` — Sin commits >6 meses, pausado
-3. Commit con mensaje: `chore(proyectos): update status of [nombre]`
+### Prioridad Media
+- [ ] **Optimización de imágenes**: Convertir imágenes estáticas a formato WebP/AVIF
+- [ ] **SEO meta tags**: Revisar que cada ruta tenga `<title>` y `<meta description>` únicos
+- [ ] **Analytics**: Considerar integración de analytics (Plausible / Umami — privacidad-friendly)
+- [ ] **Accesibilidad (a11y)**: Auditar con `axe-core` o Lighthouse para contraste de colores y ARIA labels
 
-**Revisión trimestral recomendada.**
-
----
-
-## 💰 CÓMO CONFIGURAR EL TIPJAR
-
-### Variables de entorno (`.env.local`):
-
-```env
-BLINK_API_KEY=tu_api_key_de_blink
-NEXT_PUBLIC_BLINK_LIGHTNING_ADDRESS=tu-handle@blink.sv
-NEXT_PUBLIC_BLINK_HANDLE=tu-handle
-```
-
-### Cambiar dirección Lightning:
-
-En `components/sections/TipJarSection.tsx`:
-```typescript
-const LIGHTNING_ADDRESS = "tu-handle@blink.sv";
-const BLINK_HANDLE = "tu-handle";
-```
+### Prioridad Baja
+- [ ] **Internacionalización**: Evaluar soporte multi-idioma (es/en)
+- [ ] **Service Worker**: Implementar caché offline para páginas estáticas
+- [ ] **PWA**: Agregar `manifest.json` e íconos para instalación en dispositivos móviles
+- [ ] **Docs**: Completar `docs/` con guías de contribución y despliegue detalladas
 
 ---
 
-## 📊 CÓMO FUNCIONA EL MARKET MOOD
+## 🐛 Issues Conocidos / Resueltos
 
-### Datos:
-- Fuente: **Binance API** (sin API key, gratis)
-- Par: **BTC/USDT**
-- Polling: **30 segundos**
-- Persistencia: **localStorage** (histórico de valores)
-
-### Cálculo:
-1. Fetch 300 velas OHLC de Binance
-2. Calcular 28 stochastics con períodos 10, 20, 30... 280
-3. Promediar los 28 valores → Heat Map Value
-4. Clasificar: ≥80 sobrecompra, ≤25 dip, resto neutral
-
-### Timeframes:
-- `1h` — Horario (intradía)
-- `4h` — 4 horas (swing)
-- `1d` — Diario (tendencia)
-- `1w` — Semanal (macro)
+### Resueltos Recientemente
+| Issue | Descripción | Commit |
+|-------|-------------|--------|
+| #418 / #423 | React hydration errors en componentes client-only | `0e7f8c6` — `fix(ui): resolve React hydration errors` |
+| — | TipJarSection hydration mismatch por renderizado de QR durante SSR | Resuelto con `isMounted` state guard + `dynamic ssr:false` |
+| — | MarketMoodWidget hydration por acceso a `window`/`localStorage` | Resuelto con `next/dynamic` y `ssr: false` |
+| — | Build error: `MatrixRainProps` type missing | Resuelto restaurando interfaz + constante `CHARS` |
 
 ---
 
-## 🚀 DEPLOY
+## 🔄 Últimos Commits Relevantes
 
-### Requisitos:
-- Node.js 18+
-- pnpm o npm
-- Cuenta Vercel (recomendado)
+| Hash | Mensaje |
+|------|---------|
+| `0e7f8c6` | fix(ui): resolve React hydration errors #418/#423 |
+| `af3daa0` | feat(proyectos): align /proyectos with Bitcoin Matrix design |
+| `fdd59b3` | feat(arcade): migrate aprende to Bitcoin Arcade |
+| `602dc01` | feat(ui): navbar domain styling, market mood, tipjar blink integration |
+| `516a1d1` | feat(core): refactor static data loading, add tests, Sentry |
 
-### Pasos:
+---
+
+## 📦 Instalación Local
+
 ```bash
-# Instalar dependencias
-pnpm install
+# 1. Clonar
+git clone https://github.com/ScubaAI/aceptabitcoin-org.git
+cd aceptabitcoin-org
 
-# Desarrollo local
-pnpm dev
+# 2. Instalar dependencias
+npm install
 
-# Build de producción
-pnpm build
+# 3. Configurar variables de entorno
+cp .env.example .env.local
+# Editar .env.local con valores reales:
+#   BTCMAP_API_KEY=tu_api_key
+#   NEXT_PUBLIC_TIP_JAR_LN_ADDRESS=tu@wallet@blink.sv
 
-# Deploy en Vercel
-vercel --prod
+# 4. Desarrollo
+npm run dev
+
+# 5. Build de producción
+npm run build
+npm start
 ```
 
-### Variables de entorno en Vercel:
-- `BLINK_API_KEY` (producción)
-- `NEXT_PUBLIC_BLINK_LIGHTNING_ADDRESS`
-- `NEXT_PUBLIC_BLINK_HANDLE`
-
 ---
 
-## 🐛 DEBUGGING COMÚN
-
-### Error 418/423 (Hydration mismatch):
-- Causa: Scripts de terceros manipulando DOM (Cal.com, etc.)
-- Fix: Usar `dynamic` con `ssr: false` o iframes
-
-### Market Mood no carga datos:
-- Verificar conexión a internet
-- Binance API puede rate-limitar en algunas regiones
-- Revisar consola por errores CORS
-
-### Proveedores/Proyectos no aparecen:
-- Verificar que JSON sea válido (usar jsonlint.com)
-- Revisar que imágenes existan en `public/`
-- Verificar que `id` sea único
-
----
-
-## 📝 CONVENCIONES DE CÓDIGO
-
-### Commits:
-```
-feat(proveedores): add new exchange provider
-fix(market): resolve Binance API timeout
-chore(proyectos): update status of bob-hotel
-docs(readme): update deployment instructions
-```
-
-### Nombres de archivos:
-- Componentes: `PascalCase.tsx`
-- Utilidades: `camelCase.ts`
-- Datos: `kebab-case.json`
-
-### Colores:
-- NUNCA usar cyan/azul (`#22d3ee`, `#06B6D4`)
-- SIEMPRE usar `matrix` o `bitcoin` tokens
-
----
-
-## 🔮 ROADMAP SUGERIDO
-
-### Corto plazo:
-- [ ] Agregar más proveedores reales
-- [ ] Completar datos de proyectos internos
-- [ ] Integrar WebSocket para Market Mood real-time
-- [ ] Agregar más indicadores técnicos (RSI, MACD)
-
-### Mediano plazo:
-- [ ] Sistema de blog/conteúdo (MDX)
-- [ ] Newsletter con Nostr
-- [ ] App móvil (PWA)
-- [ ] Dashboard para proveedores
-
-### Largo plazo:
-- [ ] LNbits migration (cuando tengamos liquidez propia)
-- [ ] Nostr relay propio
-- [ ] DAO para gobernanza de la plataforma
-
----
-
-## 📞 CONTACTO
-
-**Equipo:** Acepta Bitcoin México
-**Email:** hola@aceptabitcoin.org
-**Nostr:** npub... (agregar)
-**GitHub:** github.com/aceptabitcoin-org
-
----
-
-> *"El código es poesía. La soberanía financiera es libertad."*
-> — Acepta Bitcoin México
+*Documentación generada automáticamente. Actualizar tras cada deploy significativo.*

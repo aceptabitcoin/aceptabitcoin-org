@@ -144,6 +144,56 @@ export default function Footer() {
 
         </div>
 
+        {/* --- Comunidades Section --- */}
+        <div className="mt-8 pt-6 border-t border-white/10">
+          <div className="text-[10px] text-gray-500 font-mono uppercase tracking-widest mb-3">
+            Comunidades
+          </div>
+          
+          <div className="flex flex-wrap gap-3 items-center">
+            {/* === My First Bitcoin Badge === */}
+            <a
+              href="https://es.myfirstbitcoin.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-1.5 
+                         bg-black border border-matrix/30 rounded 
+                         hover:border-matrix hover:shadow-[0_0_15px_rgba(0,255,65,0.3)]
+                         transition-all duration-200 group"
+              aria-label="Visitar My First Bitcoin — Educación sobre nodos Bitcoin"
+            >
+              {/* Indicador de estado "online" */}
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-matrix opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-matrix"></span>
+              </span>
+              
+              {/* Texto del badge */}
+              <span className="font-mono text-xs text-gray-300 group-hover:text-matrix transition-colors">
+                My First Bitcoin
+              </span>
+              
+              {/* Icono de enlace externo */}
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="12" 
+                height="12" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+                className="text-matrix/60 group-hover:text-matrix transition-colors"
+              >
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
         {/* --- System Log (Copyright) --- */}
         <div className="mt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="font-mono text-[10px] text-gray-600 uppercase tracking-widest">

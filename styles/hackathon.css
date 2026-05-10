@@ -1,0 +1,35 @@
+/* styles/hackathon.css */
+:root {
+  /* Hereda variables globales de tailwind.config.ts */
+  --hackathon-matrix-glow: 0 0 25px rgba(0, 255, 65, 0.6);
+  --hackathon-bitcoin-glow: 0 0 25px rgba(247, 147, 26, 0.6);
+  --hackathon-cyan-glow: 0 0 25px rgba(6, 182, 212, 0.6);
+}
+
+@keyframes scanline-reveal {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 65, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.8); }
+}
+
+.hackathon-matrix-glow {
+  text-shadow: var(--hackathon-matrix-glow);
+}
+
+.hackathon-scanline::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 255, 65, 0.1) 50%,
+    transparent 100%
+  );
+  animation: scanline-reveal 8s linear infinite;
+  pointer-events: none;
+}
