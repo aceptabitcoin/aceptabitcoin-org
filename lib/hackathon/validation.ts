@@ -35,9 +35,7 @@ export const REGISTRATION_SCHEMA = z.object({
     "sovereignty",
     "social-impact",
     "dev-tools",
-  ], {
-    errorMap: () => ({ message: "Debes seleccionar un tema válido" }),
-  }),
+  ]),
 
   members: z.array(TEAM_MEMBER_SCHEMA)
     .min(1, "Debe haber al menos 1 miembro")
@@ -65,9 +63,7 @@ export const REGISTRATION_SCHEMA = z.object({
     .optional()
     .or(z.literal("")),
 
-  experienceLevel: z.enum(["beginner", "intermediate", "advanced"], {
-    errorMap: () => ({ message: "Selecciona un nivel de experiencia válido" }),
-  }),
+  experienceLevel: z.enum(["beginner", "intermediate", "advanced"]),
 
   needsMentorship: z.boolean().default(false),
 
