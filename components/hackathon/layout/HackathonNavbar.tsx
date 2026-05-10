@@ -42,7 +42,10 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
     },
   ];
 
-  function isActive(pattern: RegExp): boolean {
+  function isActive(pattern: RegExp | string): boolean {
+    if (typeof pattern === "string") {
+      return (pathname || "").includes(pattern);
+    }
     return pattern.test(pathname || "");
   }
 

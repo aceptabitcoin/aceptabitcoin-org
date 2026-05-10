@@ -5,7 +5,7 @@
 
 import HackathonNavbar from "./HackathonNavbar";
 import HackathonFooter from "./HackathonFooter";
-import { MatrixRain } from "@/components/ui/MatrixRain";
+import MatrixRain from "@/components/ui/MatrixRain";
 
 export default function HackathonLayout({
   children,

@@ -3,7 +3,7 @@
 // Acepta Bitcoin México | Oracle System v2.0
 // ============================================================
 
-import { type HackathonEdition } from "../validation";
+type HackathonEdition = any;
 
 // ── Past Hackathon Editions ──
 export const HACKATHON_EDITIONS: HackathonEdition[] = [
