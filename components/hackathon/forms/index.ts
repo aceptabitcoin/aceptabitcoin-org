@@ -6,4 +6,4 @@
 export { default as RegistrationForm } from "./RegistrationForm";
 export { default as TeamMemberInputs } from "./TeamMemberInputs";
 // export { default as ThemeSelector } from "./ThemeSelector";
-export { default as RegistrationSuccess } from "./RegistrationSuccess";
+// export { default as RegistrationSuccess } from "./RegistrationSuccess";
