@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Terminal, Cpu } from "lucide-react";
+import { ArrowRight, Terminal } from "lucide-react";
 
 import { HackathonEdition } from "@/lib/hackathon/editions/types";
 
@@ -49,7 +49,8 @@ export default function Hero({ nextEdition }: { nextEdition: HackathonEdition | 
 
         {/* Botones */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-          {/* Botón 1: Hackathon — Dinámico */}
+          
+          {/* Botón 1: Hackathon — Dinámico (PRIMARIO - Verde Matrix) */}
           <Link 
             href={`/hackathon/${hackathonSlug}`} 
             className="relative group w-full sm:w-auto"
@@ -69,14 +70,17 @@ export default function Hero({ nextEdition }: { nextEdition: HackathonEdition | 
             </div>
           </Link>
           
-          {/* Botón 2: Plataforma Educativa (Ahora estilo Matrix) */}
+          {/* Botón 2: Eventos (SECUNDARIO - Bitcoin Orange) */}
           <Link 
-            href="/aprende" 
-            className="w-full sm:w-auto px-8 py-4 bg-transparent border border-matrix/30 text-matrix font-serif font-bold rounded hover:border-matrix hover:bg-matrix/10 transition-all flex items-center justify-center gap-2 group"
+            href="https://luma.com/lunesdebitcoinMID"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto px-8 py-4 bg-transparent border border-bitcoin/40 text-bitcoin font-serif font-bold rounded hover:border-bitcoin hover:bg-bitcoin/10 hover:shadow-[0_0_20px_rgba(247,147,26,0.3)] transition-all flex items-center justify-center gap-2 group"
           >
-            <Cpu className="w-4 h-4 text-matrix/60 group-hover:text-matrix transition-colors" />
-            Plataforma Educativa
+            <ArrowRight className="w-4 h-4 text-bitcoin/60 group-hover:text-bitcoin transition-colors" />
+            EVENTOS
           </Link>
+          
         </div>
 
         {/* Footer del Hero (Datos técnicos) */}
