@@ -4,7 +4,9 @@
 // ============================================================
 
 import { notFound } from "next/navigation";
-import { getEditionConfig } from "@/lib/hackathon/editions";
+import type { Metadata } from "next";
+
+// ✅ Importar estilos específicos del hackathon
 import "@/styles/hackathon.css";
 
 // Components - Display
@@ -23,20 +25,84 @@ import FAQSection from "@/components/hackathon/content/FAQSection";
 import RulesSection from "@/components/hackathon/content/RulesSection";
 import GoogleFormButton from "@/components/hackathon/interactive/GoogleFormButton";
 
-export async function generateMetadata({ params }: { params: { edition: string } }) {
+// Lib
+import { getEditionConfig, listActiveEditions } from "@/lib/hackathon/editions";
+
+// ============================================================
+// GENERAR METADATOS DINÁMICOS (SEO) — Versión robusta
+// ============================================================
+export async function generateMetadata({ 
+  params 
+}: { 
+  params: { edition: string } 
+}): Promise<Metadata> {
   const edition = await getEditionConfig(params.edition);
+  
+  if (!edition) {
+    return {
+      title: "Hackathon no encontrado | Acepta Bitcoin",
+      description: "La edición solicitada no existe o está en borrador.",
+    };
+  }
+  
   return {
-    title: `${edition?.title || "Hackathon"} | Acepta Bitcoin`,
-    description: edition?.tagline || "Bitcoin Self-Custody UI Challenge",
+    title: `${edition.title} | Hackathon Bitcoin México`,
+    description: edition.tagline,
+    openGraph: {
+      title: edition.title,
+      description: edition.tagline,
+      type: "website",
+      images: [
+        {
+          url: `/hackathon/logos/${edition.slug}-og.jpg`,
+          width: 1200,
+          height: 630,
+          alt: edition.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: edition.title,
+      description: edition.tagline,
+    },
   };
 }
 
-export default async function EditionPage({ params }: { params: { edition: string } }) {
+// ============================================================
+// GENERAR RUTAS ESTÁTICAS (SSG) — CRÍTICO para evitar 404
+// ============================================================
+export async function generateStaticParams() {
+  const editions = await listActiveEditions();
+  
+  return editions.map((edition) => ({
+    edition: edition.slug,
+  }));
+}
+
+// ============================================================
+// PÁGINA PRINCIPAL (Server Component)
+// ============================================================
+interface EditionPageProps {
+  params: { edition: string };
+}
+
+export default async function EditionPage({ params }: EditionPageProps) {
+  // ✅ Await + validación ANTES de cualquier JSX
   const edition = await getEditionConfig(params.edition);
   
   if (!edition || edition.status === "draft") {
-    notFound();
+    notFound(); // ✅ Esto debe ejecutarse antes del return
   }
+
+  // Debug: Ver qué datos estamos pasando
+  console.log('[EditionPage] Rendering edition:', {
+    id: edition.id,
+    slug: edition.slug,
+    status: edition.status,
+    hasTimeline: edition.timeline?.length,
+    hasPrizes: edition.prizes?.length,
+  });
 
   return (
     <div className="min-h-screen bg-black text-white">

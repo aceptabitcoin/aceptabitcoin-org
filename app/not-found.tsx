@@ -1,3 +1,4 @@
+// app/not-found.tsx
 import Link from "next/link";
 import { Terminal } from "lucide-react";
 
@@ -21,4 +22,4 @@ export default function NotFound() {
       </div>
     </div>
   );
-} 
+}
