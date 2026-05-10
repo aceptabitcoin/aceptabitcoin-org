@@ -9,7 +9,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { REGISTRATION_SCHEMA, type RegistrationSchema, TEAM_MEMBER_SCHEMA_DEFAULTS } from "@/lib/hackathon/validation";
-import { getCurrentEdition } from "@/lib/hackathon/editions";
+
 import { Button } from "@/components/ui/button";
 import { Users, CheckCircle, Loader2, ArrowRight, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
