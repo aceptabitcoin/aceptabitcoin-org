@@ -3,8 +3,8 @@
 // Acepta Bitcoin México | Oracle System v2.0
 // ============================================================
 
-import { HackathonNavbar } from "./HackathonNavbar";
-import { HackathonFooter } from "./HackathonFooter";
+import HackathonNavbar from "./HackathonNavbar";
+import HackathonFooter from "./HackathonFooter";
 import { MatrixRain } from "@/components/ui/MatrixRain";
 
 export default function HackathonLayout({
