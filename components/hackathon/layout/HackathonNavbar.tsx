@@ -6,7 +6,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import { Bug, Menu, X, Rocket } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,23 +16,26 @@ interface HackathonNavbarProps {
 
 export default function HackathonNavbar({ className }: HackathonNavbarProps = {}) {
   const pathname = usePathname();
+  const params = useParams();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const editionSlug = (params?.edition as string) || "custody-ui-2026";
 
   const navLinks = [
-    { name: "Inicio", href: "/hackathon/[edition]", pattern: /^\/hackathon\/[^/]+\/?$/ },
+    { name: "Inicio", href: `/hackathon/${editionSlug}`, pattern: /^\/hackathon\/[^/]+\/?$/ },
     {
       name: "Registro",
-      href: "/hackathon/[edition]/register",
+      href: `/hackathon/${editionSlug}/register`,
       pattern: /^\/hackathon\/[^/]+\/register/,
     },
     {
       name: "Proyectos",
-      href: "/hackathon/[edition]/projects",
+      href: `/hackathon/${editionSlug}/projects`,
       pattern: /^\/hackathon\/[^/]+\/projects/,
     },
     {
       name: "Recursos",
-      href: "/hackathon/[edition]/resources",
+      href: `/hackathon/${editionSlug}/resources`,
       pattern: /^\/hackathon\/[^/]+\/resources/,
     },
     {
