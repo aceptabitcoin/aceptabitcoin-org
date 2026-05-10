@@ -78,9 +78,9 @@ export default function EditionHero({ edition }: EditionHeroProps) {
         {edition.format !== "virtual" && edition.locations?.length ? (
           <div className="mt-16 font-mono text-sm text-gray-400">
             <span className="text-matrix">📍</span> Sedes:{" "}
-            {edition.locations.map((loc, i) => (
+            {edition.locations.map((loc, i, arr) => (
               <span key={loc.city}>
-                {loc.city}{i < edition.locations.length - 1 ? " • " : ""}
+                {loc.city}{i < arr.length - 1 ? " • " : ""}
               </span>
             ))}
           </div>
