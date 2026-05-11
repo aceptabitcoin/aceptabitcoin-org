@@ -3,23 +3,50 @@
 // Acepta Bitcoin México | Oracle System v2.0
 // ============================================================
 
-import { BookOpen, FileText, Video, Code, Download } from "lucide-react";
+import { BookOpen, FileText, Video, Code, Download, Bot, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { getEditionConfig } from "@/lib/hackathon/editions";
+
+// ✅ Importar estilos específicos del hackathon
+import "@/styles/hackathon.css";
 
 export const metadata: Metadata = {
   title: "Recursos | Hackathon Bitcoin México",
   description: "Workshops, guías y documentación para participantes",
 };
 
-const RESOURCES = [
+// ── Critical Resources (shown first, featured cards) ──
+const CRITICAL_RESOURCES = [
   {
+    id: "guide-pdf",
     title: "Guía del Participante",
-    description: "Todo lo que necesitas saber para el hackathon",
-    icon: BookOpen,
-    href: "/public/hackathon/docs/guia-participante-2026-2.pdf",
-    type: "PDF",
+    description:
+      "Conceptos mínimos, glosario y flujo de generación de descriptores. 15 min de lectura.",
+    type: "PDF" as const,
+    href: "/hackathon/docs/guia-participante-custody-ui-2026.pdf",
+    badge: "matrix" as const,
+    featured: true,
+    icon: FileText,
+    external: false,
   },
+  {
+    id: "ai-assistant",
+    title: "AI Study Assistant",
+    description:
+      "Chat interactivo con NotebookLM. Pregunta sobre descriptors, miniscript o timelocks en tiempo real.",
+    type: "External" as const,
+    href: "https://notebooklm.google.com/notebook/08c92eb6-0d67-4ceb-afb4-6040adb3b2c5",
+    badge: "ai" as const,
+    featured: true,
+    icon: Bot,
+    external: true,
+  },
+];
+
+// ── Standard Resources (grid below) ──
+const STANDARD_RESOURCES = [
   {
     title: "API Documentation",
     description: "Endpoints y ejemplos para integraciones",
@@ -31,14 +58,14 @@ const RESOURCES = [
     title: "Lightning Setup Guide",
     description: "Configuración de desarrollo Lightning Network",
     icon: Download,
-    href: "/public/hackathon/docs/lightning-setup-guide.pdf",
+    href: "/hackathon/docs/lightning-setup-guide.pdf",
     type: "PDF",
   },
   {
     title: "NIP-99 Cheatsheet",
     description: "Referencia rápida para estándares Nostr",
     icon: FileText,
-    href: "/public/hackathon/docs/nip99-cheatsheet.pdf",
+    href: "/hackathon/docs/nip99-cheatsheet.pdf",
     type: "PDF",
   },
   {
@@ -50,7 +77,20 @@ const RESOURCES = [
   },
 ];
 
-export default function ResourcesPage() {
+// ============================================================
+// PAGE COMPONENT
+// ============================================================
+export default async function ResourcesPage({
+  params,
+}: {
+  params: { edition: string };
+}) {
+  const edition = await getEditionConfig(params.edition);
+
+  if (!edition) {
+    notFound();
+  }
+
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
@@ -61,11 +101,14 @@ export default function ResourcesPage() {
               <BookOpen className="h-8 w-8 text-matrix" />
             </div>
             <div>
-              <h1 className="font-serif text-4xl font-bold text-white">
-                Recursos
+              <h1 className="font-serif text-3xl md:text-4xl font-bold text-white">
+                Recursos{" "}
+                <span className="text-bitcoin text-lg opacity-50">
+                  // {edition.title}
+                </span>
               </h1>
-              <p className="font-mono text-gray-400 mt-1">
-                Guías, documentación y materiales para participantes
+              <p className="font-mono text-sm text-gray-400 mt-1">
+                Herramientas para construir sin romper la soberanía
               </p>
             </div>
           </div>
@@ -74,8 +117,73 @@ export default function ResourcesPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {RESOURCES.map((resource, idx) => (
+        {/* ===== CRITICAL RESOURCES (TOP ROW) ===== */}
+        <div className="grid md:grid-cols-2 gap-4 mb-12">
+          {CRITICAL_RESOURCES.map((resource) => (
+            <a
+              key={resource.id}
+              href={resource.href}
+              target={resource.external ? "_blank" : undefined}
+              rel={resource.external ? "noopener noreferrer" : undefined}
+              className={`hackathon-resource-card ${
+                resource.featured
+                  ? "hackathon-resource-card--featured"
+                  : ""
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                {/* Icono dinámico */}
+                <div
+                  className={`hackathon-resource-icon ${
+                    resource.badge === "ai"
+                      ? "hackathon-resource-icon--ai"
+                      : ""
+                  }`}
+                >
+                  <resource.icon className="w-5 h-5" />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-serif text-lg font-semibold truncate text-white">
+                      {resource.title}
+                    </h3>
+                    <span
+                      className={`hackathon-badge hackathon-badge--${resource.badge}`}
+                    >
+                      {resource.badge === "ai" ? "AI" : "PDF"}
+                    </span>
+                  </div>
+                  <p className="font-mono text-xs text-gray-400 mb-3 line-clamp-2">
+                    {resource.description}
+                  </p>
+
+                  {/* CTA contextual */}
+                  <div className="flex items-center gap-2">
+                    <span className="hackathon-btn hackathon-btn--ghost text-xs py-1 px-2">
+                      {resource.external
+                        ? "Abrir en nueva pestaña →"
+                        : "Descargar PDF ↓"}
+                    </span>
+                    {resource.type === "PDF" && (
+                      <span className="font-mono text-[10px] text-gray-500">
+                        ~2.1 MB
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* ===== STANDARD RESOURCES (GRID) ===== */}
+        <h2 className="font-serif text-xl text-white mb-6 flex items-center gap-2">
+          <BookOpen className="h-5 w-5 text-matrix" />
+          Materiales Adicionales
+        </h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {STANDARD_RESOURCES.map((resource, idx) => (
             <Link
               key={idx}
               href={resource.href}
@@ -87,7 +195,9 @@ export default function ResourcesPage() {
               </div>
               <div>
                 <h3 className="hackathon-resource-title">{resource.title}</h3>
-                <p className="hackathon-resource-desc">{resource.description}</p>
+                <p className="hackathon-resource-desc">
+                  {resource.description}
+                </p>
                 <div className="mt-2">
                   <span className="hackathon-badge hackathon-badge--matrix">
                     {resource.type}
@@ -97,6 +207,52 @@ export default function ResourcesPage() {
             </Link>
           ))}
         </div>
+
+        {/* ===== EDITION-SPECIFIC RESOURCES (from config) ===== */}
+        {edition.resources && edition.resources.length > 0 && (
+          <>
+            <h2 className="font-serif text-xl text-white mt-16 mb-6 flex items-center gap-2">
+              <ExternalLink className="h-5 w-5 text-bitcoin" />
+              Recursos de la Edición
+            </h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {edition.resources.map((resource, idx) => (
+                <a
+                  key={idx}
+                  href={resource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hackathon-resource-card group"
+                >
+                  <div className="hackathon-resource-icon group-hover:text-bitcoin transition-colors">
+                    {resource.type === "video" ? (
+                      <Video className="h-6 w-6" />
+                    ) : resource.type === "workshop" ? (
+                      <Code className="h-6 w-6" />
+                    ) : (
+                      <BookOpen className="h-6 w-6" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="hackathon-resource-title">
+                      {resource.title}
+                    </h3>
+                    {resource.description && (
+                      <p className="hackathon-resource-desc">
+                        {resource.description}
+                      </p>
+                    )}
+                    <div className="mt-2">
+                      <span className="hackathon-badge hackathon-badge--upcoming">
+                        {resource.type}
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );

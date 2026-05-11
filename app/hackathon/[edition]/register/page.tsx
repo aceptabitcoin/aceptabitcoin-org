@@ -14,14 +14,14 @@ export const metadata: Metadata = {
   description: "Formulario de registro para equipos participantes",
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage({ params }: { params: { edition: string } }) {
   return (
     <div className="min-h-screen bg-black">
       {/* Header */}
       <header className="border-b border-white/5 bg-black/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <Link
-            href="/hackathon/hbtcmx-2026-1"
+            href={`/hackathon/${params.edition}`}
             className="inline-flex items-center gap-2 text-sm font-mono text-gray-400 hover:text-matrix transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -45,7 +45,7 @@ export default function RegisterPage() {
           </div>
 
           {/* Registration Form */}
-          <RegistrationForm defaults={REGISTRATION_DEFAULTS} />
+          <RegistrationForm defaults={REGISTRATION_DEFAULTS} edition={params.edition} />
         </div>
       </main>
     </div>

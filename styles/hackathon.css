@@ -1,19 +1,509 @@
 /* styles/hackathon.css */
+/* 🕶️ Bitcoin Matrix v2.0 - Hackathon Module Specifics */
+/* Scope: Forms, Cards, Badges, Progress, Timeline, Buttons */
+
+/* Fallback si las variables no están en :root */
+.hackathon-wrapper {
+  --matrix: #00FF41;
+  --bitcoin: #F7931A;
+  --bg: #000000;
+  --text: #FAFAFA;
+}
+
+/* ============================================================
+   1. Layout Container
+   ============================================================ */
+.hackathon-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  color: var(--text);
+  font-family: 'Fira Code', monospace;
+}
+
+/* ============================================================
+   2. Glass Panel / Card Base
+   ============================================================ */
+.hackathon-panel,
+.hackathon-card {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.hackathon-panel:hover,
+.hackathon-card:hover {
+  border-color: rgba(0, 255, 65, 0.35);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+}
+
+/* ============================================================
+   3. Form Input (canonical: hackathon-input, alias: hackathon-form-input)
+   ============================================================ */
+.hackathon-input,
+.hackathon-form-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  color: var(--text, #FAFAFA);
+  font-family: 'Fira Code', monospace;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+.hackathon-input:focus,
+.hackathon-form-input:focus {
+  outline: none;
+  border-color: var(--matrix, #00FF41);
+  box-shadow: 0 0 0 2px rgba(0, 255, 65, 0.15);
+}
+.hackathon-input::placeholder,
+.hackathon-form-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ============================================================
+   4. Form Label (canonical: hackathon-label, alias: hackathon-form-label)
+   ============================================================ */
+.hackathon-label,
+.hackathon-form-label {
+  display: block;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9CA3AF;
+  margin-bottom: 0.35rem;
+  font-family: 'Fira Code', monospace;
+}
+
+/* ============================================================
+   4b. Form Section Title
+   ============================================================ */
+.hackathon-form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'IBM Plex Serif', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================================
+   4c. Form Help Text
+   ============================================================ */
+.hackathon-form-help {
+  font-size: 0.7rem;
+  color: #6B7280;
+  margin-top: 0.25rem;
+  font-family: 'Fira Code', monospace;
+}
+
+/* ============================================================
+   5. Status Badges
+   ============================================================ */
+.hackathon-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'Fira Code', monospace;
+}
+.hackathon-badge--active {
+  background: rgba(0, 255, 65, 0.12);
+  color: var(--matrix, #00FF41);
+  border: 1px solid rgba(0, 255, 65, 0.4);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
+  animation: hack-pulse 2s ease-in-out infinite;
+}
+.hackathon-badge--upcoming {
+  background: rgba(247, 147, 26, 0.12);
+  color: var(--bitcoin, #F7931A);
+  border: 1px solid rgba(247, 147, 26, 0.4);
+}
+.hackathon-badge--completed {
+  background: rgba(255, 255, 255, 0.05);
+  color: #6B7280;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.hackathon-badge--matrix {
+  background: rgba(0, 255, 65, 0.08);
+  color: var(--matrix, #00FF41);
+  border: 1px solid rgba(0, 255, 65, 0.25);
+}
+
+/* ============================================================
+   6. Multi-Step Progress Indicator (Registration Form Wizard)
+   ============================================================ */
+
+/* — 6a. Classic linear progress bar — */
+.hackathon-progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.hackathon-progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--matrix, #00FF41), var(--bitcoin, #F7931A));
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.hackathon-progress__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  animation: hack-shimmer 1.5s infinite;
+}
+
+/* — 6b. Step-based progress (used in RegistrationForm.tsx) — */
+.hackathon-progress-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+.hackathon-progress-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+.hackathon-progress-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #6B7280;
+  transition: all 0.3s ease;
+}
+.hackathon-progress-active {
+  background: rgba(247, 147, 26, 0.15);
+  border-color: var(--bitcoin, #F7931A);
+  color: var(--bitcoin, #F7931A);
+  box-shadow: 0 0 12px rgba(247, 147, 26, 0.25);
+}
+.hackathon-progress-completed {
+  background: rgba(0, 255, 65, 0.12);
+  border-color: var(--matrix, #00FF41);
+  color: var(--matrix, #00FF41);
+}
+.hackathon-progress-upcoming {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #4B5563;
+}
+.hackathon-progress-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9CA3AF;
+  display: none;
+}
+@media (min-width: 640px) {
+  .hackathon-progress-label {
+    display: inline;
+  }
+}
+.hackathon-progress-bar {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.hackathon-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--matrix, #00FF41), var(--bitcoin, #F7931A));
+  border-radius: 1px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================
+   7. Timeline Elements
+   ============================================================ */
+.hackathon-timeline {
+  position: relative;
+  padding-left: 1.5rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+.hackathon-timeline__item {
+  position: relative;
+  margin-bottom: 1.5rem;
+  padding-left: 1rem;
+}
+.hackathon-timeline__dot {
+  position: absolute;
+  left: -1.75rem;
+  top: 0.2rem;
+  width: 8px;
+  height: 8px;
+  background: var(--matrix, #00FF41);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 255, 65, 0.4);
+}
+.hackathon-timeline__item.active .hackathon-timeline__dot {
+  background: var(--bitcoin, #F7931A);
+  box-shadow: 0 0 12px rgba(247, 147, 26, 0.5);
+  animation: hack-pulse 1.5s infinite;
+}
+
+/* ============================================================
+   8. Hackathon Buttons
+   ============================================================ */
+.hackathon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.25rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hackathon-btn--primary,
+.hackathon-btn-primary {
+  background: var(--bitcoin, #F7931A);
+  color: #000;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.25rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hackathon-btn--primary:hover,
+.hackathon-btn-primary:hover {
+  background: rgba(247, 147, 26, 0.85);
+  box-shadow: 0 0 18px rgba(247, 147, 26, 0.3);
+  transform: translateY(-1px);
+}
+.hackathon-btn--ghost {
+  background: transparent;
+  color: var(--matrix, #00FF41);
+  border: 1px solid rgba(0, 255, 65, 0.3);
+}
+.hackathon-btn--ghost:hover {
+  background: rgba(0, 255, 65, 0.08);
+  box-shadow: 0 0 12px rgba(0, 255, 65, 0.15);
+}
+
+/* ============================================================
+   9. Resource / Doc Cards
+   ============================================================ */
+.hackathon-doc-link,
+.hackathon-resource-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--text, #FAFAFA);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.hackathon-doc-link:hover,
+.hackathon-resource-card:hover {
+  border-color: var(--matrix, #00FF41);
+  background: rgba(0, 255, 65, 0.04);
+  box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+  transform: translateY(-2px);
+}
+.hackathon-resource-icon {
+  flex-shrink: 0;
+  color: var(--matrix, #00FF41);
+  padding: 0.5rem;
+  background: rgba(0, 255, 65, 0.08);
+  border-radius: 6px;
+}
+.hackathon-resource-title {
+  font-family: 'IBM Plex Serif', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 0.25rem;
+}
+.hackathon-resource-desc {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  line-height: 1.4;
+}
+
+/* ============================================================
+   10. Validation / Error States
+   ============================================================ */
+.hackathon-error,
+.hackathon-form-error {
+  color: #EF4444;
+  font-size: 0.7rem;
+  margin-top: 0.25rem;
+  font-family: 'Fira Code', monospace;
+}
+.hackathon-input--error,
+.hackathon-form-input--error {
+  border-color: #EF4444;
+}
+.hackathon-input--error:focus,
+.hackathon-form-input--error:focus {
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15);
+}
+
+/* ============================================================
+   11. Team Member Inputs
+   ============================================================ */
+.hackathon-member-group {
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  transition: border-color 0.2s ease;
+}
+.hackathon-member-group:hover {
+  border-color: rgba(6, 182, 212, 0.25);
+}
+.hackathon-member-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.hackathon-member-index {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #06B6D4;
+}
+.hackathon-member-remove {
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #EF4444;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Fira Code', monospace;
+  transition: all 0.2s ease;
+}
+.hackathon-member-remove:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: #EF4444;
+}
+
+/* ============================================================
+   12. Team/Role Tag
+   ============================================================ */
+.hackathon-tag {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  color: #06B6D4;
+  font-size: 0.65rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+}
+
+/* ============================================================
+   13. Modal / Command Cheat Sheet
+   ============================================================ */
+.hackathon-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.hackathon-modal-content {
+  background: rgba(10, 10, 10, 0.95);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 640px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 0 40px rgba(0, 255, 65, 0.1);
+}
+.hackathon-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #9CA3AF;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.hackathon-modal-close:hover {
+  border-color: var(--matrix, #00FF41);
+  color: var(--matrix, #00FF41);
+}
+
+/* ============================================================
+   14. Footer
+   ============================================================ */
+.hackathon-footer {
+  padding: 2rem 1rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem;
+  color: #6B7280;
+}
+
+/* ============================================================
+   15. Matrix Glow + Scanline Effects (original v1)
+   ============================================================ */
 :root {
-  /* Hereda variables globales de tailwind.config.ts */
   --hackathon-matrix-glow: 0 0 25px rgba(0, 255, 65, 0.6);
   --hackathon-bitcoin-glow: 0 0 25px rgba(247, 147, 26, 0.6);
   --hackathon-cyan-glow: 0 0 25px rgba(6, 182, 212, 0.6);
-}
-
-@keyframes scanline-reveal {
-  0% { background-position: 0% 0%; }
-  100% { background-position: 0% 100%; }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 65, 0.4); }
-  50% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.8); }
 }
 
 .hackathon-matrix-glow {
@@ -32,4 +522,63 @@
   );
   animation: scanline-reveal 8s linear infinite;
   pointer-events: none;
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes hack-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+@keyframes hack-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@keyframes scanline-reveal {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 65, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.8); }
+}
+
+/* ============================================================
+   NEW: AI Badge & Featured Resource Card
+   ============================================================ */
+
+/* Badge especial para recursos de IA */
+.hackathon-badge--ai {
+  background: rgba(6, 182, 212, 0.15);
+  color: #06B6D4;
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+  animation: hack-pulse 3s ease-in-out infinite;
+}
+
+/* Card destacada para recursos críticos */
+.hackathon-resource-card--featured {
+  border: 2px solid var(--matrix);
+  box-shadow: 0 0 25px rgba(0, 255, 65, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+.hackathon-resource-card--featured::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--matrix), var(--bitcoin), var(--matrix));
+  animation: hack-shimmer 2s infinite;
+}
+.hackathon-resource-card--featured:hover {
+  box-shadow: 0 0 35px rgba(0, 255, 65, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Icono de chispa para AI resources */
+.hackathon-resource-icon--ai {
+  color: #06B6D4;
+  animation: hack-pulse 2.5s ease-in-out infinite;
 }

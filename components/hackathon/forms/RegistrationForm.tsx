@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 
 interface RegistrationFormProps {
   defaults?: RegistrationSchema;
+  edition?: string;
   className?: string;
 }
 
@@ -26,7 +27,8 @@ const FORM_STEPS = [
   { id: 4, title: "Confirmar", icon: CheckCircle },
 ];
 
-export default function RegistrationForm({ defaults, className }: RegistrationFormProps) {
+export default function RegistrationForm({ defaults, edition, className }: RegistrationFormProps) {
+  const GOOGLE_FORM_URL = process.env.NEXT_PUBLIC_HACKATHON_REGISTRATION_FORM_URL;
   const [step, setStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,12 +66,31 @@ export default function RegistrationForm({ defaults, className }: RegistrationFo
   const onSubmit = async (data: RegistrationSchema) => {
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
-      await new Promise((r) => setTimeout(r, 1000));
+      // 🔍 Zod validation already passed via react-hook-form zodResolver
+      // 📤 Redirect to Google Form with prefilled data
+      if (GOOGLE_FORM_URL) {
+        const params = new URLSearchParams({
+          "entry.team_name": data.teamName,
+          "entry.email": data.email,
+          "entry.team_description": data.teamDescription || "",
+          "entry.experience": data.experienceLevel || "intermediate",
+          "entry.discord": data.discordUsername || "",
+          "entry.project": data.projectDescription || "",
+          "entry.edition": edition || "unknown",
+        });
+        window.location.href = `${GOOGLE_FORM_URL}?${params.toString()}`;
+        return; // Don't setIsSubmitting(false) — page is navigating away
+      }
+
+      // Fallback: if no Google Form URL configured, show success
+      console.warn("[Registration] NEXT_PUBLIC_HACKATHON_REGISTRATION_FORM_URL not set, using fallback.");
       setIsSubmitted(true);
-    } catch (e) {
-      setError("Error al enviar el registro. Inténtalo de nuevo.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error al procesar el formulario.";
+      setError(message);
+      console.error("[Registration] Submission error:", err);
     } finally {
       setIsSubmitting(false);
     }

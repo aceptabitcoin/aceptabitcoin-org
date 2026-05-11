@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-08
+Estado actual del proyecto — última actualización: 2026-05-11
 
 ---
 
@@ -11,8 +11,9 @@ Estado actual del proyecto — última actualización: 2026-05-08
 | **Build (npm run build)** | ✅ Pasando | 0 errores TypeScript, 0 warnings de hidratación |
 | **Tipado (TypeScript strict)** | ✅ Sin errores | `tsconfig.json` en modo estricto |
 | **Linting** | ✅ Sin errores bloqueadores | — |
-| **Tests (Vitest)** | ✅ `app/api/tipjar/route.test.ts` | — |
+| **Tests (Vitest)** | ✅ Pasando | `app/api/tipjar/route.test.ts`, `lib/proveedores.test.ts` |
 | **Despliegue (Vercel)** | ✅ Configurado | Variables de entorno: `BTCMAP_API_KEY`, `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` |
+| **Módulo Hackathon** | ✅ Live | Migrado de route group `(hackathon)` a `app/hackathon/` — rutas activas |
 
 ---
 
@@ -20,39 +21,44 @@ Estado actual del proyecto — última actualización: 2026-05-08
 
 - **Framework**: Next.js 14.2.3 (App Router)
 - **Lenguaje**: TypeScript (strict mode)
-- **Estilos**: Tailwind CSS con animaciones custom (`scanline`, `blink`, `tilt`)
+- **Estilos**: Tailwind CSS con animaciones custom (`scanline`, `blink`, `tilt`) + `styles/hackathon.css`
 - **UI**: shadcn/ui + componentes custom (ArcadeButton, MatrixRain, Logo)
 - **Pagos**: Blink.sv (GraphQL API — Lightning + On-chain)
 - **Datos de mercado**: Binance API (BTC/USD, indicador DCA)
-- **QR Codes**: `qrcode.react` (client-only)
+- **QR Codes**: `qrcode.react` (client-only, `ssr: false`)
 - **Mapas**: Leaflet + react-leaflet + BTC Map API v1
-- **Reservas**: Cal.com (iframe embebido)
+- **Reservas**: Cal.com (iframe embebido en `/agenda`)
+- **Validación**: Zod (esquema de registro de hackathon)
 - **Testing**: Vitest
-- **Monitoreo**: Sentry
+- **Monitoreo**: Sentry (cliente + servidor: `sentry.client.config.ts`, `sentry.server.config.ts`)
 - **Email**: Resend
 
 ---
 
-## 🔩 Componentes Principales — Estado de Hydratación
+## 🔩 Componentes — Estado de Hidratación
 
-Todos los componentes que renderizan datos dinámicos o dependientes del navegador incluyen protección SSR/CSR:
+Todos los componentes con datos dinámicos o dependientes del navegador incluyen protección SSR/CSR:
 
 | Componente | Guard `isMounted` | `suppressHydrationWarning` | `dynamic ssr:false` | Estado |
 |------------|-------------------|---------------------------|---------------------|--------|
 | `MatrixRain` | ✅ | ✅ | — | ✅ OK |
 | `TipJarSection` | ✅ | ✅ | — | ✅ OK |
 | `MarketMoodWidget` | — | — | ✅ (via `next/dynamic`) | ✅ OK |
-| `MarketMoodInfoPopover` | — | ✅ (en interactive elements) | — | ✅ OK |
-| `QRCodeSVG` (en TipJar) | ✅ (renderizado condicional `isMounted`) | ✅ | — | ✅ OK |
+| `MarketMoodInfoPopover` | — | ✅ | — | ✅ OK |
+| `QRCodeSVG` (en TipJar) | ✅ (condicional `isMounted`) | ✅ | — | ✅ OK |
+| `CountdownTimer` (hackathon) | ✅ | — | — | ✅ OK (implementación robusta) |
+| `HackathonNavbar` | — | — | — | ✅ OK (`"use client"`, `useState` al final del archivo) |
 
 ---
 
 ## 📁 Estructura de Rutas Activas
 
+### Sitio Principal
+
 | Ruta | Componente | Estado |
 |------|-----------|--------|
 | `/` | `app/(site)/page.tsx` | ✅ Oracle v2.0 — Homepage |
-| `/aprende` | `app/(site)/aprende/page.tsx` | ✅ Bitcoin Arcade + Visionary AI |
+| `/arcade` | `app/(site)/arcade/page.tsx` | ✅ Bitcoin Arcade + Visionary AI |
 | `/mapa` | `app/(site)/mapa/page.tsx` | ✅ BTC Merchant Map |
 | `/tianguis` | `app/(site)/tianguis/page.tsx` | ✅ Nostr + Lightning Marketplace |
 | `/proyectos` | `app/(site)/proyectos/page.tsx` + `ProyectosClient.tsx` | ✅ Community Projects |
@@ -63,38 +69,72 @@ Todos los componentes que renderizan datos dinámicos o dependientes del navegad
 | `/api/tipjar` | `app/api/tipjar/route.ts` | ✅ Blink.sv Proxy |
 | `/api/webhook/lnbits` | `app/api/webhook/lnbits.ts` | ✅ Webhook Handler |
 
+### Módulo Hackathon (`app/hackathon/`)
+
+> ⚠️ **Migración completada**: Ruta aplanada de `app/(hackathon)/` → `app/hackathon/` para resolver errores de hidratación y routing en Vercel. Commit: `d9d6e6c`.
+
+| Ruta | Componente | Estado |
+|------|-----------|--------|
+| `/hackathon/[edition]` | `app/hackathon/[edition]/page.tsx` | ✅ Hero, Timeline, Prizes, FAQ, CTA |
+| `/hackathon/[edition]/register` | `app/hackathon/[edition]/register/page.tsx` | ✅ Formulario con Zod validation |
+| `/hackathon/[edition]/projects` | `app/hackathon/[edition]/projects/page.tsx` | ✅ Galería de proyectos |
+| `/hackathon/[edition]/resources` | `app/hackathon/[edition]/resources/page.tsx` | ✅ PDFs, docs, workshops |
+| `/hackathon/[edition]/api` | `app/hackathon/[edition]/api/route.ts` | ✅ GET endpoints + POST registro (stubs) |
+
+**Slugs de edición válidos:**
+| Slug | ID interno | Estado |
+|------|-----------|--------|
+| `2026-1` | `edition2026_1` | ✅ Completada |
+| `custody-ui-2026` | `edition2026_2` | 🚀 Upcoming |
+| `tianguis-2026` | `edition2026_3` | 📋 Definida |
+
 ---
 
-## 🧹 Tareas de Mantenimiento Pendientes / Sugeridas
+## 🧹 Tareas de Mantenimiento Pendientes
 
 ### Prioridad Alta
-- [ ] **Validar claves de API**: Confirmar que `BTCMAP_API_KEY` y `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` están configuradas en producción (Vercel env vars)
-- [ ] **Revisar dependencias**: Ejecutar `npm outdated` y actualizar parches de seguridad
-- [ ] **Backups de datos**: Verificar respaldo periódico de datos de proveedores (si aplica)
+- [ ] **Subir PDFs de recursos**: Crear `public/hackathon/docs/` y colocar los archivos referenciados en `resources/page.tsx` (`guia-participante-2026-2.pdf`, `lightning-setup-guide.pdf`, `nip99-cheatsheet.pdf`)
+- [ ] **Conectar API de registro**: `app/hackathon/[edition]/api/route.ts` tiene `// TODO: Save to database` y `// TODO: Send webhook to Discord` — pendiente implementación real
+- [ ] **Validar claves de API en producción**: Confirmar `BTCMAP_API_KEY` y `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` en Vercel env vars
+- [ ] **Revisar dependencias**: `npm outdated` + actualizar parches de seguridad
 
 ### Prioridad Media
-- [ ] **Optimización de imágenes**: Convertir imágenes estáticas a formato WebP/AVIF
-- [ ] **SEO meta tags**: Revisar que cada ruta tenga `<title>` y `<meta description>` únicos
-- [ ] **Analytics**: Considerar integración de analytics (Plausible / Umami — privacidad-friendly)
-- [ ] **Accesibilidad (a11y)**: Auditar con `axe-core` o Lighthouse para contraste de colores y ARIA labels
+- [ ] **`generateStaticParams` para sub-rutas**: Las páginas `/register`, `/projects`, `/resources` no implementan `generateStaticParams` — podrían generar 404 en builds estáticos si se añade `output: export`
+- [ ] **Optimización de imágenes**: Convertir assets estáticos a WebP/AVIF
+- [ ] **SEO meta tags dinámicos**: `/register`, `/resources`, `/projects` usan metadatos estáticos — evaluar si deben ser dinámicos por edición
+- [ ] **Analytics**: Integrar Plausible / Umami (privacidad-friendly)
+- [ ] **Accesibilidad (a11y)**: Auditar con Lighthouse — revisar contraste en colores Matrix/Bitcoin sobre negro
 
 ### Prioridad Baja
+- [ ] **`console.log` de debug**: Eliminar el `console.log('[EditionPage] Rendering edition:', ...)` en `app/hackathon/[edition]/page.tsx` antes de producción final
 - [ ] **Internacionalización**: Evaluar soporte multi-idioma (es/en)
-- [ ] **Service Worker**: Implementar caché offline para páginas estáticas
-- [ ] **PWA**: Agregar `manifest.json` e íconos para instalación en dispositivos móviles
-- [ ] **Docs**: Completar `docs/` con guías de contribución y despliegue detalladas
+- [ ] **PWA**: Activar Service Worker + `manifest.json` (actualmente deshabilitado: `[PWA] PWA support is disabled`)
+- [ ] **Docs**: Completar `docs/` con guías de contribución y despliegue
 
 ---
 
 ## 🐛 Issues Conocidos / Resueltos
 
 ### Resueltos Recientemente
-| Issue | Descripción | Commit |
-|-------|-------------|--------|
-| #418 / #423 | React hydration errors en componentes client-only | `0e7f8c6` — `fix(ui): resolve React hydration errors` |
-| — | TipJarSection hydration mismatch por renderizado de QR durante SSR | Resuelto con `isMounted` state guard + `dynamic ssr:false` |
-| — | MarketMoodWidget hydration por acceso a `window`/`localStorage` | Resuelto con `next/dynamic` y `ssr: false` |
-| — | Build error: `MatrixRainProps` type missing | Resuelto restaurando interfaz + constante `CHARS` |
+
+| Issue | Descripción | Fix |
+|-------|-------------|-----|
+| Hydration errors globales | `MatrixRain`, `TipJarSection`, `MarketMoodWidget` producían mismatches SSR/CSR | `isMounted` guards + `next/dynamic ssr:false` |
+| Hackathon routing 404 en Vercel | Route group `(hackathon)` no mapeaba a `/hackathon/...` correctamente | Migración a `app/hackathon/` (`d9d6e6c`) |
+| `CountdownTimer` inestable | Implementación reemplazada por versión robusta con `useEffect` limpio | `9e5f23f` |
+| `MatrixRain` import error | Default import faltante en layout del hackathon | `1fa392b` |
+| Zod enum type errors | Errores de tipo en esquema de validación de registro | `198fd38` |
+| `RegistrationSuccess` module | Export faltante causaba error de build | `536d9ec` |
+| Link "Volver" hardcoded en `/register` | `href="/hackathon/hbtcmx-2026-1"` (slug inexistente) | Corregido a `href={\`/hackathon/\${params.edition}\`}` |
+| PDFs con prefijo `/public/` | `href="/public/hackathon/docs/..."` → 404 en Next.js | Corregido a `/hackathon/docs/...` |
+
+### Issues Abiertos
+
+| Prioridad | Descripción |
+|-----------|-------------|
+| 🔴 Alta | PDFs de recursos no existen aún en `public/hackathon/docs/` |
+| 🟡 Media | API de registro hackathon son stubs (no persisten datos) |
+| 🟡 Media | `metadataBase` no configurado → warning en build para Open Graph |
 
 ---
 
@@ -102,11 +142,16 @@ Todos los componentes que renderizan datos dinámicos o dependientes del navegad
 
 | Hash | Mensaje |
 |------|---------|
-| `0e7f8c6` | fix(ui): resolve React hydration errors #418/#423 |
-| `af3daa0` | feat(proyectos): align /proyectos with Bitcoin Matrix design |
-| `fdd59b3` | feat(arcade): migrate aprende to Bitcoin Arcade |
-| `602dc01` | feat(ui): navbar domain styling, market mood, tipjar blink integration |
-| `516a1d1` | feat(core): refactor static data loading, add tests, Sentry |
+| `d9d6e6c` | refactor(hackathon): migrate from (hackathon) route group to flat app/hackathon/ |
+| `7ce9674` | fix(routing): remove route group to map correctly to /hackathon |
+| `9e5f23f` | feat(hackathon): update CountdownTimer with robust implementation |
+| `e9126b4` | feat(core): add custom 404 not found page |
+| `08556dd` | feat(hero): update CTA buttons with Luma events link |
+| `1fa392b` | fix(hackathon): correct default import for MatrixRain and fix isActive type error |
+| `198fd38` | fix(hackathon): resolve zod enum type errors in validation schema |
+| `3cdecfe` | fix(hackathon): correct default imports for Navbar and Footer in layout |
+| `1c5a144` | fix(hackathon): resolve ts warning possibly undefined in EditionHero |
+| `536d9ec` | fix(hackathon): remove missing RegistrationSuccess module export |
 
 ---
 
@@ -128,11 +173,27 @@ cp .env.example .env.local
 
 # 4. Desarrollo
 npm run dev
+# → http://localhost:3000
 
 # 5. Build de producción
 npm run build
 npm start
+
+# 6. Limpiar caché Next.js (si hay errores de routing/hidratación)
+rm -rf .next
+npm run dev
 ```
+
+---
+
+## 🌐 Variables de Entorno
+
+| Variable | Requerida | Descripción |
+|----------|-----------|-------------|
+| `BTCMAP_API_KEY` | ✅ | API key para BTC Map (mapa de comerciantes) |
+| `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` | ✅ | Lightning address para el TipJar (ej. `user@blink.sv`) |
+| `SENTRY_DSN` | Recomendada | DSN de Sentry para monitoreo de errores |
+| `RESEND_API_KEY` | Opcional | API key de Resend para emails transaccionales |
 
 ---
 

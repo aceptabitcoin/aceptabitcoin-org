@@ -33,6 +33,7 @@ const vt323 = VT323({
 const analyticsDomain = process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, "") || "aceptabitcoin.org";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://aceptabitcoin.org"),
   title: "Acepta Bitcoin México",
   description: "Educación, tiendas y adopción real de Bitcoin desde Mérida, Yucatán",
   icons: { icon: "/favicon.ico" },
