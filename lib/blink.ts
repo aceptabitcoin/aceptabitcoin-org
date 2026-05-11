@@ -1,145 +1,128 @@
-"use client";
-
+// lib/blink.ts
 // ============================================================
-// BLINK API CLIENT — Acepta Bitcoin México
-// GraphQL proxy-safe utilities for Lightning & Stablesats
+// BLINK.SV GRAPHQL CLIENT — TipJar Integration
+// Acepta Bitcoin México | Oracle System v2.0
 // ============================================================
 
-export const BLINK_API_URL = "https://api.blink.sv/graphql";
+const BLINK_API_URL = process.env.BLINK_API_URL || 'https://api.blink.sv/graphql';
+const BLINK_API_KEY = process.env.BLINK_API_KEY;
+const BLINK_WALLET_ID = process.env.BLINK_WALLET_ID;
 
-export interface BlinkWallet {
-  id: string;
-  walletCurrency: "BTC" | "USD";
-  balance: number;
+// ── Format sats to human-readable ──
+export function formatSats(sats: number): string {
+  if (sats >= 100_000_000) return `${(sats / 100_000_000).toFixed(8)} ₿`;
+  if (sats >= 100_000) return `${(sats / 100_000).toFixed(3)} ₿`;
+  if (sats >= 1_000) return `${Math.round(sats / 1_000)}k sats`;
+  return `${sats} sats`;
 }
 
-export interface BlinkInvoice {
-  paymentRequest: string;
-  paymentHash: string;
-  paymentSecret: string;
-  satoshis: number;
+// ── GraphQL request helper (server-side only) ──
+async function blinkRequest<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+  if (!BLINK_API_KEY || !BLINK_WALLET_ID) {
+    throw new Error('Blink API credentials not configured');
+  }
+
+  const response = await fetch(BLINK_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-API-KEY': BLINK_API_KEY,
+    },
+    body: JSON.stringify({ query, variables }),
+    cache: 'no-store',
+  });
+
+  const result = await response.json();
+  if (result.errors) {
+    throw new Error(result.errors[0].message || 'Blink API error');
+  }
+  return result.data as T;
 }
 
-export interface BlinkNoAmountInvoice {
-  paymentRequest: string;
-  paymentHash: string;
-  paymentSecret: string;
-}
+// ── Create Lightning Invoice (Server Action / API Route) ──
+export async function createLightningInvoice({
+  amount,
+  currency = 'BTC',
+  memo = 'Donación - Acepta Bitcoin México',
+}: {
+  amount: number; // in sats if BTC, cents if USD
+  currency?: 'BTC' | 'USD';
+  memo?: string;
+}): Promise<{ invoice: string; expiresAt: string }> {
+  // Convert USD to sats if needed (simplified: 1 USD ≈ 1000 sats for demo)
+  // In production, fetch real BTC/USD rate from Binance API
+  const amountInSats = currency === 'USD' ? Math.round(amount * 1000) : amount;
 
-export interface BlinkOnChainAddress {
-  address: string;
-}
-
-// ── Query: Get wallets & balances ──
-export const ME_QUERY = `
-  query Me {
-    me {
-      defaultAccount {
-        wallets {
-          id
-          walletCurrency
-          balance
+  const query = `
+    mutation LnInvoiceCreateOnBehalfOfRecipient($input: LnInvoiceCreateOnBehalfOfRecipientInput!) {
+      lnInvoiceCreateOnBehalfOfRecipient(input: $input) {
+        invoice {
+          paymentRequest
+          expiresAt
+        }
+        errors {
+          message
+          path
         }
       }
     }
-  }
-`;
+  `;
 
-// ── Mutation: Create Lightning Invoice (BTC) ──
-export const LN_INVOICE_CREATE = `
-  mutation LnInvoiceCreate($input: LnInvoiceCreateInput!) {
-    lnInvoiceCreate(input: $input) {
-      invoice {
-        paymentRequest
-        paymentHash
-        paymentSecret
-        satoshis
-      }
-      errors {
-        message
-      }
-    }
-  }
-`;
+  const variables = {
+    input: {
+      recipientWalletId: BLINK_WALLET_ID,
+      amount: amountInSats,
+      memo,
+    },
+  };
 
-// ── Mutation: Create No-Amount Lightning Invoice (BTC/USD) ──
-export const LN_NO_AMOUNT_INVOICE_CREATE = `
-  mutation LnNoAmountInvoiceCreate($input: LnNoAmountInvoiceCreateInput!) {
-    lnNoAmountInvoiceCreate(input: $input) {
-      invoice {
-        paymentRequest
-        paymentHash
-        paymentSecret
-      }
-      errors {
-        message
-      }
-    }
-  }
-`;
+  const data = await blinkRequest<{
+    lnInvoiceCreateOnBehalfOfRecipient: {
+      invoice: { paymentRequest: string; expiresAt: string };
+      errors: Array<{ message: string; path: string[] }>;
+    };
+  }>(query, variables);
 
-// ── Mutation: Create USD Invoice (denominated in sats) ──
-export const LN_USD_INVOICE_CREATE = `
-  mutation LnUsdInvoiceCreate($input: LnUsdInvoiceCreateInput!) {
-    lnUsdInvoiceCreate(input: $input) {
-      invoice {
-        paymentRequest
-        paymentHash
-        paymentSecret
-        satoshis
-      }
-      errors {
-        message
-      }
-    }
+  if (data.lnInvoiceCreateOnBehalfOfRecipient.errors?.length) {
+    throw new Error(data.lnInvoiceCreateOnBehalfOfRecipient.errors[0].message);
   }
-`;
 
-// ── Mutation: Get current on-chain address ──
-export const ON_CHAIN_ADDRESS_CURRENT = `
-  mutation OnChainAddressCurrent($input: OnChainAddressCurrentInput!) {
-    onChainAddressCurrent(input: $input) {
-      address
-      errors {
-        message
-      }
-    }
-  }
-`;
-
-// ── Helper: Build Lightning Address URL ──
-export function buildLightningAddressUrl(handle: string, amount?: number, memo?: string): string {
-  const base = `https://blink.sv/.well-known/lnurlp/${handle}`;
-  if (!amount) return base;
-  
-  const params = new URLSearchParams();
-  params.set("amount", (amount * 1000).toString()); // millisats
-  if (memo) params.set("comment", memo);
-  return `${base}?${params.toString()}`;
+  return {
+    invoice: data.lnInvoiceCreateOnBehalfOfRecipient.invoice.paymentRequest,
+    expiresAt: data.lnInvoiceCreateOnBehalfOfRecipient.invoice.expiresAt,
+  };
 }
 
-// ── Helper: Build QR value for Lightning Address ──
-export function buildQrValue(type: "lnurl" | "bolt11" | "onchain", value: string, amount?: number): string {
-  switch (type) {
-    case "lnurl":
-      return `lightning:${value}`;
-    case "bolt11":
-      return `lightning:${value}`;
-    case "onchain":
-      return amount ? `bitcoin:${value}?amount=${(amount / 100000000).toFixed(8)}` : `bitcoin:${value}`;
-    default:
-      return value;
+// ── Get On-Chain Address (Server Action / API Route) ──
+export async function getOnChainAddress(): Promise<{ address: string }> {
+  const query = `
+    query OnChainAddressCreate($input: OnChainAddressCreateInput!) {
+      onChainAddressCreate(input: $input) {
+        address
+        errors {
+          message
+          path
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    input: {
+      walletId: BLINK_WALLET_ID,
+    },
+  };
+
+  const data = await blinkRequest<{
+    onChainAddressCreate: {
+      address: string;
+      errors: Array<{ message: string; path: string[] }>;
+    };
+  }>(query, variables);
+
+  if (data.onChainAddressCreate.errors?.length) {
+    throw new Error(data.onChainAddressCreate.errors[0].message);
   }
-}
 
-// ── Currency formatting ──
-export function formatSats(sats: number): string {
-  return new Intl.NumberFormat("es-MX").format(sats);
-}
-
-export function formatUsd(cents: number): string {
-  return new Intl.NumberFormat("es-MX", {
-    style: "currency",
-    currency: "USD",
-  }).format(cents / 100);
+  return { address: data.onChainAddressCreate.address };
 }

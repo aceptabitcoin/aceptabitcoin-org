@@ -3,7 +3,7 @@
 // Acepta Bitcoin México | Oracle System v2.0
 // ============================================================
 
-import { Zap, Calendar, MapPin, Users, Clock } from "lucide-react";
+import { Zap, Calendar, MapPin, Users, Clock, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function Hero({
@@ -28,6 +28,7 @@ export default function Hero({
 
       {/* Content */}
       <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-32 space-y-8">
+        
         {/* Marquee / Badge */}
         <div className="inline-flex items-center gap-2 rounded-full border border-bitcoin/30 bg-bitcoin/10 px-4 py-1.5">
           <Zap className="h-3.5 w-3.5 text-bitcoin animate-pulse" />
@@ -36,18 +37,23 @@ export default function Hero({
           </span>
         </div>
 
-        {/* Main Title */}
-        <h1 className="font-serif text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight max-w-4xl mx-auto">
-          <span className="text-white">Hackathon</span>{" "}
+        {/* ═══════════════════════════════════════════════════════
+            MAIN TITLE — Updated per brief
+            ═══════════════════════════════════════════════════════ */}
+        <h1 className="font-serif text-4xl md:text-6xl font-bold leading-[1.15] tracking-tight max-w-5xl mx-auto text-center">
+          <span className="text-white">2do Hackathon</span>{" "}
+          <span className="text-matrix">Aceptabitcoin.org</span>
+          <br />
+          <span className="text-white">Bitcoin</span>{" "}
           <span className="text-bitcoin drop-shadow-[0_0_30px_rgba(247,147,26,0.4)]">
-            Bitcoin
+            Self Custody UI Challenge
           </span>
           <br />
-          <span className="text-white">México 2026</span>
+          <span className="text-white text-3xl md:text-5xl">ArcadiaB Hackathon</span>
         </h1>
 
         {/* Subtitle */}
-        <p className="font-mono text-gray-400 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed">
+        <p className="font-mono text-gray-400 max-w-2xl mx-auto text-lg md:text-xl leading-relaxed text-center">
           La edición más ambiciosa de nuestro hackathon.
           <span className="text-matrix">
             {" "}
@@ -102,5 +108,3 @@ export default function Hero({
     </section>
   );
 }
-
-import { ArrowRight } from "lucide-react";

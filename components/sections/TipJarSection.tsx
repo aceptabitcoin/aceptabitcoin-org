@@ -20,7 +20,7 @@ const BLINK_CONFIG = {
   endorsement: "Patrocinado por Blink.sv",
 };
 
-const LIGHTNING_ADDRESS = "tu-wallet@blink.sv";
+const LIGHTNING_ADDRESS = process.env.NEXT_PUBLIC_LIGHTNING_ADDRESS || "tu-wallet@blink.sv";
 
 type CurrencyMode = "BTC" | "USD";
 type QrMode = "lnaddress" | "bolt11" | "onchain";
@@ -50,21 +50,81 @@ export default function TipJarSection() {
     setIsMounted(true);
   }, []);
 
-  // ── Generate invoice via proxy ──
-  const generateInvoice = useCallback(async () => {
-    setState((s) => ({ ...s, loading: true, error: null }));
-    setTimeout(() => {
-      setState((s) => ({ ...s, loading: false, invoice: "lnbc1...", qrMode: "bolt11" }));
-    }, 1500);
-  }, [state.currency, state.amount, state.customAmount]);
+   // ── Generate invoice via proxy (REAL) ──
+   const generateInvoice = useCallback(async () => {
+     setState((s) => ({ ...s, loading: true, error: null }));
+     
+     try {
+       const amountValue = state.customAmount ? state.customAmount : state.amount;
+       const amountNum = Number(amountValue);
+       
+       if (!amountNum || amountNum <= 0) {
+         throw new Error('Monto inválido');
+       }
 
-  // ── Get on-chain address ──
-  const fetchOnChainAddress = useCallback(async () => {
-    setState((s) => ({ ...s, loading: true, error: null }));
-    setTimeout(() => {
-      setState((s) => ({ ...s, loading: false, onChainAddress: "bc1q...", qrMode: "onchain" }));
-    }, 1200);
-  }, []);
+       const response = await fetch('/api/tipjar', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({
+           action: 'create-invoice',
+           amount: amountNum,
+           currency: state.currency,
+           memo: 'Donación - Acepta Bitcoin México',
+         }),
+       });
+
+       const data = await response.json();
+       
+       if (!response.ok || !data.success) {
+         throw new Error(data.error || 'Error al generar invoice');
+       }
+
+       setState((s) => ({
+         ...s,
+         loading: false,
+         invoice: data.invoice,
+         qrMode: 'bolt11',
+       }));
+     } catch (err: any) {
+       setState((s) => ({
+         ...s,
+         loading: false,
+         error: err.message || 'Error de conexión con Blink',
+       }));
+     }
+   }, [state.currency, state.amount, state.customAmount]);
+
+   // ── Get on-chain address (REAL) ──
+   const fetchOnChainAddress = useCallback(async () => {
+     setState((s) => ({ ...s, loading: true, error: null }));
+     
+     try {
+       const response = await fetch('/api/tipjar', {
+         method: 'POST',
+         headers: { 'Content-Type': 'application/json' },
+         body: JSON.stringify({ action: 'get-onchain' }),
+       });
+
+       const data = await response.json();
+       
+       if (!response.ok || !data.success) {
+         throw new Error(data.error || 'Error al obtener dirección');
+       }
+
+       setState((s) => ({
+         ...s,
+         loading: false,
+         onChainAddress: data.address,
+         qrMode: 'onchain',
+       }));
+     } catch (err: any) {
+       setState((s) => ({
+         ...s,
+         loading: false,
+         error: err.message || 'Error de conexión con Blink',
+       }));
+     }
+   }, []);
 
   // ── Copy to clipboard ──
   const copyToClipboard = useCallback(async (text: string) => {
