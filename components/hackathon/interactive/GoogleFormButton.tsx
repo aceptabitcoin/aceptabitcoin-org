@@ -21,6 +21,8 @@ interface GoogleFormButtonProps {
   className?: string;
   /** Si es true, abre en nueva pestaña (default: true) */
   openInNewTab?: boolean;
+  /** Si es true, muestra una insignia/icono de registro oficial (default: false) */
+  showBadge?: boolean;
 }
 
 export default function GoogleFormButton({
@@ -29,6 +31,7 @@ export default function GoogleFormButton({
   variant = "primary",
   className,
   openInNewTab = true,
+  showBadge = false,
 }: GoogleFormButtonProps) {
   // URL por defecto desde env var o fallback hardcodeado
   const DEFAULT_FORM_URL =
@@ -70,7 +73,14 @@ export default function GoogleFormButton({
       )}
     >
       {/* Label */}
-      <span className="relative z-10">{label}</span>
+      <span className="relative z-10 flex items-center gap-2">
+        {label}
+        {showBadge && (
+          <span className="text-[10px] font-mono bg-white/20 px-1.5 py-0.5 rounded border border-white/30">
+            OFICIAL
+          </span>
+        )}
+      </span>
       
       {/* Icon with hover animation */}
       {openInNewTab ? (
