@@ -1,50 +1,137 @@
-// ============================================================
-// PRIZES — Prize display component
-// Acepta Bitcoin México | Oracle System v2.0
-// ============================================================
+// components/hackathon/display/Prizes.tsx
+import { Trophy, Gift, Cpu, Rocket } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-import { Prize } from "@/lib/hackathon/editions/types";
+export default function Prizes() {
+  const mainPrizes = [
+    {
+      place: "1er Lugar",
+      amount: "6,000",
+      icon: Trophy,
+      color: "text-bitcoin",
+      border: "border-bitcoin/30",
+      bg: "bg-bitcoin/5",
+      glow: "hover:shadow-[0_0_25px_rgba(247,147,26,0.25)]",
+    },
+    {
+      place: "2do Lugar",
+      amount: "2,500",
+      icon: Trophy,
+      color: "text-matrix",
+      border: "border-matrix/30",
+      bg: "bg-matrix/5",
+      glow: "hover:shadow-[0_0_20px_rgba(0,255,65,0.2)]",
+    },
+    {
+      place: "3er Lugar",
+      amount: "1,500",
+      icon: Trophy,
+      color: "text-gray-300",
+      border: "border-white/20",
+      bg: "bg-white/5",
+      glow: "hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]",
+    },
+  ];
 
-export default function Prizes({
-  prizes,
-  paidInBitcoin,
-  currency = "MXN",
-  className,
-}: {
-  prizes: Prize[];
-  paidInBitcoin?: boolean;
-  currency?: string;
-  className?: string;
-}) {
   return (
-    <div className={`space-y-6 ${className || ""}`}>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {prizes.map((prize, idx) => {
-          const icon = prize.place.includes("1") ? "🏆" : prize.place.includes("2") ? "🥈" : prize.place.includes("3") ? "🥉" : "🏅";
-          
-          return (
-            <div key={idx} className="hackathon-card p-5 text-center">
-              <div className="text-3xl mb-3">
-                {icon}
-              </div>
-              <div className="font-vt323 text-xl font-bold text-bitcoin mb-1">
-                ${prize.amountMXN.toLocaleString()} {currency}
-              </div>
-              <div className="font-mono text-[10px] text-gray-500 uppercase tracking-wider mb-2">
-                {prize.place} Lugar
-              </div>
-              <div className="font-mono text-[11px] text-gray-400">
-                {prize.description}
-              </div>
-              {paidInBitcoin && (
-                <div className="mt-3 inline-flex items-center gap-1 text-[9px] font-mono text-matrix bg-matrix/5 px-2 py-0.5 rounded-full border border-matrix/20">
-                  ⚡ Pagado en Bitcoin
-                </div>
-              )}
-            </div>
-          );
-        })}
+    <section className="py-20">
+      {/* Header */}
+      <div className="text-center mb-12 space-y-4">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-matrix/10 border border-matrix/30 rounded-full">
+          <Trophy className="h-3.5 w-3.5 text-matrix animate-pulse" />
+          <span className="font-mono text-[10px] text-matrix uppercase tracking-[0.2em]">
+            Recompensas Oficiales
+          </span>
+        </div>
+        <h2 className="font-serif text-4xl md:text-5xl font-bold text-white">
+          Premios & <span className="text-bitcoin drop-shadow-[0_0_25px_rgba(247,147,26,0.4)]">Impacto Real</span>
+        </h2>
+        <p className="font-mono text-sm text-gray-400 max-w-2xl mx-auto">
+          Construye, compite y escala. El reconocimiento económico es solo el inicio.
+        </p>
       </div>
-    </div>
+
+      {/* Main Prize Tiers */}
+      <div className="grid md:grid-cols-3 gap-6 mb-12">
+        {mainPrizes.map((prize) => (
+          <div
+            key={prize.place}
+            className={cn(
+              "relative group p-6 rounded-xl border backdrop-blur-md transition-all duration-300",
+              prize.bg,
+              prize.border,
+              prize.glow
+            )}
+          >
+            {/* Corner Accents */}
+            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-tl-lg" />
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-br-lg" />
+
+            <div className="flex items-center justify-between mb-4">
+              <prize.icon className={cn("h-7 w-7", prize.color)} />
+              <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                {prize.place}
+              </span>
+            </div>
+
+            <div className="space-y-1">
+              <span className={cn("font-serif text-4xl md:text-5xl font-bold", prize.color)}>
+                ${prize.amount}
+              </span>
+              <p className="font-mono text-xs text-gray-400">USD • Transferencia inmediata</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Secondary Prizes & ArcadiaB Impulse */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Merch & Hardware */}
+        <div className="p-6 bg-black/60 backdrop-blur-md border border-white/10 rounded-xl transition-all hover:border-white/20">
+          <h3 className="font-serif text-xl text-white mb-4 flex items-center gap-2">
+            <Gift className="h-5 w-5 text-matrix" /> Merch & Hardware
+          </h3>
+          <ul className="font-mono text-sm text-gray-400 space-y-3">
+            <li className="flex items-start gap-3">
+              <span className="text-matrix mt-0.5">▹</span> Camisetas & Stickers exclusivos edición limitada
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-matrix mt-0.5">▹</span> Hardware Wallets (Trezor / Ledger)
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-matrix mt-0.5">▹</span> Kits de desarrollo (Node Starter + Librerías BDK)
+            </li>
+          </ul>
+        </div>
+
+        {/* ArcadiaB Industry Impulse */}
+        <div className="p-6 bg-bitcoin/5 backdrop-blur-md border border-bitcoin/30 rounded-xl relative overflow-hidden transition-all hover:border-bitcoin/50 hover:shadow-[0_0_30px_rgba(247,147,26,0.15)]">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-bitcoin/10 blur-3xl rounded-full pointer-events-none" />
+          
+          <h3 className="font-serif text-xl text-white mb-4 flex items-center gap-2">
+            <Rocket className="h-5 w-5 text-bitcoin" /> Impulso ArcadiaB
+          </h3>
+          <p className="font-mono text-sm text-gray-300 leading-relaxed mb-4">
+            Si tu proyecto es <span className="text-bitcoin font-bold">viable para la industria Bitcoin</span>, 
+            ArcadiaB lo impulsará directamente con:
+          </p>
+          <ul className="font-mono text-sm text-gray-400 space-y-2 mb-4">
+            <li className="flex items-start gap-3">
+              <span className="text-bitcoin mt-0.5">⚡</span> Mentoría técnica & producto
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-bitcoin mt-0.5">⚡</span> Seed funding & acceso a partners institucionales
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-bitcoin mt-0.5">⚡</span> Integración real en el ecosistema soberano
+            </li>
+          </ul>
+          
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-bitcoin/10 border border-bitcoin/30 rounded-full">
+            <span className="font-mono text-[10px] text-bitcoin uppercase tracking-wider">Eco-system Grant</span>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
