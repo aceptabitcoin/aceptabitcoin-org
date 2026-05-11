@@ -1,40 +1,57 @@
 // components/hackathon/display/Prizes.tsx
 import { Trophy, Gift, Cpu, Rocket } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { Prize } from "@/lib/hackathon/editions/types";
 
-export default function Prizes() {
-  const mainPrizes = [
-    {
-      place: "1er Lugar",
-      amount: "6,000",
-      icon: Trophy,
-      color: "text-bitcoin",
-      border: "border-bitcoin/30",
-      bg: "bg-bitcoin/5",
-      glow: "hover:shadow-[0_0_25px_rgba(247,147,26,0.25)]",
-    },
-    {
-      place: "2do Lugar",
-      amount: "2,500",
-      icon: Trophy,
-      color: "text-matrix",
-      border: "border-matrix/30",
-      bg: "bg-matrix/5",
-      glow: "hover:shadow-[0_0_20px_rgba(0,255,65,0.2)]",
-    },
-    {
-      place: "3er Lugar",
-      amount: "1,500",
-      icon: Trophy,
-      color: "text-gray-300",
-      border: "border-white/20",
-      bg: "bg-white/5",
-      glow: "hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]",
-    },
-  ];
+export default function Prizes({
+  prizes,
+  paidInBitcoin = false,
+  className,
+}: {
+  prizes: Prize[];
+  paidInBitcoin?: boolean;
+  className?: string;
+}) {
+  // Map prize place to color scheme
+  const getPrizeStyle = (index: number) => {
+    switch (index) {
+      case 0: // 1st place
+        return {
+          color: "text-bitcoin",
+          border: "border-bitcoin/30",
+          bg: "bg-bitcoin/5",
+          glow: "hover:shadow-[0_0_25px_rgba(247,147,26,0.25)]",
+        };
+      case 1: // 2nd place
+        return {
+          color: "text-matrix",
+          border: "border-matrix/30",
+          bg: "bg-matrix/5",
+          glow: "hover:shadow-[0_0_20px_rgba(0,255,65,0.2)]",
+        };
+      case 2: // 3rd place
+        return {
+          color: "text-gray-300",
+          border: "border-white/20",
+          bg: "bg-white/5",
+          glow: "hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]",
+        };
+      default:
+        return {
+          color: "text-gray-400",
+          border: "border-white/10",
+          bg: "bg-white/5",
+          glow: "hover:shadow-[0_0_10px_rgba(255,255,255,0.05)]",
+        };
+    }
+  };
+
+  const formatAmount = (amountMXN: number) => {
+    return new Intl.NumberFormat("es-MX").format(amountMXN);
+  };
 
   return (
-    <section className="py-20">
+    <section className={cn("py-20", className)}>
       {/* Header */}
       <div className="text-center mb-12 space-y-4">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-matrix/10 border border-matrix/30 rounded-full">
@@ -53,35 +70,40 @@ export default function Prizes() {
 
       {/* Main Prize Tiers */}
       <div className="grid md:grid-cols-3 gap-6 mb-12">
-        {mainPrizes.map((prize) => (
-          <div
-            key={prize.place}
-            className={cn(
-              "relative group p-6 rounded-xl border backdrop-blur-md transition-all duration-300",
-              prize.bg,
-              prize.border,
-              prize.glow
-            )}
-          >
-            {/* Corner Accents */}
-            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-tl-lg" />
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-br-lg" />
+        {prizes.slice(0, 3).map((prize, idx) => {
+          const style = getPrizeStyle(idx);
+          return (
+            <div
+              key={idx}
+              className={cn(
+                "relative group p-6 rounded-xl border backdrop-blur-md transition-all duration-300",
+                style.bg,
+                style.border,
+                style.glow
+              )}
+            >
+              {/* Corner Accents */}
+              <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-tl-lg" />
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-matrix/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-br-lg" />
 
-            <div className="flex items-center justify-between mb-4">
-              <prize.icon className={cn("h-7 w-7", prize.color)} />
-              <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
-                {prize.place}
-              </span>
-            </div>
+              <div className="flex items-center justify-between mb-4">
+                <Trophy className={cn("h-7 w-7", style.color)} />
+                <span className="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+                  {prize.place}
+                </span>
+              </div>
 
-            <div className="space-y-1">
-              <span className={cn("font-serif text-4xl md:text-5xl font-bold", prize.color)}>
-                ${prize.amount}
-              </span>
-              <p className="font-mono text-xs text-gray-400">USD • Transferencia inmediata</p>
+              <div className="space-y-1">
+                <span className={cn("font-serif text-4xl md:text-5xl font-bold", style.color)}>
+                  ${formatAmount(prize.amountMXN)}
+                </span>
+                <p className="font-mono text-xs text-gray-400">
+                  {paidInBitcoin ? "BTC • Transferencia inmediata" : "MXN • Transferencia bancaria"}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Secondary Prizes & ArcadiaB Impulse */}
