@@ -15,8 +15,8 @@ interface GoogleFormButtonProps {
   formUrl?: string;
   /** Texto del botón (default: "Registrarse Ahora") */
   label?: string;
-  /** Variante de estilo: 'primary' (Bitcoin Orange) o 'ghost' (Matrix Green) */
-  variant?: "primary" | "ghost";
+  /** Variante de estilo: 'primary' (Bitcoin Orange), 'ghost' (Matrix Green) o 'compact' (inline) */
+  variant?: "primary" | "ghost" | "compact";
   /** Clase adicional para personalización */
   className?: string;
   /** Si es true, abre en nueva pestaña (default: true) */
@@ -40,6 +40,7 @@ export default function GoogleFormButton({
 
   const href = formUrl || DEFAULT_FORM_URL;
   const isPrimary = variant === "primary";
+  const isCompact = variant === "compact";
 
   return (
     <a
@@ -49,11 +50,11 @@ export default function GoogleFormButton({
       aria-label={label}
       className={cn(
         // Base styles
-        "group relative inline-flex items-center justify-center gap-2 px-8 py-4 font-vt323 text-lg font-bold tracking-wide rounded-xl transition-all duration-300",
+        "group inline-flex items-center justify-center gap-2 font-vt323 tracking-wide rounded-xl transition-all duration-300",
         
         // Primary variant (Bitcoin Orange)
         isPrimary && [
-          "bg-bitcoin text-black",
+          "bg-bitcoin text-black px-8 py-4 text-lg font-bold",
           "hover:bg-bitcoin/90",
           "shadow-[0_0_25px_rgba(247,147,26,0.4)]",
           "hover:shadow-[0_0_40px_rgba(247,147,26,0.6)]",
@@ -61,11 +62,18 @@ export default function GoogleFormButton({
         ],
         
         // Ghost variant (Matrix Green)
-        !isPrimary && [
-          "border border-matrix/30 text-matrix",
+        !isPrimary && !isCompact && [
+          "border border-matrix/30 text-matrix px-8 py-4 text-lg",
           "hover:border-matrix hover:bg-matrix/10",
           "shadow-[0_0_15px_rgba(0,255,65,0.1)]",
           "hover:shadow-[0_0_25px_rgba(0,255,65,0.25)]",
+        ],
+        
+        // Compact variant (inline, subtle)
+        isCompact && [
+          "text-matrix hover:text-bitcoin text-sm font-mono",
+          "underline-offset-4 hover:underline",
+          "px-0 py-1",
         ],
         
         // Custom overrides
@@ -82,22 +90,24 @@ export default function GoogleFormButton({
         )}
       </span>
       
-      {/* Icon with hover animation */}
-      {openInNewTab ? (
+      {/* Icon (hidden for compact variant) */}
+      {!isCompact && openInNewTab ? (
         <ExternalLink className="h-5 w-5 opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-      ) : (
+      ) : !isCompact && !openInNewTab ? (
         <ArrowUpRight className="h-5 w-5 opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-      )}
+      ) : null}
       
-      {/* Subtle glow overlay on hover */}
-      <span
-        className={cn(
-          "absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none",
-          isPrimary 
-            ? "bg-gradient-to-br from-bitcoin/20 to-transparent" 
-            : "bg-gradient-to-br from-matrix/20 to-transparent"
-        )}
-      />
+      {/* Subtle glow overlay on hover (skip for compact) */}
+      {!isCompact && (
+        <span
+          className={cn(
+            "absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none",
+            isPrimary 
+              ? "bg-gradient-to-br from-bitcoin/20 to-transparent" 
+              : "bg-gradient-to-br from-matrix/20 to-transparent"
+          )}
+        />
+      )}
     </a>
   );
 }
