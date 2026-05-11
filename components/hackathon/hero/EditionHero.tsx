@@ -8,8 +8,13 @@ import { cn } from "@/lib/utils";
 
 export default function Hero({
   className,
+  edition,
 }: {
   className?: string;
+  edition?: {
+    title: string;
+    slug: string;
+  };
 }) {
   return (
     <section className={cn(
