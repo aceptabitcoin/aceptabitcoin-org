@@ -1,18 +1,21 @@
 "use client";
-import { useState, useEffect, useMemo } from "react";
-import { Globe, Users, Crown, Handshake, User, Search, MapPin, Utensils, UserCog } from "lucide-react";
-import ProviderCard from "@/components/cards/ProviderCard";
-import ProviderSkeleton from "@/components/cards/ProviderSkeleton";
-import CategoryFilter from "@/components/filters/CategoryFilter";
-import MatrixRain from "@/components/ui/MatrixRain";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import { type Proveedor, type Categoria, getStats } from "@/lib/proveedores";
 
 // 📌 REBRAND NOTE (2026-05-12):
 // - UI visible: "Comercio Libre" (nuevo nombre para usuarios)
 // - Estructura interna: se mantiene "proveedores" en rutas, imports y archivos
 // - Nuevas categorías visibles: "Restaurantes" (Utensils), "Consultoría" (UserCog)
+// 📌 HYDRATION FIX (2026-05-12):
+// - MatrixRain removido para alinear fondo con otras páginas y evitar mismatch SSR/CSR
+// - Fondo base: bg-black puro (#000000) según Design System v2.0
+
+import { useState, useEffect, useMemo } from "react";
+import { Globe, Users, Crown, Handshake, User, Search, MapPin, Utensils, UserCog } from "lucide-react";
+import ProviderCard from "@/components/cards/ProviderCard";
+import ProviderSkeleton from "@/components/cards/ProviderSkeleton";
+import CategoryFilter from "@/components/filters/CategoryFilter";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import { type Proveedor, type Categoria, getStats } from "@/lib/proveedores";
 
 interface ProveedoresClientProps {
   proveedores: Proveedor[];
@@ -59,11 +62,13 @@ export default function ProveedoresClient({ proveedores }: ProveedoresClientProp
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-black relative overflow-hidden">
-        {/* Background Effects (DS Aligned) */}
-        <MatrixRain className="opacity-20" speed={0.5} density={15} />
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(rgba(0,255,65,0.06)_1px,transparent_1px)] bg-[size:50px_50px]" />
-        {/* DS: Bitcoin Orange glow blur - adjusted opacity for subtlety */}
+      {/* 🖤 DS Rule: Fondo negro puro para consistencia con el resto del proyecto */}
+      <main className="min-h-screen bg-black relative" suppressHydrationWarning>
+        
+        {/* Grid sutil de fondo (DS: texture decorativa, CSS-only, seguro para SSR) */}
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(rgba(0,255,65,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+        
+        {/* Glow decorativo sutil (CSS-only, sin manipulación DOM) */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-bitcoin/5 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 container mx-auto px-4 pt-32 pb-20">
@@ -155,10 +160,12 @@ export default function ProveedoresClient({ proveedores }: ProveedoresClientProp
               ═══════════════════════════════════════════════════════ */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {loading ? (
-              <ProviderSkeleton count={6} />
+              Array.from({ length: 6 }).map((_, i) => (
+                <ProviderSkeleton key={`skeleton-${i}`} />
+              ))
             ) : filtered.length > 0 ? (
-              filtered.map((proveedor, index) => (
-                <ProviderCard key={proveedor.id} proveedor={proveedor} index={index} />
+              filtered.map((proveedor) => (
+                <ProviderCard key={proveedor.id} proveedor={proveedor} index={filtered.indexOf(proveedor)} />
               ))
             ) : (
               <div className="col-span-full text-center py-20 bg-black/40 border border-white/10 rounded-lg backdrop-blur-sm">
