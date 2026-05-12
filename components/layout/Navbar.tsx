@@ -1,5 +1,10 @@
 "use client";
 
+// 📌 REBRAND NOTE (2026-05-12):
+// - Link visible: "Comercio Libre" (nuevo nombre para usuarios)
+// - Ruta interna: se mantiene href="/proveedores" por estabilidad técnica
+// - Nuevas categorías disponibles en el directorio: "Restaurantes", "Consultoría"
+
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
@@ -20,10 +25,11 @@ export default function Navbar() {
 
   const navLinks = [
     { name: "Inicio", href: "/" },
-    { name: "🎮 Arcade", href: "/arcade" }, // ✅ CAMBIADO
+    { name: "🎮 Arcade", href: "/arcade" },
     { name: "Tianguis", href: "/tianguis" },
     { name: "Proyectos", href: "/proyectos" },
-    { name: "Proveedores", href: "/proveedores" },
+    // 🔄 REBRAND: Texto visible actualizado, ruta interna intacta
+    { name: "Comercio Libre", href: "/proveedores" },
     { name: "Historia", href: "/nuestra-historia" },
     { name: "Crea tu Tienda", href: "/crea-tu-tienda" },
   ];
