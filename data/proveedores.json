@@ -96,5 +96,53 @@
     "ubicacion": "Ciudad de México",
     "tags": ["pagos", "POS", "e-commerce", "comercio"],
     "destacado": true
+  },
+  {
+    "id": "la-cripta-cafe",
+    "nombre": "La Cripta Café",
+    "categoria": "Restaurantes",
+    "tier": "miembro",
+    "descripcion": "Cafetería de especialidad en Roma Norte. Acepta pagos Lightning Network para tu café matutino.",
+    "url": "https://lacriptacafe.mx",
+    "logo": "/proveedores/la-cripta-cafe.svg",
+    "ubicacion": "Ciudad de México, Roma Norte",
+    "tags": ["cafe", "LN", "Restaurantes", "fisico"],
+    "destacado": false
+  },
+  {
+    "id": "nodo-veggie",
+    "nombre": "Nodo Veggie",
+    "categoria": "Restaurantes",
+    "tier": "miembro",
+    "descripcion": "Restaurante vegetariano con menú estacional. Pagos en BTC vía Lightning y descuentos por pagar en satoshis.",
+    "url": "https://nodoveggie.mx",
+    "logo": "/proveedores/nodo-veggie.svg",
+    "ubicacion": "Guadalajara, Jalisco",
+    "tags": ["vegetariano", "LN", "Restaurantes", "descuentos-BTC"],
+    "destacado": false
+  },
+  {
+    "id": "satoshi-legal-marketing",
+    "nombre": "Satoshi Legal & Marketing",
+    "categoria": "Consultoría",
+    "tier": "partner",
+    "descripcion": "Asesoría fiscal, legal y de marketing para proyectos Bitcoin. Expertos en regulación mexicana y estrategias de adopción.",
+    "url": "https://satoshiprofessional.mx",
+    "logo": "/proveedores/satoshi-legal.svg",
+    "ubicacion": "Remoto / CDMX",
+    "tags": ["Consultoría", "legal", "marketing", "B2B", "asesores"],
+    "destacado": false
+  },
+  {
+    "id": "bitcoin-strategy-group",
+    "nombre": "Bitcoin Strategy Group",
+    "categoria": "Consultoría",
+    "tier": "partner",
+    "descripcion": "Consultores senior en treasury corporativo, compliance y comunicación para empresas que adoptan Bitcoin.",
+    "url": "https://btcstrategy.mx",
+    "logo": "/proveedores/btc-strategy.svg",
+    "ubicacion": "Remoto / México",
+    "tags": ["Consultoría", "treasury", "compliance", "estrategia", "B2B"],
+    "destacado": true
   }
 ]

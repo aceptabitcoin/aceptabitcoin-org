@@ -3,6 +3,11 @@
 // ============================================================
 // PROVEEDORES — Types, Utilities & Data Loader
 // Acepta Bitcoin México | Oracle System v2.0
+// 
+// 📌 REBRAND NOTE (2026-05-12):
+// - Internamente se mantiene "proveedores" por estabilidad de rutas e imports.
+// - La capa UI muestra "Comercio Libre" según requerimiento del cliente.
+// - Nuevas categorías añadidas: "Restaurantes", "Consultoría"
 // ============================================================
 
 export type Categoria = 
@@ -11,7 +16,9 @@ export type Categoria =
   | "educacion"
   | "comercio"
   | "servicios"
-  | "tecnologia";
+  | "tecnologia"
+  | "Restaurantes"
+  | "Consultoría";
 
 export type Tier = "patrocinador" | "partner" | "miembro";
 
@@ -36,6 +43,9 @@ export const CATEGORIAS: { value: Categoria; label: string; icon: string }[] = [
   { value: "comercio", label: "Comercio", icon: "Store" },
   { value: "servicios", label: "Servicios", icon: "Briefcase" },
   { value: "tecnologia", label: "Tecnología", icon: "Cpu" },
+  // 🆕 Nuevas categorías para "Comercio Libre"
+  { value: "Restaurantes", label: "Restaurantes", icon: "Utensils" },
+  { value: "Consultoría", label: "Consultoría", icon: "UserCog" },
 ];
 
 export const TIER_CONFIG: Record<Tier, {

@@ -1,7 +1,22 @@
 "use client";
 
+// 📌 REBRAND NOTE (2026-05-12):
+// - UI visible: "Comercio Libre" (nuevo nombre para usuarios)
+// - Nuevas categorías añadidas: "Restaurantes" (Utensils), "Consultoría" (UserCog)
+// - Estructura interna: se mantiene "proveedores" en lib/types
+
 import { CATEGORIAS, type Categoria } from "@/lib/proveedores";
-import { ArrowLeftRight, Truck, GraduationCap, Store, Briefcase, Cpu, LayoutGrid } from "lucide-react";
+import { 
+  ArrowLeftRight, 
+  Truck, 
+  GraduationCap, 
+  Store, 
+  Briefcase, 
+  Cpu, 
+  LayoutGrid,
+  Utensils,    // 🆕 Restaurantes
+  UserCog,     // 🆕 Consultoría
+} from "lucide-react";
 
 interface CategoryFilterProps {
   active: Categoria | "todos";
@@ -17,19 +32,22 @@ const ICONS: Record<string, React.ElementType> = {
   Briefcase,
   Cpu,
   LayoutGrid,
+  // 🆕 Nuevos iconos para categorías del rebrand
+  Utensils,    // Restaurantes
+  UserCog,     // Consultoría
 };
 
 export default function CategoryFilter({ active, onChange, counts }: CategoryFilterProps) {
   const allCount = Object.values(counts).reduce((a, b) => a + b, 0);
 
   return (
-    <div className="flex flex-wrap gap-2">
-      {/* "Todos" pill */}
+    <div className="flex flex-wrap justify-center gap-2">
+      {/* "Todos" pill — DS: Bitcoin Orange para acción principal */}
       <button
         onClick={() => onChange("todos")}
         className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-mono font-bold uppercase tracking-wider border transition-all duration-300 ${
           active === "todos"
-            ? "bg-bitcoin text-black border-bitcoin shadow-[0_0_15px_rgba(247,147,26,0.3)]"
+            ? "bg-bitcoin text-black border-bitcoin shadow-[0_0_15px_rgba(247,147,26,0.3)] hover:bg-bitcoin/90"
             : "bg-white/5 text-gray-400 border-white/10 hover:border-white/30 hover:text-white"
         }`}
       >
@@ -51,8 +69,8 @@ export default function CategoryFilter({ active, onChange, counts }: CategoryFil
             onClick={() => onChange(cat.value)}
             className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-mono font-bold uppercase tracking-wider border transition-all duration-300 ${
               isActive
-                ? "bg-matrix text-black border-matrix shadow-[0_0_15px_rgba(0,255,65,0.3)]"
-                : "bg-white/5 text-gray-400 border-white/10 hover:border-white/30 hover:text-white"
+                ? "bg-matrix text-black border-matrix shadow-[0_0_15px_rgba(0,255,65,0.3)] hover:shadow-[0_0_20px_rgba(0,255,65,0.4)]"
+                : "bg-white/5 text-gray-400 border-white/10 hover:border-matrix/30 hover:text-matrix"
             }`}
           >
             <Icon className="h-3.5 w-3.5" />
