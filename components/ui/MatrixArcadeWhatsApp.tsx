@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface MatrixArcadeWhatsAppProps {
   phoneNumber: string;
@@ -40,12 +40,16 @@ export const MatrixPhoneIcon = ({ className = '' }: { className?: string }) => (
 // ─────────────────────────────────────────────────────────────
 const useArcadeFeedback = (enableSound: boolean) => {
   const audioContextRef = useRef<AudioContext | null>(null);
-  const prefersReducedMotion = useMemo(
-    () =>
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    []
-  );
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mq.matches);
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener('change', listener);
+    return () => mq.removeEventListener('change', listener);
+  }, []);
 
   const triggerHaptic = useCallback(() => {
     if (prefersReducedMotion) return;
@@ -105,12 +109,16 @@ const useArcadeFeedback = (enableSound: boolean) => {
 // ─────────────────────────────────────────────────────────────
 const MatrixRain = ({ active }: { active: boolean }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const prefersReducedMotion = useMemo(
-    () =>
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    []
-  );
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mq.matches);
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener('change', listener);
+    return () => mq.removeEventListener('change', listener);
+  }, []);
 
   useEffect(() => {
     if (!active || prefersReducedMotion) return;
@@ -201,12 +209,16 @@ export default function MatrixArcadeWhatsApp({
 }: MatrixArcadeWhatsAppProps) {
   const { triggerFullFeedback } = useArcadeFeedback(enableSound);
   const [isHovered, setIsHovered] = useState(false);
-  const prefersReducedMotion = useMemo(
-    () =>
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    []
-  );
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mq.matches);
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener('change', listener);
+    return () => mq.removeEventListener('change', listener);
+  }, []);
 
   // Mapeo de tamaños con clases Tailwind DS v2.0
   const sizeClasses = {

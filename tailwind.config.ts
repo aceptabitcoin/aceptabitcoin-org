@@ -7,7 +7,14 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
+    // ✅ Rutas explícitas para nuevos componentes
+    "./components/widgets/bob-chat/**/*.{ts,tsx}",
+    "./components/ui/MatrixArcadeWhatsApp.{ts,tsx}",
+    "./components/ui/icons/**/*.{ts,tsx}",
+    "./lib/prompts/**/*.{ts,tsx}",
+    "./lib/vector/**/*.{ts,tsx}",
   ],
+
   prefix: "",
   theme: {
     container: {

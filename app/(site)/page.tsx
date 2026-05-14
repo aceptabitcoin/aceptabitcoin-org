@@ -11,7 +11,17 @@ import dynamic from "next/dynamic";
 
 // 🤖 B.O.B. imports
 import BobSectionHeader from "@/components/widgets/bob-chat/BobSectionHeader";
-import BobChatWidget from "@/components/widgets/bob-chat/BobChatWidget";
+
+// BobChatWidget: Client-only (sessionStorage + typing interval)
+const BobChatWidget = dynamic(
+  () => import('@/components/widgets/bob-chat/BobChatWidget'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[500px] bg-black/40 border border-white/10 rounded-2xl animate-pulse" />
+    ),
+  }
+);
 
 // MarketMoodWidget: Client-only con skeleton loading (ya optimizado)
 const MarketMoodWidget = dynamic(
