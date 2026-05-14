@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 
 export interface MatrixArcadeWhatsAppProps {
   phoneNumber: string;
@@ -13,10 +13,11 @@ export interface MatrixArcadeWhatsAppProps {
   lastSeen?: string;
   className?: string;
   onOpen?: () => void;
+  floating?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────
-// Icono Matrix Phone (SVG custom, reutilizable)
+// Icono Matrix Phone (SVG custom, DS v2.0)
 // ─────────────────────────────────────────────────────────────
 export const MatrixPhoneIcon = ({ className = '' }: { className?: string }) => (
   <svg
@@ -36,36 +37,31 @@ export const MatrixPhoneIcon = ({ className = '' }: { className?: string }) => (
 );
 
 // ─────────────────────────────────────────────────────────────
-// Hook: Feedback Háptico + Audio Arcade (con guard de privacidad)
+// Hook: Feedback Háptico + Audio (con prefers-reduced-motion)
 // ─────────────────────────────────────────────────────────────
 const useArcadeFeedback = (enableSound: boolean) => {
   const audioContextRef = useRef<AudioContext | null>(null);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const prefersReducedMotion = useMemo(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    []
+  );
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mq.matches);
-    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mq.addEventListener('change', listener);
-    return () => mq.removeEventListener('change', listener);
-  }, []);
-
-  const triggerHaptic = useCallback(() => {
+  const triggerFullFeedback = useCallback(() => {
     if (prefersReducedMotion) return;
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
-      navigator.vibrate([8, 18, 6]); // Patrón arcade sutil
-    }
-  }, [prefersReducedMotion]);
 
-  const playClick = useCallback(() => {
-    if (!enableSound || prefersReducedMotion || typeof window === 'undefined') return;
+    // Haptic
+    if ('vibrate' in navigator) navigator.vibrate([8, 18, 6]);
 
+    // Audio (solo si está habilitado)
+    if (!enableSound) return;
     try {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      }
-      const ctx = audioContextRef.current;
+      const ctx =
+        audioContextRef.current ||
+        new (window.AudioContext || (window as any).webkitAudioContext)();
+      audioContextRef.current = ctx;
+
       if (ctx.state === 'suspended') ctx.resume();
 
       const osc = ctx.createOscillator();
@@ -74,26 +70,21 @@ const useArcadeFeedback = (enableSound: boolean) => {
 
       osc.type = 'square';
       osc.frequency.setValueAtTime(920, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(360, ctx.currentTime + 0.095);
+      osc.frequency.exponentialRampToValueAtTime(360, ctx.currentTime + 0.09);
 
       filter.type = 'lowpass';
       filter.frequency.value = 1400;
 
-      gain.gain.setValueAtTime(0.13, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.135);
+      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.13);
 
       osc.connect(filter).connect(gain).connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 0.15);
+      osc.stop(ctx.currentTime + 0.14);
     } catch {
-      // Fail silently: audio no es crítico
+      // Fail silently
     }
   }, [enableSound, prefersReducedMotion]);
-
-  const triggerFullFeedback = useCallback(() => {
-    playClick();
-    triggerHaptic();
-  }, [playClick, triggerHaptic]);
 
   useEffect(() => {
     return () => {
@@ -105,20 +96,16 @@ const useArcadeFeedback = (enableSound: boolean) => {
 };
 
 // ─────────────────────────────────────────────────────────────
-// Matrix Rain Canvas (con soporte prefers-reduced-motion)
+// Matrix Rain Canvas (completo + prefers-reduced-motion)
 // ─────────────────────────────────────────────────────────────
 const MatrixRain = ({ active }: { active: boolean }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mq.matches);
-    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mq.addEventListener('change', listener);
-    return () => mq.removeEventListener('change', listener);
-  }, []);
+  const prefersReducedMotion = useMemo(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    []
+  );
 
   useEffect(() => {
     if (!active || prefersReducedMotion) return;
@@ -162,6 +149,7 @@ const MatrixRain = ({ active }: { active: boolean }) => {
       for (let i = 0; i < drops.length; i++) {
         const char = chars[Math.floor(Math.random() * chars.length)];
         const alpha = 0.45 + Math.random() * 0.55;
+        // ✅ FALLBACK: usa hex si la CSS var no está disponible
         ctx.fillStyle = `rgba(0, 255, 65, ${alpha})`;
         ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 
@@ -186,14 +174,14 @@ const MatrixRain = ({ active }: { active: boolean }) => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none opacity-40 mix-blend-screen"
+      className="absolute inset-0 w-full h-full pointer-events-none opacity-30 mix-blend-screen"
       aria-hidden="true"
     />
   );
 };
 
 // ─────────────────────────────────────────────────────────────
-// Componente Principal: MatrixArcadeWhatsApp
+// Componente Principal: MatrixArcadeWhatsApp (CORREGIDO)
 // ─────────────────────────────────────────────────────────────
 export default function MatrixArcadeWhatsApp({
   phoneNumber,
@@ -201,26 +189,26 @@ export default function MatrixArcadeWhatsApp({
   label = 'CONECTAR CON LA MATRIX',
   size = 'lg',
   enableMatrixRain = true,
-  enableSound = false, // 🔇 Desactivado por defecto (UX friendly)
+  enableSound = false,
   onlineStatus = 'online',
   lastSeen,
   className = '',
   onOpen,
+  floating = true,
 }: MatrixArcadeWhatsAppProps) {
   const { triggerFullFeedback } = useArcadeFeedback(enableSound);
   const [isHovered, setIsHovered] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const prefersReducedMotion = useMemo(
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    []
+  );
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mq.matches);
-    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mq.addEventListener('change', listener);
-    return () => mq.removeEventListener('change', listener);
-  }, []);
+  // ✅ FALLBACK: Define colores hex como respaldo si CSS vars fallan
+  const MATRIX_HEX = '#00FF41';
+  const MATRIX_RGBA = 'rgba(0, 255, 65,';
 
-  // Mapeo de tamaños con clases Tailwind DS v2.0
   const sizeClasses = {
     sm: 'w-16 h-16 text-xl',
     md: 'w-20 h-20 text-2xl',
@@ -231,19 +219,16 @@ export default function MatrixArcadeWhatsApp({
   const cleanPhone = phoneNumber.replace(/\D/g, '');
   const whatsappUrl = `https://wa.me/${cleanPhone}${message ? `?text=${encodeURIComponent(message)}` : ''}`;
 
-  // Handler inteligente: App nativa → Web fallback
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>) => {
       triggerFullFeedback();
 
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
       if (isMobile) {
         e.preventDefault();
         const appUrl = `whatsapp://send?phone=${cleanPhone}&text=${encodeURIComponent(message || '')}`;
         window.location.href = appUrl;
 
-        // Fallback a web si la app no se abre en 1.6s
         setTimeout(() => {
           if (document.visibilityState === 'visible') {
             window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
@@ -258,34 +243,26 @@ export default function MatrixArcadeWhatsApp({
     [triggerFullFeedback, cleanPhone, message, whatsappUrl, onOpen]
   );
 
-  // Clases dinámicas alineadas a DS v2.0
-  const glowClass = isHovered
-    ? 'shadow-[var(--matrix-glow-hover)]'
-    : 'shadow-[var(--matrix-glow)]';
-
-  const borderClass = isHovered ? 'border-[var(--matrix)]/70' : 'border-[var(--matrix)]/40';
-
   return (
-    <div className={`relative inline-block ${className}`} data-component="matrix-whatsapp">
-      {/* Matrix Rain (solo si está activo y el usuario permite animaciones) */}
-      {enableMatrixRain && !prefersReducedMotion && (
-        <div className="absolute -inset-12 rounded-[4rem] overflow-hidden">
-          <MatrixRain active={isHovered} />
-        </div>
-      )}
-
-      {/* Glow exterior con CSS vars del DS v2.0 */}
+    <div
+      className={`
+        ${floating ? 'fixed bottom-6 right-6 z-50' : 'relative inline-block'}
+        ${className}
+      `}
+      data-component="matrix-whatsapp"
+      style={{ '--matrix-fallback': MATRIX_HEX } as React.CSSProperties}
+    >
+      {/* ✅ Glow exterior con fallback hex */}
       <div
-        className={`absolute -inset-6 rounded-full transition-all duration-500 pointer-events-none ${
-          isHovered && !prefersReducedMotion ? 'opacity-100 blur-3xl scale-110' : 'opacity-60 blur-2xl'
-        }`}
+        className={`absolute -inset-8 rounded-full transition-all duration-500 pointer-events-none
+          ${isHovered && !prefersReducedMotion ? 'opacity-100 scale-110 blur-2xl' : 'opacity-40 blur-xl'}`}
         style={{
-          background:
-            'radial-gradient(circle, rgba(0,255,65,0.75) 15%, rgba(0,200,60,0.25) 50%, transparent 80%)',
+          background: `radial-gradient(circle, ${MATRIX_RGBA}0.6) 20%, transparent 70%)`,
+          boxShadow: `0 0 30px ${MATRIX_RGBA}0.4)`,
         }}
       />
 
-      {/* Botón Principal */}
+      {/* ✅ Botón principal con fallbacks */}
       <a
         href={whatsappUrl}
         target="_blank"
@@ -297,58 +274,51 @@ export default function MatrixArcadeWhatsApp({
           relative flex items-center justify-center
           ${sizeClasses[size]}
           bg-gradient-to-br from-zinc-950 via-black to-zinc-950
-          border-[5px] ${borderClass}
+          border-[5px] border-[#00FF41]/60
           rounded-3xl overflow-hidden
           transition-all duration-300 ease-out
           ${!prefersReducedMotion ? 'hover:scale-110 active:scale-95' : ''}
-          focus:outline-none focus:ring-4 focus:ring-[var(--matrix)]/50
-          ${glowClass}
+          focus:outline-none focus:ring-4 focus:ring-[#00FF41]/50
+          shadow-[0_0_20px_rgba(0,255,65,0.3)]
+          hover:shadow-[0_0_50px_rgba(0,255,65,0.6)]
           group
         `}
         aria-label={`Abrir WhatsApp con ${label}`}
       >
-        {/* Scanlines overlay */}
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,#00000022_0px,#00000022_1px,transparent_1px,transparent_3px)] pointer-events-none" />
+        {/* Scanlines sutiles */}
+        <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,#00000033_0px,#00000033_2px,transparent_2px,transparent_4px)] pointer-events-none" />
 
-        {/* Scanline animation */}
-        <div
-          className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-transparent opacity-30 pointer-events-none"
+        {/* ✅ Icono con color fallback */}
+        <MatrixPhoneIcon
+          className={`
+            w-3/5 h-3/5 transition-all duration-300
+            ${isHovered ? 'scale-110' : ''}
+          `}
           style={{
-            animation: prefersReducedMotion
-              ? 'none'
-              : isHovered
-              ? 'scanline 1.6s linear infinite'
-              : 'scanline 4s linear infinite',
+            color: MATRIX_HEX,
+            filter: `drop-shadow(0 0 20px ${MATRIX_RGBA}0.8))`,
           }}
         />
 
-        {/* Icono con color DS v2.0 */}
-        <MatrixPhoneIcon
-          className={`
-            w-3/5 h-3/5 transition-all duration-300 drop-shadow-[0_0_20px_var(--matrix)]
-            ${isHovered ? 'text-[var(--matrix)]/90 scale-110' : 'text-[var(--matrix)]'}
-          `}
-        />
-
-        {/* Energy ring */}
+        {/* ✅ Energy ring con fallback */}
         <div
-          className={`absolute inset-[6px] border border-[var(--matrix)]/30 rounded-[20px] transition-all duration-700 ${
-            isHovered && !prefersReducedMotion ? 'opacity-90 scale-95' : 'opacity-20'
-          }`}
+          className={`absolute inset-[5px] border border-[#00FF41]/40 rounded-[18px] transition-all duration-500
+            ${isHovered && !prefersReducedMotion ? 'opacity-80 scale-95' : 'opacity-30'}`}
         />
 
-        {/* Partículas (solo si no hay reduced motion) */}
+        {/* ✅ Partículas (solo si no hay reduced motion) */}
         {isHovered && !prefersReducedMotion && (
           <>
-            {[...Array(7)].map((_, i) => (
+            {[...Array(5)].map((_, i) => (
               <span
                 key={i}
-                className="absolute w-1.5 h-1.5 bg-[var(--matrix)] rounded-full animate-ping"
+                className="absolute w-1 h-1 rounded-full animate-ping"
                 style={{
-                  top: `${20 + Math.random() * 60}%`,
-                  left: `${20 + Math.random() * 60}%`,
-                  animationDelay: `${i * 0.1}s`,
-                  animationDuration: `${1 + Math.random()}s`,
+                  backgroundColor: MATRIX_HEX,
+                  top: `${25 + Math.random() * 50}%`,
+                  left: `${25 + Math.random() * 50}%`,
+                  animationDelay: `${i * 0.15}s`,
+                  animationDuration: `${1.2 + Math.random() * 0.8}s`,
                 }}
               />
             ))}
@@ -356,46 +326,51 @@ export default function MatrixArcadeWhatsApp({
         )}
       </a>
 
-      {/* Label con tipografía DS v2.0 */}
+      {/* ✅ Label con fallback de color */}
       {label && (
         <div
           className={`
-            absolute top-full mt-4 left-1/2 -translate-x-1/2
-            font-mono text-[var(--matrix)] text-sm tracking-[4px] uppercase
-            transition-all duration-300 drop-shadow-[0_0_12px_var(--matrix)]
-            ${isHovered && !prefersReducedMotion ? 'opacity-100 translate-y-0' : 'opacity-60 translate-y-2'}
+            absolute top-full mt-3 left-1/2 -translate-x-1/2 whitespace-nowrap
+            font-mono text-xs tracking-[3px] uppercase
+            transition-all duration-300
+            ${isHovered && !prefersReducedMotion ? 'opacity-100' : 'opacity-70'}
           `}
+          style={{ color: MATRIX_HEX, textShadow: `0 0 8px ${MATRIX_RGBA}0.7)` }}
         >
-          <span className="text-[var(--matrix)]/80 mr-1">{'> '}</span> {label}
+          <span style={{ color: `${MATRIX_RGBA}0.7)` }}>{'> '}</span> {label}
         </div>
       )}
 
-      {/* Indicador de estado (DS v2.0 compliant) */}
-      <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+      {/* ✅ Status indicator con fallback */}
+      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
         <div
-          className={`w-3 h-3 rounded-full shadow-[0_0_12px_currentColor] transition-colors ${
+          className={`w-3 h-3 rounded-full transition-all ${
             onlineStatus === 'online'
-              ? 'bg-[var(--matrix)] animate-pulse text-[var(--matrix)]'
+              ? 'animate-pulse'
               : onlineStatus === 'away'
-              ? 'bg-[var(--bitcoin)] text-[var(--bitcoin)]'
-              : 'bg-red-500 animate-none text-red-500'
+              ? 'bg-[#F7931A]'
+              : 'bg-red-500 animate-none'
           }`}
+          style={{
+            backgroundColor: onlineStatus === 'online' ? MATRIX_HEX : undefined,
+            boxShadow: `0 0 10px ${MATRIX_RGBA}0.8)`,
+          }}
         />
-        <span className="text-[10px] font-mono text-[var(--matrix)]/80 tracking-widest">
+        <span
+          className="text-[9px] font-mono tracking-widest"
+          style={{ color: `${MATRIX_RGBA}0.8)` }}
+        >
           {onlineStatus.toUpperCase()}
           {lastSeen && onlineStatus !== 'online' && ` • ${lastSeen}`}
         </span>
       </div>
 
-      {/* Keyframes globales (solo se inyectan una vez) */}
-      <style>{`
-        @media (prefers-reduced-motion: no-preference) {
-          @keyframes scanline {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(200%); }
-          }
-        }
-      `}</style>
+      {/* ✅ Matrix Rain (solo hover + si permite animaciones) */}
+      {enableMatrixRain && !prefersReducedMotion && isHovered && (
+        <div className="absolute -inset-16 rounded-[4rem] overflow-hidden pointer-events-none -z-10">
+          <MatrixRain active={isHovered} />
+        </div>
+      )}
     </div>
   );
 }

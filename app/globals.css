@@ -16,15 +16,15 @@
   --ring: 30 93% 53%;
   --radius: 0.75rem;
   
-  /* 🟢 COLORES DE MARCA — HSL triplets (para shadcn/Tailwind tokens) */
+  /* 🟢 COLORES DE MARCA — hex para uso directo en CSS y componentes */
+  --matrix: #00FF41;
+  --matrix-dark: #00B300;
+  --bitcoin: #F7931A;
+
+  /* 🟢 COLORES DE MARCA — HSL triplets para tokens shadcn/ui */
   --bitcoin-hsl: 30 93% 53%;
   --matrix-hsl: 132 100% 50%;
   --matrix-dark-hsl: 132 100% 35%;
-
-  /* 🟢 COLORES DE MARCA — valores directos (para text-[var(--matrix)] etc.) */
-  --bitcoin: hsl(30, 93%, 53%);
-  --matrix: hsl(132, 100%, 50%);
-  --matrix-dark: hsl(132, 100%, 35%);
 
   /* ✨ Efectos Glow (RGBA para sombras CSS) */
   --matrix-glow: 0 0 15px rgba(0, 255, 65, 0.2), 0 0 30px rgba(0, 255, 65, 0.1);
