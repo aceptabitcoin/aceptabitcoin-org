@@ -55,7 +55,7 @@ export function useBobChat({ context, lang }: UseBobChatProps) {
 
     let charIndex = 0;
     typingRef.current = setInterval(() => {
-      if (!isMounted.current) return clearInterval(typingRef.current);
+      if (!isMounted.current) return clearInterval(typingRef.current!);
       
       setMessages(prev => {
         const updated = [...prev];
