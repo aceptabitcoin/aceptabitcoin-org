@@ -19,11 +19,13 @@ const config = {
     },
     extend: {
       colors: {
-        // Design System Matrix v2.0
-        matrix: "#00FF41",
-        bitcoin: "#F7931A",
-        dark: "#000000",
-
+        // 🟢 Design System Matrix v2.0 — Colores de marca
+        matrix: "#00FF41",      // Verde neon: información técnica, borders, glow
+        bitcoin: "#F7931A",     // Naranja Bitcoin: CTAs, precios, acciones principales
+        
+        // ❌ REMOVIDO: `dark: "#000000"` → usar `bg-black` nativo de Tailwind
+        
+        // shadcn/ui variables (HSL) — no interferir con colores custom
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -58,16 +60,30 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      
+      // ✨ NUEVO: Utilities de glow para sombras neon (DS v2.0)
+      boxShadow: {
+        'matrix': '0 0 15px rgba(0,255,65,0.2), 0 0 30px rgba(0,255,65,0.1)',
+        'matrix-hover': '0 0 25px rgba(0,255,65,0.4), 0 0 50px rgba(0,255,65,0.25)',
+        'bitcoin': '0 0 20px rgba(247,147,26,0.4)',
+        'bitcoin-hover': '0 0 35px rgba(247,147,26,0.6)',
+        'terminal': '0 0 12px rgba(0,255,65,0.15)',
+      },
+      
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      
+      // 🔤 Tipografía semántica (DS v2.0)
       fontFamily: {
-        serif: ["var(--font-ibm-plex)", "serif"],
-        mono: ["var(--font-fira-code)", "monospace"],
-        vt323: ["var(--font-vt323)", "monospace"],
+        serif: ["var(--font-ibm-plex)", "serif"],    // Títulos: autoridad institucional
+        mono: ["var(--font-fira-code)", "monospace"], // Datos, código, logs técnicos
+        vt323: ["var(--font-vt323)", "monospace"],    // Arcade, botones especiales, metadata
       },
+      
+      // 🎬 Keyframes custom (animaciones del sistema)
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -77,24 +93,34 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        // Scanline vertical (barrido de terminal)
         scanline: {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(200%)" },
         },
+        // Tilt sutil (efecto hover en cards)
         tilt: {
           "0%, 50%, 100%": { transform: "rotate(0deg)" },
           "25%": { transform: "rotate(1deg)" },
           "75%": { transform: "rotate(-1deg)" },
         },
+        // Blink (cursor parpadeante)
         blink: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
         },
+        // Loading pulse (estados de carga)
         loading: {
           "0%, 100%": { opacity: "0.3" },
           "50%": { opacity: "1" },
         },
+        // Ping suave para partículas
+        "ping-soft": {
+          "75%, 100%": { transform: "scale(2)", opacity: "0" },
+        },
       },
+      
+      // 🎞️ Animaciones registradas para uso con `animate-*`
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
@@ -102,6 +128,18 @@ const config = {
         tilt: "tilt 10s infinite linear",
         blink: "blink 1s step-end infinite",
         loading: "loading 1.5s ease-in-out infinite",
+        "ping-soft": "ping-soft 1.2s cubic-bezier(0, 0, 0.2, 1) infinite",
+      },
+      
+      // 🎨 Utilidades adicionales para el DS
+      backgroundImage: {
+        // Grid sutil estilo terminal (para fondos decorativos)
+        'matrix-grid': 'radial-gradient(rgba(0,255,65,0.03) 1px, transparent 1px)',
+        'bitcoin-grid': 'radial-gradient(rgba(247,147,26,0.03) 1px, transparent 1px)',
+      },
+      backgroundSize: {
+        'grid-40': '40px 40px',
+        'grid-50': '50px 50px',
       },
     },
   },

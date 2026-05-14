@@ -2,92 +2,109 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─────────────────────────────────────────────────────────────
+   🎨 DESIGN SYSTEM v2.0 — Variables & Base
+   ───────────────────────────────────────────────────────────── */
 @layer base {
   :root {
-    /* FONDO: Negro Puro (Estilo Matrix Cinematográfico) */
-    --background: 0 0% 0%;       /* #000000 */
-    --foreground: 210 40% 98%;  /* Blanco Hueso para texto general */
+    /* FONDO: Negro Puro (OLED Depth) */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%; /* #FAFAFA */
 
-    /* Tarjetas y Popovers: Negro con un tinte verde imperceptible */
-    --card: 120 10% 5%;         /* #000d0a - Fondo tarjeta casi negro */
-    --card-foreground: 210 40% 98%;
-    --popover: 120 10% 5%;
-    --popover-foreground: 210 40% 98%;
+    /* Tarjetas / Popovers: Negro con tinte verde imperceptible */
+    --card: 132 10% 2%;
+    --card-foreground: 0 0% 98%;
+    --popover: 132 10% 2%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Bordes y estados */
-    --border: 120 30% 15%;       /* Bordes verde oscuro */
-    --input: 120 30% 15%;
-    --ring: 30 93% 53%;         /* El ring de foco sigue siendo Naranja (Bitcoin) */
+    /* Bordes y Estados */
+    --border: 132 20% 10%;
+    --input: 132 20% 10%;
+    --ring: 30 93% 53%; /* Bitcoin Orange para focus ring */
     --radius: 0.75rem;
 
-    /* COLORES DE MARCA (HSL) */
-    --bitcoin: 30 93% 53%;      /* #F7931A - Invariable */
-    
-    /* CAMBIO CLAVE: Cyan por Matrix Green */
-    --matrix: 120 100% 50%;     /* #00FF00 - Verde Matrix Puro */
-    /* Variante un poco más oscura para textos largos */
-    --matrix-dark: 120 100% 35%; /* #00B300 */
+    /* 🟢 COLORES DE MARCA (HSL exactos) */
+    --bitcoin: 30 93% 53%;      /* #F7931A */
+    --matrix: 132 100% 50%;     /* #00FF41 ← CORREGIDO */
+    --matrix-dark: 132 100% 35%;/* #00B300 */
 
-    /* Mapeo de Componentes */
-    --primary: 30 93% 53%;      /* Bitcoin sigue siendo Primary */
+    /* ✨ Efectos Glow (RGBA para sombras CSS) */
+    --matrix-glow: 0 0 15px rgba(0, 255, 65, 0.2), 0 0 30px rgba(0, 255, 65, 0.1);
+    --matrix-glow-hover: 0 0 25px rgba(0, 255, 65, 0.4), 0 0 50px rgba(0, 255, 65, 0.25);
+    --bitcoin-glow: 0 0 20px rgba(247, 147, 26, 0.4);
+
+    /* 🧩 Mapeo shadcn/ui */
+    --primary: 30 93% 53%;
     --primary-foreground: 0 0% 0%;
-    
-    --secondary: 120 100% 50%;  /* El secundario ahora es Matrix Green */
+    --secondary: 132 100% 50%;
     --secondary-foreground: 0 0% 0%;
-
-    /* Estados adicionales */
-    --muted: 120 10% 10%;       /* Gris verdoso muy oscuro */
-    --muted-foreground: 120 10% 60%; /* Gris verdoso apagado */
-    --accent: 120 30% 15%;
-    --accent-foreground: 120 100% 50%;
+    --muted: 132 10% 8%;
+    --muted-foreground: 132 10% 60%;
+    --accent: 132 20% 10%;
+    --accent-foreground: 132 100% 50%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 98%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  @apply bg-background text-foreground antialiased;
-  font-feature-settings: "rlig" 1, "calt" 1;
-}
-
-/* UTILIDADES PERSONALIZADAS */
+/* ─────────────────────────────────────────────────────────────
+   🛠️ UTILIDADES PERSONALIZADAS (DS v2.0)
+   ───────────────────────────────────────────────────────────── */
 @layer utilities {
-  /* Bitcoin Colors */
-  .text-bitcoin {
-    color: hsl(var(--bitcoin));
-  }
-  .bg-bitcoin {
-    background-color: hsl(var(--bitcoin));
-  }
-  .border-bitcoin {
-    border-color: hsl(var(--bitcoin));
+  /* 🔤 Colores de Marca */
+  .text-matrix { color: hsl(var(--matrix)); }
+  .bg-matrix { background-color: hsl(var(--matrix)); }
+  .border-matrix { border-color: hsl(var(--matrix)); }
+
+  .text-bitcoin { color: hsl(var(--bitcoin)); }
+  .bg-bitcoin { background-color: hsl(var(--bitcoin)); }
+  .border-bitcoin { border-color: hsl(var(--bitcoin)); }
+
+  /* 💡 Glows (Separados para no afectar contraste/a11y por defecto) */
+  .glow-matrix { text-shadow: 0 0 8px rgba(0, 255, 65, 0.6); }
+  .glow-bitcoin { text-shadow: 0 0 8px rgba(247, 147, 26, 0.6); }
+  .shadow-matrix { box-shadow: var(--matrix-glow); }
+  .shadow-matrix-hover { box-shadow: var(--matrix-glow-hover); }
+
+  /* 🪟 Glassmorphism "Bunker" */
+  .glass-bunker {
+    @apply bg-black/80 backdrop-blur-md border border-white/10;
   }
 
-  /* Matrix Green Colors (Reemplazando a Turquesa) */
-  .text-matrix {
-    color: hsl(var(--matrix));
-    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5); /* Efecto Glow sutil */
-  }
-  
-  .bg-matrix {
-    background-color: hsl(var(--matrix));
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3); /* Glow fuerte para fondos */
+  /* ✅ CORREGIDO: Comentario CSS válido */
+  .bg-matrix-grid {
+    background-image: radial-gradient(rgba(0, 255, 65, 0.15) 1px, transparent 1px);
+    background-size: 50px 50px;
   }
 
-  .border-matrix {
-    border-color: hsl(var(--matrix));
+  /* 🎭 Ruido CRT (Textura monitor antiguo) */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
   }
 
-  /* Fallbacks de turquesa por si acaso (Opcional, eliminar si limpias todo) */
-  .text-turquesa {
-    color: hsl(var(--matrix)); /* Redirige turquesa a matrix */
-  }
-  .bg-turquesa {
-    background-color: hsl(var(--matrix));
-  }
-
-  @keyframes matrix-fall {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
+  /* ♿ Accesibilidad: Desactivar animaciones si el usuario lo solicita */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .animate-scanline, .animate-blink, .animate-ping, .animate-pulse {
+      animation: none !important;
+    }
   }
 }
