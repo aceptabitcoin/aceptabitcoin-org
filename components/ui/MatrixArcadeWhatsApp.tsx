@@ -19,11 +19,12 @@ export interface MatrixArcadeWhatsAppProps {
 // ─────────────────────────────────────────────────────────────
 // Icono Matrix Phone (SVG custom, DS v2.0)
 // ─────────────────────────────────────────────────────────────
-export const MatrixPhoneIcon = ({ className = '' }: { className?: string }) => (
+export const MatrixPhoneIcon = ({ className = '', style }: { className?: string; style?: React.CSSProperties }) => (
   <svg
     viewBox="0 0 24 24"
     fill="none"
     className={className}
+    style={style}
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
   >
