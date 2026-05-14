@@ -83,6 +83,7 @@ export default function BobChatWidget({
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false); // used only in floating mode
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingRef = useRef<NodeJS.Timeout | null>(null);
@@ -225,9 +226,10 @@ export default function BobChatWidget({
   // ──────────────────────────────────────────────────────────
   // Floating Mode (Labs / Secondary pages)
   // ──────────────────────────────────────────────────────────
+  const FloatingIcon = CONTEXTS.find(c => c.key === context)?.icon || FundamentosIcon;
+
   if (mode === 'floating') {
-    const [isOpen, setIsOpen] = useState(false);
-    const ActiveIcon = CONTEXTS.find(c => c.key === context)?.icon || FundamentosIcon;
+    const ActiveIcon = FloatingIcon;
 
     return (
       <>
