@@ -9,7 +9,7 @@ export interface SearchResult {
   metadata: Record<string, unknown>;
 }
 
-export async function searchWhitepaper(query: string): Promise<SearchResult[]> {
+export async function searchWhitepaper(query: string, topK = 5): Promise<SearchResult[]> {
   // Stub: retorna array vacío hasta que se configure Upstash Vector
   return [];
 }
