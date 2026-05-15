@@ -7,12 +7,23 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { REGISTRATION_DEFAULTS } from "@/lib/hackathon/validation";
 import RegistrationForm from "@/components/hackathon/forms/RegistrationForm";
+import { listActiveEditions } from "@/lib/hackathon/editions";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Registro | Hackathon Bitcoin México",
-  description: "Formulario de registro para equipos participantes",
-};
+export async function generateMetadata({ params }: { params: { edition: string } }): Promise<Metadata> {
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://aceptabitcoin.org"),
+    title: "Registro | Hackathon Bitcoin México",
+    description: "Formulario de registro para equipos participantes",
+  };
+}
+
+export async function generateStaticParams() {
+  const editions = await listActiveEditions();
+  return editions.map((edition) => ({
+    edition: edition.slug,
+  }));
+}
 
 export default async function RegisterPage({ params }: { params: { edition: string } }) {
   return (

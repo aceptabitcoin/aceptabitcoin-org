@@ -1,16 +1,17 @@
 // ============================================================
 // COUNTDOWN TIMER — Hackathon Edition
 // Acepta Bitcoin México | Oracle System v2.0
-// Design System: Cypherpunk Bank / Matrix Terminal
+// Design System: "Bitcoin Matrix" v2.0
 // ============================================================
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 export interface CountdownTimerProps {
-  targetDate: string; // ISO 8601 string (e.g., "2026-06-15T09:00:00-06:00")
-  timezone: string;   // IANA timezone (e.g., "America/Mexico_City")
+  targetDate: string; // ISO 8601: "2026-06-05T09:00:00-06:00"
+  timezone: string;   // IANA: "America/Mexico_City"
   labels: {
     days: string;
     hours: string;
@@ -18,7 +19,8 @@ export interface CountdownTimerProps {
     seconds: string;
   };
   className?: string;
-  onComplete?: () => void; // Callback when countdown reaches zero
+  onComplete?: () => void;
+  withContainer?: boolean; // 🎨 Opcional: envolver en glassmorphism card
 }
 
 interface TimeLeft {
@@ -29,16 +31,12 @@ interface TimeLeft {
   isExpired: boolean;
 }
 
-// Helper: Calculate time difference with timezone awareness
+// 🧠 Helper: Cálculo de tiempo con timezone awareness
 function calculateTimeLeft(targetDate: string, timezone: string): TimeLeft {
   try {
-    // Parse target date in the specified timezone
     const target = new Date(targetDate).getTime();
-    
-    // Get current time in the same timezone (for consistency)
     const now = new Date().toLocaleString("en-US", { timeZone: timezone });
     const currentTime = new Date(now).getTime();
-    
     const difference = target - currentTime;
     
     if (difference <= 0) {
@@ -53,12 +51,11 @@ function calculateTimeLeft(targetDate: string, timezone: string): TimeLeft {
       isExpired: false,
     };
   } catch (error) {
-    console.error("[CountdownTimer] Error calculating time:", error);
+    console.error("[CountdownTimer] Error:", error);
     return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: false };
   }
 }
 
-// Helper: Format number with leading zero for display
 function formatUnit(value: number): string {
   return value.toString().padStart(2, "0");
 }
@@ -69,85 +66,57 @@ export default function CountdownTimer({
   labels,
   className = "",
   onComplete,
+  withContainer = false,
 }: CountdownTimerProps) {
-  // ✅ isMounted guard: prevents hydration mismatch
+  // ✅ isMounted guard: previene hydration mismatch (MANTENIMIENTO.md)
   const [isMounted, setIsMounted] = useState(false);
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-    isExpired: false,
+    days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: false,
   });
 
-  // Mount effect: only run client-side logic after hydration
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Timer effect: update every second (only after mount)
   useEffect(() => {
     if (!isMounted) return;
-
-    // Initial calculation
+    
     const update = () => {
       const result = calculateTimeLeft(targetDate, timezone);
       setTimeLeft(result);
-      
-      // Trigger callback if expired
-      if (result.isExpired && onComplete) {
-        onComplete();
-      }
+      if (result.isExpired && onComplete) onComplete();
     };
-
-    update(); // Run immediately
-    const interval = setInterval(update, 1000); // Update every second
-
-    return () => clearInterval(interval); // Cleanup
+    
+    update();
+    const interval = setInterval(update, 1000);
+    return () => clearInterval(interval);
   }, [isMounted, targetDate, timezone, onComplete]);
 
-  // ✅ Skeleton state: matches final layout dimensions to prevent layout shift
+  // 🦴 Skeleton state: dimensiones fijas para evitar layout shift
   if (!isMounted) {
     return (
-      <div 
-        className={`font-mono text-2xl text-matrix flex items-center justify-center gap-2 ${className}`}
-        aria-label="Cargando contador"
-      >
-        {/* Days */}
-        <span className="flex flex-col items-center">
-          <span className="inline-block w-12 h-10 bg-matrix/10 border border-matrix/20 rounded animate-pulse" />
-          <span className="text-[10px] text-gray-600 mt-1">{labels.days}</span>
-        </span>
-        <span className="text-matrix/30">:</span>
-        
-        {/* Hours */}
-        <span className="flex flex-col items-center">
-          <span className="inline-block w-12 h-10 bg-matrix/10 border border-matrix/20 rounded animate-pulse" />
-          <span className="text-[10px] text-gray-600 mt-1">{labels.hours}</span>
-        </span>
-        <span className="text-matrix/30">:</span>
-        
-        {/* Minutes */}
-        <span className="flex flex-col items-center">
-          <span className="inline-block w-12 h-10 bg-matrix/10 border border-matrix/20 rounded animate-pulse" />
-          <span className="text-[10px] text-gray-600 mt-1">{labels.minutes}</span>
-        </span>
-        <span className="text-matrix/30">:</span>
-        
-        {/* Seconds */}
-        <span className="flex flex-col items-center">
-          <span className="inline-block w-12 h-10 bg-matrix/10 border border-matrix/20 rounded animate-pulse" />
-          <span className="text-[10px] text-gray-600 mt-1">{labels.seconds}</span>
-        </span>
+      <div className={cn("flex items-center justify-center gap-3", className)}>
+        {[labels.days, labels.hours, labels.minutes, labels.seconds].map((label, i) => (
+          <span key={label} className="flex flex-col items-center">
+            <span className="w-14 h-12 bg-matrix/10 border border-matrix/20 rounded animate-pulse" />
+            <span className="text-[9px] font-mono text-gray-600 mt-1 uppercase tracking-wider">
+              {label}
+            </span>
+          </span>
+        ))}
       </div>
     );
   }
 
-  // ✅ Expired state: show message instead of zeros
+  // ⚡ Expired state: mensaje con acento Bitcoin Orange
   if (timeLeft.isExpired) {
     return (
       <div 
-        className={`font-mono text-xl text-bitcoin font-bold ${className}`}
+        className={cn(
+          "font-mono text-lg font-bold text-bitcoin",
+          "drop-shadow-[0_0_15px_rgba(247,147,26,0.3)]",
+          className
+        )}
         role="status"
         aria-live="polite"
       >
@@ -156,60 +125,53 @@ export default function CountdownTimer({
     );
   }
 
-  // ✅ Render final countdown
-  return (
+  // 🎨 Render principal alineado con DS
+  const TimerUnit = ({ value, label }: { value: number; label: string }) => (
+    <span className="flex flex-col items-center">
+      <span className="text-3xl md:text-4xl font-vt323 text-[#FAFAFA] tabular-nums">
+        {formatUnit(value)}
+      </span>
+      <span className="text-[9px] font-mono text-gray-500 uppercase tracking-wider mt-0.5">
+        {label}
+      </span>
+    </span>
+  );
+
+  const content = (
     <div 
-      className={`font-mono text-2xl text-matrix flex items-center justify-center gap-2 ${className}`}
-      suppressHydrationWarning // Defensive: minor timestamp differences
+      className={cn(
+        "font-mono flex items-center justify-center gap-3",
+        "text-matrix", // Separadores en verde Matrix
+        className
+      )}
+      suppressHydrationWarning
       role="timer"
       aria-live="polite"
-      aria-label={`Tiempo restante: ${timeLeft.days} días, ${timeLeft.hours} horas, ${timeLeft.minutes} minutos, ${timeLeft.seconds} segundos`}
+      aria-label={`Tiempo restante: ${timeLeft.days}d ${timeLeft.hours}h ${timeLeft.minutes}m ${timeLeft.seconds}s`}
     >
-      {/* Days */}
-      <span className="flex flex-col items-center">
-        <span className="text-3xl font-vt323 text-white tabular-nums">
-          {formatUnit(timeLeft.days)}
-        </span>
-        <span className="text-[10px] text-gray-500 uppercase tracking-wider">
-          {labels.days}
-        </span>
-      </span>
-      
-      <span className="text-matrix/40 text-2xl font-vt323">:</span>
-      
-      {/* Hours */}
-      <span className="flex flex-col items-center">
-        <span className="text-3xl font-vt323 text-white tabular-nums">
-          {formatUnit(timeLeft.hours)}
-        </span>
-        <span className="text-[10px] text-gray-500 uppercase tracking-wider">
-          {labels.hours}
-        </span>
-      </span>
-      
-      <span className="text-matrix/40 text-2xl font-vt323">:</span>
-      
-      {/* Minutes */}
-      <span className="flex flex-col items-center">
-        <span className="text-3xl font-vt323 text-white tabular-nums">
-          {formatUnit(timeLeft.minutes)}
-        </span>
-        <span className="text-[10px] text-gray-500 uppercase tracking-wider">
-          {labels.minutes}
-        </span>
-      </span>
-      
-      <span className="text-matrix/40 text-2xl font-vt323">:</span>
-      
-      {/* Seconds */}
-      <span className="flex flex-col items-center">
-        <span className="text-3xl font-vt323 text-white tabular-nums animate-pulse">
-          {formatUnit(timeLeft.seconds)}
-        </span>
-        <span className="text-[10px] text-gray-500 uppercase tracking-wider">
-          {labels.seconds}
-        </span>
-      </span>
+      <TimerUnit value={timeLeft.days} label={labels.days} />
+      <span className="text-2xl md:text-3xl font-vt323 text-matrix/40">:</span>
+      <TimerUnit value={timeLeft.hours} label={labels.hours} />
+      <span className="text-2xl md:text-3xl font-vt323 text-matrix/40">:</span>
+      <TimerUnit value={timeLeft.minutes} label={labels.minutes} />
+      <span className="text-2xl md:text-3xl font-vt323 text-matrix/40">:</span>
+      <TimerUnit value={timeLeft.seconds} label={labels.seconds} />
     </div>
   );
+
+  // 🎨 Opcional: envolver en glassmorphism card para Hero
+  if (withContainer) {
+    return (
+      <div className={cn(
+        "inline-flex items-center justify-center px-4 py-3 rounded-xl",
+        "bg-black/80 backdrop-blur-md border border-white/10",
+        "shadow-[0_0_20px_rgba(0,255,65,0.1)]",
+        className
+      )}>
+        {content}
+      </div>
+    );
+  }
+
+  return content;
 }

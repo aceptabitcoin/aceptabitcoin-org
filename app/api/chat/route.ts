@@ -4,9 +4,10 @@ import { getSystemPrompt } from '@/lib/prompts/bob-agent';
 // ⚠️ Asegúrate que esta ruta existe en tu proyecto o ajusta el import según tu estructura vectorial
 import { searchWhitepaper } from '@/lib/vector/search';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! });
-
 export const runtime = 'edge';
+
+// Move instantiation inside POST to avoid build-time errors when GROQ_API_KEY is missing
+const getGroqClient = () => new Groq({ apiKey: process.env.GROQ_API_KEY || 'stub_key' });
 
 async function searchWithTimeout(query: string, timeoutMs = 2000) {
   const timeout = new Promise<never>((_, reject) =>
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const groq = getGroqClient();
     const completion = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [

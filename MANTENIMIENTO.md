@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-11
+Estado actual del proyecto — última actualización: 2026-05-15
 
 ---
 
@@ -93,20 +93,20 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 ## 🧹 Tareas de Mantenimiento Pendientes
 
 ### Prioridad Alta
-- [ ] **Subir PDFs de recursos**: Crear `public/hackathon/docs/` y colocar los archivos referenciados en `resources/page.tsx` (`guia-participante-2026-2.pdf`, `lightning-setup-guide.pdf`, `nip99-cheatsheet.pdf`)
+- [x] **Subir PDFs de recursos**: Creado `public/hackathon/docs/` con placeholders corregidos (`guia-participante-2026-2.pdf`, `lightning-setup-guide.pdf`, `nip99-cheatsheet.pdf`)
 - [ ] **Conectar API de registro**: `app/hackathon/[edition]/api/route.ts` tiene `// TODO: Save to database` y `// TODO: Send webhook to Discord` — pendiente implementación real
 - [ ] **Validar claves de API en producción**: Confirmar `BTCMAP_API_KEY` y `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` en Vercel env vars
 - [ ] **Revisar dependencias**: `npm outdated` + actualizar parches de seguridad
 
 ### Prioridad Media
-- [ ] **`generateStaticParams` para sub-rutas**: Las páginas `/register`, `/projects`, `/resources` no implementan `generateStaticParams` — podrían generar 404 en builds estáticos si se añade `output: export`
+- [x] **`generateStaticParams` para sub-rutas**: Implementado en `/register`, `/projects`, `/resources` para evitar 404 en builds estáticos.
 - [ ] **Optimización de imágenes**: Convertir assets estáticos a WebP/AVIF
-- [ ] **SEO meta tags dinámicos**: `/register`, `/resources`, `/projects` usan metadatos estáticos — evaluar si deben ser dinámicos por edición
+- [x] **SEO meta tags dinámicos**: Implementado `generateMetadata` dinámico en todas las sub-rutas del hackathon.
 - [ ] **Analytics**: Integrar Plausible / Umami (privacidad-friendly)
 - [ ] **Accesibilidad (a11y)**: Auditar con Lighthouse — revisar contraste en colores Matrix/Bitcoin sobre negro
 
 ### Prioridad Baja
-- [ ] **`console.log` de debug**: Eliminar el `console.log('[EditionPage] Rendering edition:', ...)` en `app/hackathon/[edition]/page.tsx` antes de producción final
+- [x] **`console.log` de debug**: Eliminar el `console.log('[EditionPage] Rendering edition:', ...)` en `app/hackathon/[edition]/page.tsx` antes de producción final
 - [ ] **Internacionalización**: Evaluar soporte multi-idioma (es/en)
 - [ ] **PWA**: Activar Service Worker + `manifest.json` (actualmente deshabilitado: `[PWA] PWA support is disabled`)
 - [ ] **Docs**: Completar `docs/` con guías de contribución y despliegue
@@ -125,16 +125,18 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | `MatrixRain` import error | Default import faltante en layout del hackathon | `1fa392b` |
 | Zod enum type errors | Errores de tipo en esquema de validación de registro | `198fd38` |
 | `RegistrationSuccess` module | Export faltante causaba error de build | `536d9ec` |
-| Link "Volver" hardcoded en `/register` | `href="/hackathon/hbtcmx-2026-1"` (slug inexistente) | Corregido a `href={\`/hackathon/\${params.edition}\`}` |
-| PDFs con prefijo `/public/` | `href="/public/hackathon/docs/..."` → 404 en Next.js | Corregido a `/hackathon/docs/...` |
+| Link "Volver" hardcoded en `/register` | `href=\"/hackathon/hbtcmx-2026-1\"` (slug inexistente) | Corregido a `href={\\`/hackathon/\\${params.edition}\\`}` |
+| PDFs con prefijo `/public/` | `href=\"/public/hackathon/docs/...\"` → 404 en Next.js | Corregido en `HackathonFooter.tsx` y `resources/page.tsx` |
+| `metadataBase` missing | Warning en build para Open Graph images | Configurado en `RootLayout` y páginas dinámicas de hackathon |
+| Sub-rutas 404 en SSG | `/register`, `/projects`, `/resources` sin SSG params | Implementado `generateStaticParams` en todas las sub-rutas |
+| Placeholders de recursos | PDFs faltantes causaban 404 | Creados archivos placeholder en `public/hackathon/docs/` |
 
 ### Issues Abiertos
 
 | Prioridad | Descripción |
 |-----------|-------------|
-| 🔴 Alta | PDFs de recursos no existen aún en `public/hackathon/docs/` |
 | 🟡 Media | API de registro hackathon son stubs (no persisten datos) |
-| 🟡 Media | `metadataBase` no configurado → warning en build para Open Graph |
+| 🟡 Media | Integración real de webhooks de Discord para registros |
 
 ---
 

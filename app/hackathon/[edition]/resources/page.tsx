@@ -5,17 +5,28 @@
 
 import { BookOpen, FileText, Video, Code, Download, Bot, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getEditionConfig } from "@/lib/hackathon/editions";
+import { getEditionConfig, listActiveEditions } from "@/lib/hackathon/editions";
+import type { Metadata } from "next";
 
 // ✅ Importar estilos específicos del hackathon
 import "@/styles/hackathon.css";
 
-export const metadata: Metadata = {
-  title: "Recursos | Hackathon Bitcoin México",
-  description: "Workshops, guías y documentación para participantes",
-};
+export async function generateMetadata({ params }: { params: { edition: string } }): Promise<Metadata> {
+  const edition = await getEditionConfig(params.edition);
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://aceptabitcoin.org"),
+    title: `Recursos | ${edition?.title || "Hackathon Bitcoin México"}`,
+    description: "Workshops, guías y documentación para participantes",
+  };
+}
+
+export async function generateStaticParams() {
+  const editions = await listActiveEditions();
+  return editions.map((edition) => ({
+    edition: edition.slug,
+  }));
+}
 
 // ── Critical Resources (shown first, featured cards) ──
 const CRITICAL_RESOURCES = [
@@ -25,7 +36,7 @@ const CRITICAL_RESOURCES = [
     description:
       "Conceptos mínimos, glosario y flujo de generación de descriptores. 15 min de lectura.",
     type: "PDF" as const,
-    href: "/hackathon/docs/guia-participante-custody-ui-2026.pdf",
+    href: "/hackathon/docs/guia-participante-2026-2.pdf",
     badge: "matrix" as const,
     featured: true,
     icon: FileText,

@@ -145,10 +145,10 @@ export default function HackathonFooter({ className }: { className?: string }) {
             © {new Date().getFullYear()} Acepta Bitcoin México. Todos los proyectos son open source bajo licencia MIT.
           </p>
           <div className="flex gap-4 text-xs text-gray-600 font-mono">
-            <a href="/public/hackathon/docs/Code_of_Conduct.md" className="hover:text-matrix transition-colors">
+            <a href="/hackathon/docs/Code_of_Conduct.md" className="hover:text-matrix transition-colors">
               Código de Conducta
             </a>
-            <a href="/public/hackathon/docs/index.md" className="hover:text-matrix transition-colors">
+            <a href="/hackathon/docs/index.md" className="hover:text-matrix transition-colors">
               Documentación
             </a>
             <a href="/api/tipjar" className="hover:text-matrix transition-colors">

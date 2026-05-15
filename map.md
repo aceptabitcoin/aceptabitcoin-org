@@ -27,11 +27,11 @@ aceptabitcoin-org/
 │   │   └── [edition]/               #   Dynamic route — one page per hackathon edition
 │   │       ├── page.tsx             #   Edition landing: Hero, Timeline, Prizes, FAQ, CTA
 │   │       ├── register/
-│   │       │   └── page.tsx         #   ⚠️ BUG: "Volver" link hard-coded to /hackathon/hbtcmx-2026-1
+│   │       │   └── page.tsx         #   Edition registration form
 │   │       ├── projects/
 │   │       │   └── page.tsx         #   Project gallery — ProjectGrid component
 │   │       ├── resources/
-│   │       │   └── page.tsx         #   ⚠️ BUG: PDF hrefs use /public/... prefix (should be /)
+│   │       │   └── page.tsx         #   Resources Hub — PDFs, docs, workshops
 │   │       └── api/
 │   │           └── route.ts         #   GET / POST — registration + submission endpoints
 │   ├── agenda/                      # Booking / Consultas (Cal.com iframe)
@@ -61,7 +61,10 @@ aceptabitcoin-org/
 │   │   └── BtcMapSection.tsx        # Leaflet map — BTC Map API merchants
 │   ├── widgets/                     # Standalone interactive widgets
 │   │   ├── MarketMoodWidget.tsx     # DCA quality indicator (4H Binance)
-│   │   └── MarketMoodInfoPopover.tsx # Educational DCA tooltip (localStorage)
+│   │   ├── MarketMoodInfoPopover.tsx # Educational DCA tooltip (localStorage)
+│   │   └── bob-chat/                # 🤖 Bob the Bitcoin Agent (AI Chat)
+│   │       ├── BobChatWidget.tsx    #   Main chat UI w/ Matrix aesthetic
+│   │       └── BobSectionHeader.tsx #   Header for Bob section
 │   ├── hackathon/                   # ✅ Hackathon-specific components (modular)
 │   │   ├── layout/
 │   │   │   ├── HackathonNavbar.tsx  # Edition-aware nav with mobile menu
@@ -135,6 +138,8 @@ aceptabitcoin-org/
 │   │       ├── 2026-2.ts            # Edition: Custody UI 2026 (upcoming) — slug: custody-ui-2026
 │   │       ├── 2026-3.ts            # Edition: Tianguis 2026 — slug: tianguis-2026
 │   │       └── legacy-data.ts       # Legacy edition data
+│   ├── prompts/
+│   │   └── bob-agent.ts             # Bob's personality & system prompt
 │   ├── market/                      # Market data clients
 │   │   ├── binance.ts               # Binance BTC/USD price fetch
 │   │   └── useMarketMood.ts         # React hook: DCA ratio, price, sparkline data
@@ -152,6 +157,8 @@ aceptabitcoin-org/
 ├── public/                          # Static assets (images, icons)
 ├── docs/                            # Documentation
 ├── hooks/                           # Custom React hooks
+│   ├── useMarketMood.ts             # Hook for DCA & Price data
+│   └── useBobChat.ts                # BobChat state & typing logic
 ├── scripts/                         # Build / utility scripts
 ├── .env.local                       # Local env (never committed)
 ├── .env.example                     # Env var template
@@ -177,9 +184,9 @@ aceptabitcoin-org/
 | `/nuestra-historia` | Project History & Mission | `app/nuestra-historia/page.tsx` | ✅ Functional |
 | `/proveedores` | **Sovereign Directory** — Filterable provider grid w/ MatrixRain | `app/proveedores/page.tsx` + `ProveedoresClient.tsx` | ✅ Functional |
 | `/hackathon/[edition]` | **Hackathon Landing** — Edition-specific page (Hero, Timeline, Prizes, FAQ, CTA) | `app/hackathon/[edition]/page.tsx` | ✅ Live — slugs: `custody-ui-2026`, `tianguis-2026`, `2026-1` |
-| `/hackathon/[edition]/register` | **Team Registration** — Zod-validated form | `app/hackathon/[edition]/register/page.tsx` | ⚠️ Bug: "Volver" link hard-coded to `/hackathon/hbtcmx-2026-1` |
+| `/hackathon/[edition]/register` | **Team Registration** — Zod-validated form | `app/hackathon/[edition]/register/page.tsx` | ✅ Functional |
 | `/hackathon/[edition]/projects` | **Project Gallery** — ProjectGrid w/ edition data | `app/hackathon/[edition]/projects/page.tsx` | ✅ Functional |
-| `/hackathon/[edition]/resources` | **Resources Hub** — PDFs, docs, workshop recordings | `app/hackathon/[edition]/resources/page.tsx` | ⚠️ Bug: PDF hrefs use `/public/...` prefix (should be `/hackathon/...`) |
+| `/hackathon/[edition]/resources` | **Resources Hub** — PDFs, docs, workshop recordings | `app/hackathon/[edition]/resources/page.tsx` | ✅ Functional |
 | `/hackathon/[edition]/api` | **Hackathon API** — GET endpoints list, POST registration | `app/hackathon/[edition]/api/route.ts` | ✅ Functional (stubs) |
 | `/api/tipjar` | Lightning Tip-Jar API (Blink.sv proxy) | `app/api/tipjar/route.ts` | ✅ Live |
 | `/api/webhook/lnbits` | LNbits webhook handler | `app/api/webhook/lnbits.ts` | ✅ Live |
@@ -192,9 +199,7 @@ aceptabitcoin-org/
 | `2026-2` | `custody-ui-2026` | 🚀 upcoming | Custody UI Challenge |
 | `2026-3` | `tianguis-2026` | 📋 defined | Tianguis Lightning Edition |
 
-**Known Bugs in Hackathon Module:**
-- `register/page.tsx:24` — "Volver" link hard-codes `/hackathon/hbtcmx-2026-1` (slug doesn't exist). Should use `params.edition` dynamically.
-- `resources/page.tsx:20,34,41` — PDF `href` values use `/public/hackathon/...` prefix. In Next.js, files in `/public` are served from `/`, so they should be `/hackathon/docs/...`.
+**Status:** All critical module bugs resolved. Documentation paths and dynamic routing verified.
 
 ## 🛠️ Technology Stack
 
@@ -253,3 +258,5 @@ The project uses a high-contrast, technical aesthetic inspired by digital fronti
 9. **Interactive Footer**: "Node Status" simulation, terminal-style nav links
 10. **Hackathon Module** (🚀 New): Full multi-edition hackathon platform under `app/hackathon/[edition]/`. Migrated from `(hackathon)` route group to flat `app/hackathon/` to fix hydration & routing errors. Supports editions: `custody-ui-2026`, `tianguis-2026`, `2026-1`.
 11. **CI/CD**: Build verified passing with zero hydration errors, zero TypeScript errors
+12. **Hackathon Stability** (🛠️): Fixed hardcoded links, corrected `/public/` documentation paths, implemented `generateStaticParams` for all sub-routes, and configured `metadataBase` for Open Graph.
+13. **Bob the Bitcoin Agent** (🤖): Integrated a specialized Bitcoin AI assistant on the homepage with custom Cypherpunk personality, Matrix-style chat UI, and stateful interaction.

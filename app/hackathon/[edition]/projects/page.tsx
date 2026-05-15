@@ -5,15 +5,25 @@
 
 import { FolderGit } from "lucide-react";
 import ProjectGrid from "@/components/hackathon/display/ProjectGrid";
+import { getEditionConfig, listActiveEditions } from "@/lib/hackathon/editions";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Proyectos | Hackathon Bitcoin México",
-  description: "Galería de proyectos presentados en el hackathon",
-};
+export async function generateMetadata({ params }: { params: { edition: string } }): Promise<Metadata> {
+  const edition = await getEditionConfig(params.edition);
+  return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://aceptabitcoin.org"),
+    title: `Proyectos | ${edition?.title || "Hackathon Bitcoin México"}`,
+    description: "Galería de proyectos presentados en el hackathon",
+  };
+}
 
-import { getEditionConfig } from "@/lib/hackathon/editions";
-import { notFound } from "next/navigation";
+export async function generateStaticParams() {
+  const editions = await listActiveEditions();
+  return editions.map((edition) => ({
+    edition: edition.slug,
+  }));
+}
 
 export default async function ProjectsPage({ params }: { params: { edition: string } }) {
   const edition = await getEditionConfig(params.edition);

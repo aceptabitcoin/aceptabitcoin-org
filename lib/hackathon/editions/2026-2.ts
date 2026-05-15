@@ -3,6 +3,7 @@ import { HackathonEdition } from "./types";
 // ============================================================
 // HACKATHON EDITION: 2026-2 (Bitcoin Self-Custody UI Challenge)
 // Basado en: hackathon-bitcoin-custody-ui.md.pdf
+// Alineado con: Design System "Bitcoin Matrix" v2.0
 // ============================================================
 
 export const edition2026_2: HackathonEdition = {
@@ -13,34 +14,60 @@ export const edition2026_2: HackathonEdition = {
   tagline: "Diseña la mejor experiencia de usuario para custodia avanzada de Bitcoin",
   subtitle: "Multisig + Timelocks + Miniscript — Sin perder la cabeza en el intento",
   
-  // --- Fechas (Placeholder lógico basado en la estructura del PDF) ---
+  // --- Fechas (PDF oficial) ---
   status: "upcoming",
   dates: {
-    start: "2026-06-15T09:00:00-06:00", // Kickoff
-    end: "2026-06-17T23:59:00-06:00",   // Submission Deadline (48h)
-    registrationDeadline: "2026-06-13T23:59:00-06:00",
+    start: "2026-06-05T09:00:00-06:00",
+    end: "2026-06-07T23:59:00-06:00",
+    registrationDeadline: "2026-06-04T23:59:00-06:00",
     timezone: "America/Mexico_City",
   },
 
   // --- Formato ---
   format: "hibrida",
   locations: [
-    { city: "Ciudad de México", venue: "Hub CDMX (Por confirmar)" },
-    { city: "Mérida", venue: "Tec de Software Mérida" },
+    { 
+      city: "Mérida", 
+      venue: "Tecnológico de Software Mérida",
+      address: "C. 18 103, Col. México, México Oriente, 97100 Mérida, Yuc.",
+      coordinates: { lat: 20.9674, lng: -89.5926 },
+      isPrimary: true 
+    },
   ],
 
-  // --- Contexto y Descripción ---
+  // --- Contexto ---
   context: `La auto-custodia de Bitcoin sigue siendo un campo donde la seguridad y la usabilidad están en tensión constante. 
   Sparrow es excelente para técnicos, pero su UI asume conocimientos profundos. Liana simplifica con 'primary/recovery paths', 
   pero aún deja espacio para iteración. 
   El reto es crear una UI donde un usuario pueda configurar visualmente su política de custodia (multisig, timelocks, herencia) 
   sin escribir descriptors a mano, pero permitiendo al usuario avanzado el poder total de un descriptor BIP380.`,
 
-  // --- Premios ---
+  // --- Premios (montos corregidos + DS tokens) ---
   prizes: [
-    { place: "1°", amountMXN: 15000, paidInBitcoin: true, description: "Mejor UX + Correctitud Técnica + Innovación" },
-    { place: "2°", amountMXN: 8000, paidInBitcoin: true, description: "Mejor Diseño de Experiencia y Accesibilidad" },
-    { place: "3°", amountMXN: 4000, paidInBitcoin: true, description: "Mejor Implementación de Descriptor y Código" },
+    { 
+      place: "1°", 
+      amountMXN: 6000, 
+      paidInBitcoin: true, 
+      description: "Mejor UX + Correctitud Técnica + Innovación",
+      dsColor: "text-bitcoin",
+      glow: "shadow-[0_0_20px_rgba(247,147,26,0.4)]"
+    },
+    { 
+      place: "2°", 
+      amountMXN: 2500, 
+      paidInBitcoin: true, 
+      description: "Mejor Diseño de Experiencia y Accesibilidad",
+      dsColor: "text-matrix",
+      glow: "shadow-[0_0_15px_rgba(0,255,65,0.2)]"
+    },
+    { 
+      place: "3°", 
+      amountMXN: 1500, 
+      paidInBitcoin: true, 
+      description: "Mejor Implementación de Descriptor y Código",
+      dsColor: "text-gray-300",
+      glow: "shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+    },
   ],
 
   // --- Criterios de Evaluación ---
@@ -65,34 +92,14 @@ export const edition2026_2: HackathonEdition = {
 
   // --- Conceptos Técnicos ---
   technicalConcepts: [
-    { 
-      id: "xpub", 
-      title: "XPUB (Extended Public Key)", 
-      description: "Llaves públicas padre para derivar direcciones sin exponer privadas. Formato: xpub, ypub, zpub." 
-    },
-    { 
-      id: "descriptors", 
-      title: "Output Descriptors (BIP380)", 
-      description: "Strings que describen cómo la wallet genera direcciones (ej: wpkh, wsh(multi()))." 
-    },
-    { 
-      id: "miniscript", 
-      title: "Miniscript", 
-      description: "Lenguaje estructurado para condiciones complejas (multi-firma, timelocks, hashes) dentro de wsh() y tr()." 
-    },
-    { 
-      id: "timelocks", 
-      title: "Timelocks (BIP68/BIP65)", 
-      description: "Relativos (older) para recovery paths y Absolutos (after) para herencia con fecha fija." 
-    },
-    { 
-      id: "psbt", 
-      title: "PSBT (BIP174)", 
-      description: "Partially Signed Bitcoin Transaction. Formato estándar para cooperación de firmantes." 
-    },
+    { id: "xpub", title: "XPUB (Extended Public Key)", description: "Llaves públicas padre para derivar direcciones sin exponer privadas. Formato: xpub, ypub, zpub." },
+    { id: "descriptors", title: "Output Descriptors (BIP380)", description: "Strings que describen cómo la wallet genera direcciones (ej: wpkh, wsh(multi()))." },
+    { id: "miniscript", title: "Miniscript", description: "Lenguaje estructurado para condiciones complejas (multi-firma, timelocks, hashes) dentro de wsh() y tr()." },
+    { id: "timelocks", title: "Timelocks (BIP68/BIP65)", description: "Relativos (older) para recovery paths y Absolutos (after) para herencia con fecha fija." },
+    { id: "psbt", title: "PSBT (BIP174)", description: "Partially Signed Bitcoin Transaction. Formato estándar para cooperación de firmantes." },
   ],
 
-  // --- Anti-Patrones (Lo que NO deben hacer) ---
+  // --- Anti-Patrones ---
   antiPatterns: [
     "❌ Pedir seed phrase al usuario en una web app.",
     "❌ Custodiar llaves privadas en el backend.",
@@ -120,16 +127,26 @@ export const edition2026_2: HackathonEdition = {
     { title: "Sparrow Multisig Walkthrough", type: "workshop", url: "https://sparrowwallet.com/", description: "Tutorial de Orange Surf" },
   ],
 
-  // --- Logística y Reglas ---
+  // --- Hardware Wallets (solo Trezor por soberanía) ---
+  hardwareWallets: [
+    { 
+      name: "Trezor", 
+      models: ["Model T", "Safe 3", "One"], 
+      supported: true,
+      note: "Recomendado por soberanía y código abierto"
+    },
+  ],
+
+  // --- Reglas ---
   rules: "Código Open Source (MIT/Apache/BSD). Equipos de 2-4 personas. Multi-disciplinario recomendado. IP: Propiedad compartida bajo licencia permisiva.",
 
-  // --- Timeline del Evento ---
+  // --- Timeline ---
   timeline: [
-    { step: "01", title: "Kickoff + Workshop Miniscript", description: "Presentación del reto y taller de Descriptors/Miniscript", date: "2026-06-15 09:00 AM" },
-    { step: "02", title: "48h de Construcción", description: "Desarrollo del frontend y validación de policies", date: "2026-06-15 a 2026-06-17" },
+    { step: "01", title: "Banderazo + Workshop Miniscript", description: "Presentación del reto y taller de Descriptors/Miniscript", date: "2026-06-05 09:00 AM", location: "Tec de Software Mérida / Discord" },
+    { step: "02", title: "48h de Construcción", description: "Desarrollo del frontend y validación de policies", date: "2026-06-05 a 2026-06-07" },
     { step: "03", title: "Office Hours / Mentoring", description: "Sesiones con mentores (Bitcoin Dev Kit, UX Experts)", date: "Disponible por Discord" },
-    { step: "04", title: "Submission Deadline", description: "Envío de Repo, Demo y Video Pitch", date: "2026-06-17 11:59 PM" },
-    { step: "05", title: "Pitch Final & Winners", description: "Demos en vivo de 5 min + Q&A", date: "2026-06-18" },
+    { step: "04", title: "Submission Deadline", description: "Envío de Repo, Demo y Video Pitch", date: "2026-06-07 11:59 PM" },
+    { step: "05", title: "Pitch Final & Winners", description: "Demos en vivo de 5 min + Q&A", date: "2026-06-08" },
   ],
 
   // --- Sponsors ---
@@ -143,15 +160,16 @@ export const edition2026_2: HackathonEdition = {
       featured: true 
     },
     { 
-      name: "Tec de Software Mérida", 
-      role: "hub", 
+      name: "Tecnológico de Software Mérida", 
+      role: "hub-presencial", 
       logo: "/hackathon/logos/tecdesoftware.svg", 
       url: "https://tecdesoftware.edu.mx/", 
-      description: "Formación técnica de alto impacto en el sureste." 
+      description: "Formación técnica de alto impacto en el sureste.",
+      address: "C. 18 103, Col. México, México Oriente, 97100 Mérida, Yuc."
     }
   ],
 
-  // --- Configuración del Repositorio Base ---
+  // --- Repo Base ---
   repoBase: {
     url: "https://github.com/aceptabitcoin/custody-ui-base",
     branch: "main",

@@ -46,6 +46,7 @@ export async function generateMetadata({
   }
   
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://aceptabitcoin.org"),
     title: `${edition.title} | Hackathon Bitcoin México`,
     description: edition.tagline,
     openGraph: {
@@ -94,15 +95,6 @@ export default async function EditionPage({ params }: EditionPageProps) {
   if (!edition || edition.status === "draft") {
     notFound(); // ✅ Esto debe ejecutarse antes del return
   }
-
-  // Debug: Ver qué datos estamos pasando
-  console.log('[EditionPage] Rendering edition:', {
-    id: edition.id,
-    slug: edition.slug,
-    status: edition.status,
-    hasTimeline: edition.timeline?.length,
-    hasPrizes: edition.prizes?.length,
-  });
 
   return (
     <div className="min-h-screen bg-black text-white">

@@ -1,14 +1,17 @@
 // ============================================================
 // HACKATHON NAVBAR — Dedicated navigation for hackathon section
 // Acepta Bitcoin México | Oracle System v2.0
+// Estética: Cyberpunk Bank meets The Matrix
 // ============================================================
 
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
-import { Bug, Menu, X, Rocket } from "lucide-react";
+import { Menu, X, Rocket } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Logo from "@/components/ui/Logo";
 
 interface HackathonNavbarProps {
   className?: string;
@@ -21,12 +24,12 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
   
   const editionSlug = (params?.edition as string) || "custody-ui-2026";
 
+  // ✅ Links unificados: solo navegación esencial
   const navLinks = [
-    { name: "Inicio", href: `/hackathon/${editionSlug}`, pattern: /^\/hackathon\/[^/]+\/?$/ },
-    {
-      name: "Registro",
-      href: `/hackathon/${editionSlug}/register`,
-      pattern: /^\/hackathon\/[^/]+\/register/,
+    { 
+      name: "Inicio", 
+      href: `/hackathon/${editionSlug}`, 
+      pattern: /^\/hackathon\/[^/]+\/?$/ 
     },
     {
       name: "Proyectos",
@@ -37,11 +40,6 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
       name: "Recursos",
       href: `/hackathon/${editionSlug}/resources`,
       pattern: /^\/hackathon\/[^/]+\/resources/,
-    },
-    {
-      name: "API",
-      href: "#api-docs",
-      pattern: "#api",
     },
   ];
 
@@ -55,22 +53,23 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
   return (
     <nav
       className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
-        "bg-black/80 backdrop-blur-md",
+        "fixed top-0 w-full z-50 transition-all duration-300",
+        "bg-black/80 backdrop-blur-md border-b border-white/10",
         className
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+          
+          {/* Logo — Componente oficial + tipografía institucional */}
           <Link href="/" className="flex items-center gap-2 z-50">
-            <Bug className="h-6 w-6 text-bitcoin" />
-            <span className="font-serif font-bold text-sm md:text-base text-white">
+            <Logo className="h-6 w-6 text-bitcoin" />
+            <span className="font-serif font-bold text-sm md:text-base text-[#FAFAFA]">
               <span className="text-bitcoin">Acepta Bitcoin</span>
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation — font-mono para datos técnicos */}
           <div className="hidden md:flex items-center space-x-1">
             {navLinks.map((link) => {
               const active = isActive(link.pattern);
@@ -82,12 +81,13 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
                     "px-3 py-2 rounded-lg text-sm font-mono transition-all duration-200",
                     "relative group",
                     active
-                      ? "text-bitcoin bg-bitcoin/10 shadow-[0_0_15px_rgba(247,147,26,0.2)]"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                      ? "text-bitcoin bg-bitcoin/10 shadow-[0_0_20px_rgba(247,147,26,0.4)]"
+                      : "text-gray-300 hover:text-[#FAFAFA] hover:bg-white/5"
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}
+                  {/* Indicador de estado: Matrix Green para hover, Bitcoin para activo */}
                   <span
                     className={cn(
                       "absolute -bottom-1 left-0 h-[2px] transition-all duration-300",
@@ -101,7 +101,7 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
             })}
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button — Interactive: text-matrix */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden text-matrix focus:outline-none z-50"
@@ -112,7 +112,7 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu — Overlay con backdrop-blur-xl */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 bg-black/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center space-y-6 md:hidden">
           <Rocket className="h-8 w-8 text-bitcoin animate-pulse" />
@@ -121,7 +121,7 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
               key={link.name}
               href={link.href}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="text-xl font-serif text-white hover:text-bitcoin transition-colors"
+              className="text-xl font-serif text-[#FAFAFA] hover:text-bitcoin transition-colors"
             >
               {link.name}
             </Link>
@@ -134,6 +134,3 @@ export default function HackathonNavbar({ className }: HackathonNavbarProps = {}
     </nav>
   );
 }
-
-// Import useState (needed for client component)
-import { useState } from "react";
