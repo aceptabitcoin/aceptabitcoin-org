@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-15
+Estado actual del proyecto — última actualización: 2026-05-16
 
 ---
 
@@ -130,6 +130,9 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | `metadataBase` missing | Warning en build para Open Graph images | Configurado en `RootLayout` y páginas dinámicas de hackathon |
 | Sub-rutas 404 en SSG | `/register`, `/projects`, `/resources` sin SSG params | Implementado `generateStaticParams` en todas las sub-rutas |
 | Placeholders de recursos | PDFs faltantes causaban 404 | Creados archivos placeholder en `public/hackathon/docs/` |
+| Metadata types missing | Error `Cannot find name 'Metadata'` en build | Importado `type { Metadata } from 'next'` en sub-páginas |
+| Build failure `/api/chat` | Error en Edge Runtime por SDK de Groq | Instanciación movida dentro del handler `POST` |
+| BobChat scroll hijacking | Scroll automático interrumpía navegación al escribir | Trigger cambiado a `messages.length` + `block: 'nearest'` |
 
 ### Issues Abiertos
 

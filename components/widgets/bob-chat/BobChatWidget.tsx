@@ -116,10 +116,10 @@ export default function BobChatWidget({
   // Auto-scroll + cleanup typing on unmount/context change
   // ──────────────────────────────────────────────────────────
   useEffect(() => {
-    if (messages.length > 0) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > 0 && isMounted.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  }, [messages]);
+  }, [messages.length]);
 
   useEffect(() => {
     return () => { 
