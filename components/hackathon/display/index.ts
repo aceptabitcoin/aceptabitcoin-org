@@ -12,6 +12,5 @@ export { default as SponsorsGrid } from "./SponsorsGrid";
 export { default as LoadingState } from "./LoadingState";
 export { default as CountdownTimer } from "./CountdownTimer";
 export { default as Leaderboard } from "./Leaderboard";
-export { default as ApiDocsCard } from "./ApiDocsCard";
 
 export { default as HackathonLayout } from "@/components/hackathon/layout/HackathonLayout";

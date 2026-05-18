@@ -178,11 +178,10 @@ export default async function Home() {
 
         {/* 🟢 Botón flotante de contacto (siempre accesible) */}
         <MatrixArcadeWhatsApp
-          phoneNumber="+521234567890"
+          phoneNumber="+525586765117"
           message="Hola, quiero aprender sobre Bitcoin 🟢"
           label="Soporte Matrix"
           size="lg"
-          enableMatrixRain={true}
           enableSound={false}
           onlineStatus="online"
           className="fixed bottom-6 right-6 z-40"

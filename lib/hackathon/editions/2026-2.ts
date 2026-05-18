@@ -160,6 +160,14 @@ export const edition2026_2: HackathonEdition = {
       featured: true 
     },
     { 
+      name: "ArcadiaB", 
+      role: "sponsor", 
+      logo: "/hackathon/logos/arcadiab.svg", // 👈 Asegúrate de subir arcadiab.svg a /public/hackathon/logos/
+      url: "https://www.arcadiab.com/", 
+      description: "Plataforma de innovación Bitcoin para desarrolladores. Impulsando proyectos de custodia soberana.", 
+      featured: true // ⭐ Muestra badge de destacado en SponsorsGrid
+    },
+    { 
       name: "Tecnológico de Software Mérida", 
       role: "hub-presencial", 
       logo: "/hackathon/logos/tecdesoftware.svg", 

@@ -85,7 +85,6 @@ aceptabitcoin-org/
 │   │   │   ├── Leaderboard.tsx
 │   │   │   ├── LoadingState.tsx
 │   │   │   ├── PreviousWinners.tsx
-│   │   │   ├── ApiDocsCard.tsx
 │   │   │   ├── ExperienceTier.tsx
 │   │   │   └── index.ts
 │   │   ├── content/
@@ -99,9 +98,7 @@ aceptabitcoin-org/
 │   │   │   ├── EditionOverview.tsx
 │   │   │   └── index.ts
 │   │   ├── forms/
-│   │   │   ├── RegistrationForm.tsx # Full registration form w/ Zod validation
-│   │   │   ├── TeamMemberInputs.tsx # Dynamic team member fields
-│   │   │   └── index.ts
+│   │   │   └── index.ts             #   Form exports (Registration removed)
 │   │   └── interactive/
 │   │       ├── GoogleFormButton.tsx # CTA button linking to Google Form
 │   │       ├── CommandCheatSheet.tsx
@@ -184,10 +181,10 @@ aceptabitcoin-org/
 | `/nuestra-historia` | Project History & Mission | `app/nuestra-historia/page.tsx` | ✅ Functional |
 | `/proveedores` | **Sovereign Directory** — Filterable provider grid w/ MatrixRain | `app/proveedores/page.tsx` + `ProveedoresClient.tsx` | ✅ Functional |
 | `/hackathon/[edition]` | **Hackathon Landing** — Edition-specific page (Hero, Timeline, Prizes, FAQ, CTA) | `app/hackathon/[edition]/page.tsx` | ✅ Live — slugs: `custody-ui-2026`, `tianguis-2026`, `2026-1` |
-| `/hackathon/[edition]/register` | **Team Registration** — Zod-validated form | `app/hackathon/[edition]/register/page.tsx` | ✅ Functional |
+| `/hackathon/[edition]/register` | **External Registration** — Redirect to Google Forms | `app/hackathon/[edition]/register/page.tsx` | ✅ Redirect |
 | `/hackathon/[edition]/projects` | **Project Gallery** — ProjectGrid w/ edition data | `app/hackathon/[edition]/projects/page.tsx` | ✅ Functional |
 | `/hackathon/[edition]/resources` | **Resources Hub** — PDFs, docs, workshop recordings | `app/hackathon/[edition]/resources/page.tsx` | ✅ Functional |
-| `/hackathon/[edition]/api` | **Hackathon API** — GET endpoints list, POST registration | `app/hackathon/[edition]/api/route.ts` | ✅ Functional (stubs) |
+| `/hackathon/[edition]/api` | **Hackathon API** — Info + Submission endpoints | `app/hackathon/[edition]/api/route.ts` | ✅ Functional |
 | `/api/tipjar` | Lightning Tip-Jar API (Blink.sv proxy) | `app/api/tipjar/route.ts` | ✅ Live |
 | `/api/webhook/lnbits` | LNbits webhook handler | `app/api/webhook/lnbits.ts` | ✅ Live |
 
@@ -260,3 +257,4 @@ The project uses a high-contrast, technical aesthetic inspired by digital fronti
 11. **CI/CD**: Build verified passing with zero hydration errors, zero TypeScript errors
 12. **Hackathon Stability** (🛠️): Fixed hardcoded links, corrected `/public/` documentation paths, implemented `generateStaticParams` for all sub-routes, and configured `metadataBase` for Open Graph.
 13. **Bob the Bitcoin Agent** (🤖): Integrated a specialized Bitcoin AI assistant on the homepage with custom Cypherpunk personality, Matrix-style chat UI, and stateful interaction.
+14. **Dead Code Cleanup** (🧹): Removed unused legacy components (e.g., `ApiDocsCard`) and cleaned up exports to keep the module lightweight.

@@ -156,6 +156,9 @@ export interface HackathonEdition {
     map?: boolean;               // Mostrar mapa interactivo
   };
 
+  // --- External Redirects ---
+  registrationUrl?: string;     // URL personalizado de Google Forms (opcional)
+
   // --- Métricas (para ediciones completadas) ---
   metrics?: {
     totalProjects: number;

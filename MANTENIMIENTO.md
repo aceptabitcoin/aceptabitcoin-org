@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-16
+Estado actual del proyecto — última actualización: 2026-05-18
 
 ---
 
@@ -94,7 +94,7 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 
 ### Prioridad Alta
 - [x] **Subir PDFs de recursos**: Creado `public/hackathon/docs/` con placeholders corregidos (`guia-participante-2026-2.pdf`, `lightning-setup-guide.pdf`, `nip99-cheatsheet.pdf`)
-- [ ] **Conectar API de registro**: `app/hackathon/[edition]/api/route.ts` tiene `// TODO: Save to database` y `// TODO: Send webhook to Discord` — pendiente implementación real
+- [x] **Conectar API de registro**: Migrado a Google Forms para simplificar la gestión y soberanía de datos. El endpoint `POST /register` ha sido removido.
 - [ ] **Validar claves de API en producción**: Confirmar `BTCMAP_API_KEY` y `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` en Vercel env vars
 - [ ] **Revisar dependencias**: `npm outdated` + actualizar parches de seguridad
 
@@ -110,6 +110,7 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 - [ ] **Internacionalización**: Evaluar soporte multi-idioma (es/en)
 - [ ] **PWA**: Activar Service Worker + `manifest.json` (actualmente deshabilitado: `[PWA] PWA support is disabled`)
 - [ ] **Docs**: Completar `docs/` con guías de contribución y despliegue
+- [x] **Limpieza de código muerto**: Eliminación del componente `ApiDocsCard` y limpieza de exports huérfanos en `components/hackathon/display/index.ts`.
 
 ---
 
@@ -133,6 +134,8 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | Metadata types missing | Error `Cannot find name 'Metadata'` en build | Importado `type { Metadata } from 'next'` en sub-páginas |
 | Build failure `/api/chat` | Error en Edge Runtime por SDK de Groq | Instanciación movida dentro del handler `POST` |
 | BobChat scroll hijacking | Scroll automático interrumpía navegación al escribir | Trigger cambiado a `messages.length` + `block: 'nearest'` |
+| Native Registration Form | Mantenimiento de formulario y validación Zod complejo | Migrado a Google Forms con redirección automática en `/register` |
+| Componentes obsoletos | `ApiDocsCard` y exports sin uso en el módulo de display del Hackathon | Componente eliminado y `index.ts` limpiado |
 
 ### Issues Abiertos
 
