@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-18
+Estado actual del proyecto — última actualización: 2026-05-18 (Fix Hydration)
 
 ---
 
@@ -41,7 +41,9 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 
 | Componente | Guard `isMounted` | `suppressHydrationWarning` | `dynamic ssr:false` | Estado |
 |------------|-------------------|---------------------------|---------------------|--------|
-| `MatrixRain` | ✅ | ✅ | — | ✅ OK |
+| `MatrixRain` | ✅ | — | — | ✅ OK (Renderiza `<canvas>` en SSR y CSR para evitar mismatch) |
+| `HeroParticles` | ✅ | — | — | ✅ OK (Renderiza `<canvas>` en SSR y CSR para evitar mismatch) |
+| `MatrixHeroBackground` | — | — | — | ✅ OK (Wrapper siempre activo en SSR/CSR) |
 | `TipJarSection` | ✅ | ✅ | — | ✅ OK |
 | `MarketMoodWidget` | — | — | ✅ (via `next/dynamic`) | ✅ OK |
 | `MarketMoodInfoPopover` | — | ✅ | — | ✅ OK |
@@ -120,6 +122,9 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 
 | Issue | Descripción | Fix |
 |-------|-------------|-----|
+| Mismatches de hidratación graves en Hackathon | `HeroParticles`, `MatrixRain` y `MatrixHeroBackground` causaban caídas de DOM | Unificación de tags en SSR/CSR (siempre `<canvas>` y `div` activos) |
+| Errores de compilación por `density` prop | Se removió la prop obsoleta de `<MatrixRain>` en toda la app | Depurado en `/arcade`, `/proyectos` y layouts |
+| `string.getTime()` error en countdown | `.toLocaleString()` devolvía string que rompía tipado en build | Migración a `Date.now()` absoluto en `CountdownTimer.tsx` |
 | Hydration errors globales | `MatrixRain`, `TipJarSection`, `MarketMoodWidget` producían mismatches SSR/CSR | `isMounted` guards + `next/dynamic ssr:false` |
 | Hackathon routing 404 en Vercel | Route group `(hackathon)` no mapeaba a `/hackathon/...` correctamente | Migración a `app/hackathon/` (`d9d6e6c`) |
 | `CountdownTimer` inestable | Implementación reemplazada por versión robusta con `useEffect` limpio | `9e5f23f` |
@@ -150,6 +155,9 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 
 | Hash | Mensaje |
 |------|---------|
+| `ae43409` | fix(hydration): eliminate severe DOM mismatches in dynamic hackathon sections |
+| `e61d0e5` | fix(compile): remove density prop usages + fix string.getTime() in CountdownTimer |
+| `7f82ede` | fix(hydration): resolve React #425/#423 errors in CountdownTimer + MatrixRain |
 | `d9d6e6c` | refactor(hackathon): migrate from (hackathon) route group to flat app/hackathon/ |
 | `7ce9674` | fix(routing): remove route group to map correctly to /hackathon |
 | `9e5f23f` | feat(hackathon): update CountdownTimer with robust implementation |
@@ -159,7 +167,6 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | `198fd38` | fix(hackathon): resolve zod enum type errors in validation schema |
 | `3cdecfe` | fix(hackathon): correct default imports for Navbar and Footer in layout |
 | `1c5a144` | fix(hackathon): resolve ts warning possibly undefined in EditionHero |
-| `536d9ec` | fix(hackathon): remove missing RegistrationSuccess module export |
 
 ---
 
