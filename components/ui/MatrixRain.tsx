@@ -9,7 +9,6 @@ import { useEffect, useRef, useCallback, useState } from "react";
 
 interface MatrixRainProps {
   className?: string;
-  density?: number;      // Characters per column (default: 20)
   speed?: number;        // Fall speed multiplier (default: 1)
   opacity?: number;      // Base opacity (default: 0.15)
   color?: string;        // Matrix green or custom
@@ -19,7 +18,6 @@ const CHARS = "アイウエオカキクケコサシスセソタチツテトナ�
 
 export default function MatrixRain({
   className = "",
-  density = 20,
   speed = 1,
   opacity = 0.12,
   color = "#00FF41",

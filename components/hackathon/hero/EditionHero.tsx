@@ -80,13 +80,15 @@ export default function Hero({
             COUNTDOWN TIMER — Reintegrado con protección de hidratación
             ═══════════════════════════════════════════════════════ */}
         <div className="flex justify-center">
+          {/* 
           <CountdownTimer
             targetDate={targetDate}
             timezone={timezone}
             labels={{ days: "Días", hours: "Hrs", minutes: "Min", seconds: "Seg" }}
-            withContainer={true} // 🎨 Glassmorphism card opcional
+            withContainer={true}
             className="mx-auto"
           />
+          */}
         </div>
 
         {/* Metadata strip — DS: Mono + subtle borders */}
