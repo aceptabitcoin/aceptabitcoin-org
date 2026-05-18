@@ -95,14 +95,11 @@ export default function MatrixRain({
     };
   }, [speed, opacity, color, initDrops, isMounted]);
 
-  if (!isMounted) return null;
-
   return (
     <canvas
       ref={canvasRef}
       className={`absolute inset-0 pointer-events-none ${className}`}
       style={{ zIndex: 0 }}
-      suppressHydrationWarning
     />
   );
 }

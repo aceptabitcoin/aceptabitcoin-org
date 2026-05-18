@@ -106,21 +106,11 @@ export default function HeroParticles({
     };
   }, [isMounted, particleCount]);
 
-  if (!isMounted) {
-    return (
-      <div
-        className={className}
-        style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
-      />
-    );
-  }
-
   return (
     <canvas
       ref={canvasRef}
       className={`absolute inset-0 pointer-events-none ${className}`}
       style={{ zIndex: 0 }}
-      suppressHydrationWarning
     />
   );
 }
