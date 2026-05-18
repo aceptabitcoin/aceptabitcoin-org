@@ -23,7 +23,7 @@ export default function HackathonLayout({
         className="absolute inset-0 bg-[radial-gradient(rgba(0,255,65,0.03)_1px,transparent_1px)] bg-[size:60px_60px] pointer-events-none"
         aria-hidden="true"
       />
-      <MatrixRain className="opacity-[0.03]" speed={0.2} density={6} />
+      <MatrixRain className="opacity-[0.03]" speed={0.2} />
 
       {showNavbar && <HackathonNavbar />}
 

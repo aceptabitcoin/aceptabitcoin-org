@@ -36,7 +36,7 @@ export default function ProyectosPage() {
     <>
       {/* Efecto Matrix Rain de fondo (sutil, solo decorativo) */}
       <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none">
-        <MatrixRain speed={0.3} density={8} opacity={0.08} />
+        <MatrixRain speed={0.3} opacity={0.08} />
       </div>
 
       {/* Contenedor principal con fondo negro puro */}

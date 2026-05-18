@@ -24,7 +24,7 @@ interface TimeLeft {
 function calculateTimeLeft(targetDate: string, timezone: string): TimeLeft {
   try {
     const target = new Date(targetDate).getTime();
-    const now = new Date().toLocaleString("en-US", { timeZone: timezone }).getTime();
+    const now = Date.now();
     const diff = target - now;
     if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true };
     return {

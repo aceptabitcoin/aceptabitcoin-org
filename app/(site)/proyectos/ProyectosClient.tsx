@@ -55,7 +55,7 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
       <main className="min-h-screen bg-black relative overflow-hidden">
         
         {/* Background Effects - Bitcoin Matrix */}
-        <MatrixRain className="opacity-[0.08]" speed={0.4} density={12} />
+        <MatrixRain className="opacity-[0.08]" speed={0.4} />
         <div
           className="absolute inset-0 pointer-events-none"
           style={{

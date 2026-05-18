@@ -111,7 +111,7 @@ export default async function ArcadePage() {
         
         {/* Efecto Matrix Rain de fondo (sutil) */}
         <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <MatrixRain speed={0.5} density={10} opacity={0.08} />
+          <MatrixRain speed={0.5} opacity={0.08} />
         </div>
 
         {/* Hero Section - Sala Arcade */}
