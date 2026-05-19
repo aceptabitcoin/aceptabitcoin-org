@@ -10,8 +10,6 @@ aceptabitcoin-org/
 │   ├── (site)/                      # Main website route group (public-facing pages)
 │   │   ├── page.tsx                 # Homepage — Oracle v2.0 w/ Hero, PriceConverter,
 │   │   │                            #   MarketMoodWidget, Aprende, Tianguis cards, TipJar
-│   │   ├── mapa/                    # BTC Merchant Map (standalone, Leaflet + BTC Map API)
-│   │   │   └── page.tsx             #   → BtcMapSection
 │   │   ├── arcade/                  # Bitcoin learning hub — Visionary AI arcade
 │   │   │   └── page.tsx             #   → Tron/Cypherpunk styled, 8 interactive projects
 │   │   ├── crea-tu-tienda/          # Merchant onboarding form (BTCPay Server)
@@ -58,10 +56,11 @@ aceptabitcoin-org/
 │   ├── sections/                    # Feature sections (page-scoped)
 │   │   ├── PriceConverter.tsx       # Real-time BTC↔MXN/USD converter
 │   │   ├── TipJarSection.tsx        # Lightning tip-jar w/ MatrixRain, QR, Blink
-│   │   └── BtcMapSection.tsx        # Leaflet map — BTC Map API merchants
 │   ├── widgets/                     # Standalone interactive widgets
 │   │   ├── MarketMoodWidget.tsx     # DCA quality indicator (4H Binance)
 │   │   ├── MarketMoodInfoPopover.tsx # Educational DCA tooltip (localStorage)
+│   │   ├── AhorraSectionHeader.tsx  # Section header for savings/DCA section
+│   │   ├── AceptaBitcoinSectionHeader.tsx # Header for price calculator section
 │   │   └── bob-chat/                # 🤖 Bob the Bitcoin Agent (AI Chat)
 │   │       ├── BobChatWidget.tsx    #   Main chat UI w/ Matrix aesthetic
 │   │       └── BobSectionHeader.tsx #   Header for Bob section
@@ -122,7 +121,6 @@ aceptabitcoin-org/
 │   └── embeds/                      # (Cal.com, Bitcoin Agent embeds)
 ├── lib/
 │   ├── blink.ts                     # Blink.sv GraphQL API client
-│   ├── btcmap.ts                    # BTC Map API v1 wrapper (merchants by city)
 │   ├── hackathon/                   # ✅ Hackathon data & logic layer
 │   │   ├── index.ts                 # Re-exports: getEditionConfig, listActiveEditions, getNextEdition
 │   │   ├── config.ts                # Shared hackathon config/constants
@@ -173,7 +171,6 @@ aceptabitcoin-org/
 |-------|-------------|------|--------|
 | `/` | **Oracle Homepage** — Hero, MarketMood, PriceConverter, Aprende, Tianguis cards, TipJar | `app/(site)/page.tsx` | ✅ Live (v2.0) |
 | `/arcade` | **Bitcoin Arcade** — Visionary AI interactive labs, 8 hackathon projects | `app/(site)/arcade/page.tsx` | ✅ Live (Tron/Cypherpunk) |
-| `/mapa` | **BTC Map Viewer** — Leaflet map with BTC Map API merchants | `app/(site)/mapa/page.tsx` | ✅ Standalone |
 | `/tianguis` | **Lightning Marketplace** — Nostr + Lightning commerce | `app/(site)/tianguis/page.tsx` | ✅ Functional |
 | `/proyectos` | **Community Showcase** — Client-rendered project grid | `app/(site)/proyectos/page.tsx` + `ProyectosClient.tsx` | ✅ Functional |
 | `/crea-tu-tienda` | **Merchant Onboarding** — BTCPay registration form | `app/(site)/crea-tu-tienda/page.tsx` | ✅ Functional |
@@ -208,7 +205,6 @@ aceptabitcoin-org/
 | **UI Kit** | [shadcn/ui](https://ui.shadcn.com/) | + custom ArcadeButton, MatrixRain, Logo |
 | **Icons** | [Lucide React](https://lucide.dev/) | — |
 | **QR Codes** | [qrcode.react](https://github.com/zpao/qrcode.react) | Client-only (`ssr: false`) |
-| **Maps** | [Leaflet](https://leafletjs.com/) + react-leaflet | `/mapa` route |
 | **Payments** | [Blink.sv](https://blink.sv) | GraphQL API — Lightning + On-chain |
 | **Market Data** | Binance API | BTC/USD via `lib/market/binance` |
 | **Booking** | [Cal.com](https://cal.com) | Embedded in `/agenda` |
@@ -234,6 +230,7 @@ The project uses a high-contrast, technical aesthetic inspired by digital fronti
 | **Accent (Cyan/Tron)** | `#06B6D4` | Interactive highlights |
 | **Matrix Green** | `#00FF41` | Status, MatrixRain, decorative |
 | **Status Green** | `#22C55E` | Operational indicators |
+| **Orange** | `#F97316` | Section headers, financial accents |
 
 ### Visual Effects
 - **Glassmorphism**: High-intensity `backdrop-blur` for cards and modals
@@ -258,3 +255,5 @@ The project uses a high-contrast, technical aesthetic inspired by digital fronti
 12. **Hackathon Stability** (🛠️): Fixed hardcoded links, corrected `/public/` documentation paths, implemented `generateStaticParams` for all sub-routes, and configured `metadataBase` for Open Graph.
 13. **Bob the Bitcoin Agent** (🤖): Integrated a specialized Bitcoin AI assistant on the homepage with custom Cypherpunk personality, Matrix-style chat UI, and stateful interaction.
 14. **Dead Code Cleanup** (🧹): Removed unused legacy components (e.g., `ApiDocsCard`) and cleaned up exports to keep the module lightweight.
+15. **Section Headers** (🎉): Added `AhorraSectionHeader` and `AceptaBitcoinSectionHeader` with IntersectionObserver animations, financial chips, realtime badges, and WCAG AA compliance.
+16. **Orange Palette** (🎨): Defined CSS variables `--orange-500`, `--orange-400`, `--orange-glow` in globals.css and tailwind config for consistent financial UI theming.

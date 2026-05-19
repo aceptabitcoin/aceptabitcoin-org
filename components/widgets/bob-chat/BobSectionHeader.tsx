@@ -24,15 +24,14 @@ export interface BobSectionHeaderProps {
 }
 
 /**
- * 🤖 B.O.B. Section Header
- * Separador visual para introducir la sección educativa del chatbot.
- * Diseño ligero: no compite con el Hero, pero marca claramente el inicio del flujo "Aprende".
+ * 🤖 B.O.B. Section Header - ORANGE VARIANT
+ * Separador visual con temática naranja para secciones destacadas.
  * 
- * DS v2.0 Compliance:
+ * DS v2.0 Compliance (Orange Theme):
  * - Fondo: #000000 (puro)
  * - Texto: font-serif (títulos), font-mono (subtítulos)
- * - Colores: var(--matrix) / var(--bitcoin) via CSS vars
- * - Efectos: glow sutil, border-white/10, backdrop-blur opcional
+ * - Colores: var(--orange-500) / var(--orange-glow) via CSS vars
+ * - Efectos: glow naranja sutil, border-orange/10
  */
 export default function BobSectionHeader({
   title,
@@ -64,6 +63,11 @@ export default function BobSectionHeader({
     return () => observer.disconnect();
   }, [animateOnScroll]);
 
+  // Variables de color naranja (DS v2.0 — definidas en globals.css)
+  const orangeMain = 'var(--orange-500)';
+  const orangeGlow = 'var(--orange-glow)';
+  const orangeLight = 'var(--orange-400)';
+
   return (
     <div 
       id={id}
@@ -72,12 +76,12 @@ export default function BobSectionHeader({
       role="separator"
       aria-label={`Sección: ${title}`}
     >
-      {/* Línea superior sutil con glow Matrix */}
+      {/* Línea superior sutil con glow naranja */}
       <div 
         className="w-full h-[1px] relative overflow-hidden"
         style={{ 
-          background: 'linear-gradient(90deg, transparent, var(--matrix), transparent)',
-          boxShadow: 'var(--matrix-glow, 0 0 15px rgba(0,255,65,0.2))'
+          background: `linear-gradient(90deg, transparent, ${orangeMain}, transparent)`,
+          boxShadow: orangeGlow
         }}
       />
 
@@ -88,11 +92,12 @@ export default function BobSectionHeader({
         animate={isVisible ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.4, ease: 'easeOut' }}
       >
-        {/* Título principal: font-serif, color matrix, glow sutil */}
+        {/* Título principal: font-serif, color naranja, glow sutil */}
         <h2 
-          className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-[var(--matrix)]"
+          className="font-serif text-2xl sm:text-3xl font-bold tracking-tight"
           style={{ 
-            textShadow: '0 0 12px rgba(0,255,65,0.3)',
+            color: orangeMain,
+            textShadow: `0 0 12px rgba(249, 115, 22, 0.4)`,
           }}
         >
           {title}
@@ -114,12 +119,16 @@ export default function BobSectionHeader({
         {activeContext && (
           <motion.span 
             className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono 
-              bg-[var(--matrix)]/10 border border-[var(--matrix)]/30 text-[var(--matrix)]"
+              bg-[var(--orange-500)]/10 border border-[var(--orange-500)]/30"
+            style={{ color: orangeLight }}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={isVisible ? { opacity: 1, scale: 1 } : {}}
             transition={{ delay: 0.25, duration: 0.3 }}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--matrix)] animate-pulse" />
+            <span 
+              className="w-1.5 h-1.5 rounded-full animate-pulse" 
+              style={{ backgroundColor: orangeMain }} 
+            />
             Contexto: <span className="font-bold capitalize">{activeContext}</span>
           </motion.span>
         )}
@@ -129,8 +138,8 @@ export default function BobSectionHeader({
       <div 
         className="w-full h-[1px] mt-4 relative overflow-hidden"
         style={{ 
-          background: 'linear-gradient(90deg, transparent, var(--matrix), transparent)',
-          boxShadow: 'var(--matrix-glow, 0 0 15px rgba(0,255,65,0.2))'
+          background: `linear-gradient(90deg, transparent, ${orangeMain}, transparent)`,
+          boxShadow: orangeGlow
         }}
       />
 
@@ -144,7 +153,7 @@ export default function BobSectionHeader({
             background: linear-gradient(
               to right,
               transparent 0%,
-              rgba(255,255,255,0.03) 50%,
+              rgba(249, 115, 22, 0.04) 50%,
               transparent 100%
             );
             animation: scanline 4s linear infinite;

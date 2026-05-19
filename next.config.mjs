@@ -6,8 +6,6 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'binance.com' },
       { protocol: 'https', hostname: '**.binance.com' },
-      { protocol: 'https', hostname: 'btcmap.org' },
-      { protocol: 'https', hostname: '**.btcmap.org' },
       { protocol: 'https', hostname: 'nostr.build' },
       { protocol: 'https', hostname: 'image.nostr.build' },
       { protocol: 'https', hostname: 'cal.com' },

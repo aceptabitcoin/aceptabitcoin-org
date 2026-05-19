@@ -53,7 +53,7 @@ export default function Footer() {
               </h4>
             </div>
             <ul className="space-y-4 font-mono text-sm">
-              <li><Link href="/aprende" className="text-gray-400 hover:text-matrix transition-colors flex items-center gap-2 group">
+              <li><Link href="/#aprende" className="text-gray-400 hover:text-matrix transition-colors flex items-center gap-2 group">
                 <span className="opacity-0 group-hover:opacity-100 text-matrix/60">➜</span> ./aprende
               </Link></li>
               <li><Link href="/tianguis" className="text-gray-400 hover:text-matrix transition-colors flex items-center gap-2 group">

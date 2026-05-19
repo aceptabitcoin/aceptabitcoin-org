@@ -66,6 +66,12 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // 🟠 Orange palette — uses CSS variables for consistency
+        orange: {
+          500: "var(--orange-500)",
+          400: "var(--orange-400)",
+          300: "var(--orange-300)",
+        },
       },
       
       // ✨ NUEVO: Utilities de glow para sombras neon (DS v2.0)
@@ -74,6 +80,8 @@ const config = {
         'matrix-hover': '0 0 25px rgba(0,255,65,0.4), 0 0 50px rgba(0,255,65,0.25)',
         'bitcoin': '0 0 20px rgba(247,147,26,0.4)',
         'bitcoin-hover': '0 0 35px rgba(247,147,26,0.6)',
+        'orange': 'var(--orange-glow)',
+        'orange-hover': '0 0 25px rgba(249,115,22,0.5), 0 0 40px rgba(249,115,22,0.25)',
         'terminal': '0 0 12px rgba(0,255,65,0.15)',
       },
       

@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-18 (Fix Hydration)
+Estado actual del proyecto — última actualización: 2026-05-19
 
 ---
 
@@ -12,7 +12,7 @@ Estado actual del proyecto — última actualización: 2026-05-18 (Fix Hydration
 | **Tipado (TypeScript strict)** | ✅ Sin errores | `tsconfig.json` en modo estricto |
 | **Linting** | ✅ Sin errores bloqueadores | — |
 | **Tests (Vitest)** | ✅ Pasando | `app/api/tipjar/route.test.ts`, `lib/proveedores.test.ts` |
-| **Despliegue (Vercel)** | ✅ Configurado | Variables de entorno: `BTCMAP_API_KEY`, `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` |
+| **Despliegue (Vercel)** | ✅ Configurado | Variables de entorno: `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` |
 | **Módulo Hackathon** | ✅ Live | Migrado de route group `(hackathon)` a `app/hackathon/` — rutas activas |
 
 ---
@@ -22,11 +22,10 @@ Estado actual del proyecto — última actualización: 2026-05-18 (Fix Hydration
 - **Framework**: Next.js 14.2.3 (App Router)
 - **Lenguaje**: TypeScript (strict mode)
 - **Estilos**: Tailwind CSS con animaciones custom (`scanline`, `blink`, `tilt`) + `styles/hackathon.css`
-- **UI**: shadcn/ui + componentes custom (ArcadeButton, MatrixRain, Logo)
+- **UI**: shadcn/ui + componentes custom (ArcadeButton, MatrixRain, Logo, AhorraSectionHeader, AceptaBitcoinSectionHeader)
 - **Pagos**: Blink.sv (GraphQL API — Lightning + On-chain)
 - **Datos de mercado**: Binance API (BTC/USD, indicador DCA)
 - **QR Codes**: `qrcode.react` (client-only, `ssr: false`)
-- **Mapas**: Leaflet + react-leaflet + BTC Map API v1
 - **Reservas**: Cal.com (iframe embebido en `/agenda`)
 - **Validación**: Zod (esquema de registro de hackathon)
 - **Testing**: Vitest
@@ -50,6 +49,8 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | `QRCodeSVG` (en TipJar) | ✅ (condicional `isMounted`) | ✅ | — | ✅ OK |
 | `CountdownTimer` (hackathon) | ✅ | — | — | ✅ OK (implementación robusta) |
 | `HackathonNavbar` | — | — | — | ✅ OK (`"use client"`, `useState` al final del archivo) |
+| `AhorraSectionHeader` | ✅ | — | — | ✅ OK (IntersectionObserver + framer-motion) |
+| `AceptaBitcoinSectionHeader` | ✅ | — | — | ✅ OK (IntersectionObserver + framer-motion) |
 
 ---
 
@@ -59,9 +60,8 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 
 | Ruta | Componente | Estado |
 |------|-----------|--------|
-| `/` | `app/(site)/page.tsx` | ✅ Oracle v2.0 — Homepage |
+| `/` | `app/(site)/page.tsx` | ✅ Oracle v2.0 — Homepage con Section Headers (Bob, Ahorra, Acepta) |
 | `/arcade` | `app/(site)/arcade/page.tsx` | ✅ Bitcoin Arcade + Visionary AI |
-| `/mapa` | `app/(site)/mapa/page.tsx` | ✅ BTC Merchant Map |
 | `/tianguis` | `app/(site)/tianguis/page.tsx` | ✅ Nostr + Lightning Marketplace |
 | `/proyectos` | `app/(site)/proyectos/page.tsx` + `ProyectosClient.tsx` | ✅ Community Projects |
 | `/crea-tu-tienda` | `app/(site)/crea-tu-tienda/page.tsx` | ✅ Merchant Onboarding |
@@ -97,8 +97,9 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 ### Prioridad Alta
 - [x] **Subir PDFs de recursos**: Creado `public/hackathon/docs/` con placeholders corregidos (`guia-participante-2026-2.pdf`, `lightning-setup-guide.pdf`, `nip99-cheatsheet.pdf`)
 - [x] **Conectar API de registro**: Migrado a Google Forms para simplificar la gestión y soberanía de datos. El endpoint `POST /register` ha sido removido.
-- [ ] **Validar claves de API en producción**: Confirmar `BTCMAP_API_KEY` y `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` en Vercel env vars
+- [ ] **Validar claves de API en producción**: Confirmar `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` en Vercel env vars
 - [ ] **Revisar dependencias**: `npm outdated` + actualizar parches de seguridad
+- [x] **Orange palette CSS variables**: Definidas `--orange-500`, `--orange-400`, `--orange-glow` en `globals.css` y `tailwind.config.ts`
 
 ### Prioridad Media
 - [x] **`generateStaticParams` para sub-rutas**: Implementado en `/register`, `/projects`, `/resources` para evitar 404 en builds estáticos.
@@ -131,8 +132,8 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | `MatrixRain` import error | Default import faltante en layout del hackathon | `1fa392b` |
 | Zod enum type errors | Errores de tipo en esquema de validación de registro | `198fd38` |
 | `RegistrationSuccess` module | Export faltante causaba error de build | `536d9ec` |
-| Link "Volver" hardcoded en `/register` | `href=\"/hackathon/hbtcmx-2026-1\"` (slug inexistente) | Corregido a `href={\\`/hackathon/\\${params.edition}\\`}` |
-| PDFs con prefijo `/public/` | `href=\"/public/hackathon/docs/...\"` → 404 en Next.js | Corregido en `HackathonFooter.tsx` y `resources/page.tsx` |
+| Link "Volver" hardcoded en `/register` | `href="/hackathon/hbtcmx-2026-1"` (slug inexistente) | Corregido a `href={`/hackathon/${params.edition}`}` |
+| PDFs con prefijo `/public/` | `href="/public/hackathon/docs/..."` → 404 en Next.js | Corregido en `HackathonFooter.tsx` y `resources/page.tsx` |
 | `metadataBase` missing | Warning en build para Open Graph images | Configurado en `RootLayout` y páginas dinámicas de hackathon |
 | Sub-rutas 404 en SSG | `/register`, `/projects`, `/resources` sin SSG params | Implementado `generateStaticParams` en todas las sub-rutas |
 | Placeholders de recursos | PDFs faltantes causaban 404 | Creados archivos placeholder en `public/hackathon/docs/` |
@@ -141,6 +142,9 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | BobChat scroll hijacking | Scroll automático interrumpía navegación al escribir | Trigger cambiado a `messages.length` + `block: 'nearest'` |
 | Native Registration Form | Mantenimiento de formulario y validación Zod complejo | Migrado a Google Forms con redirección automática en `/register` |
 | Componentes obsoletos | `ApiDocsCard` y exports sin uso en el módulo de display del Hackathon | Componente eliminado y `index.ts` limpiado |
+| Orange palette CSS vars | Variables `--orange-500`, `--orange-400`, `--orange-glow` no definidas | Agregadas a `app/globals.css` y `tailwind.config.ts` |
+| `AhorraSectionHeader` sin estandarizar | Necesario componente estandarizado para sección de ahorro | Creado con props `marketTrend`, `isLive`, memoización |
+| `AceptaBitcoinSectionHeader` faltante | Header para calculadora de pagos/conversiones | Creado con IntersectionObserver, chips financieros, badge realtime |
 
 ### Issues Abiertos
 
@@ -183,7 +187,6 @@ npm install
 # 3. Configurar variables de entorno
 cp .env.example .env.local
 # Editar .env.local con valores reales:
-#   BTCMAP_API_KEY=tu_api_key
 #   NEXT_PUBLIC_TIP_JAR_LN_ADDRESS=tu@wallet@blink.sv
 
 # 4. Desarrollo
@@ -205,7 +208,6 @@ npm run dev
 
 | Variable | Requerida | Descripción |
 |----------|-----------|-------------|
-| `BTCMAP_API_KEY` | ✅ | API key para BTC Map (mapa de comerciantes) |
 | `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` | ✅ | Lightning address para el TipJar (ej. `user@blink.sv`) |
 | `SENTRY_DSN` | Recomendada | DSN de Sentry para monitoreo de errores |
 | `RESEND_API_KEY` | Opcional | API key de Resend para emails transaccionales |
