@@ -86,8 +86,10 @@ export default function Prizes({
               </div>
 
               <div className="space-y-1">
+                {/* 💰 Monto con denominación MXN explícita */}
                 <span className={cn("font-serif text-4xl md:text-5xl font-bold", style.color)}>
                   ${formatAmount(prize.amountMXN)}
+                  <span className="font-mono text-lg md:text-xl text-gray-500 ml-1">MXN</span>
                 </span>
                 <p className="font-mono text-xs text-gray-400">
                   {paidInBitcoin ? "BTC • Transferencia inmediata" : "MXN • Transferencia bancaria"}
