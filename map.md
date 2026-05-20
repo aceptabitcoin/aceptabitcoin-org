@@ -40,9 +40,8 @@ aceptabitcoin-org/
 │   │   ├── page.tsx                 #   Server data fetching
 │   │   └── ProveedoresClient.tsx    #   Client component — MatrixRain bg, filter/search, ProviderCard grid
 │   ├── api/
-│   │   ├── tipjar/route.ts          # Blink.sv Lightning tip-jar proxy (GraphQL)
-│   │   ├── tipjar/route.test.ts
-│   │   └── webhook/lnbits.ts        # LNbits webhook handler
+│   │   └── tipjar/route.ts          # Blink.sv Lightning tip-jar proxy (GraphQL)
+│   │   └── tipjar/route.test.ts
 │   ├── actions/
 │   │   └── submit-onboarding.tsx    # Server action for merchant form
 │   ├── not-found.tsx                # Global 404 page
@@ -139,7 +138,6 @@ aceptabitcoin-org/
 │   │   ├── binance.ts               # Binance BTC/USD price fetch
 │   │   └── useMarketMood.ts         # React hook: DCA ratio, price, sparkline data
 │   ├── juegos.ts                    # Arcade/games data loader
-│   ├── lnbits.ts                    # LNbits client (legacy)
 │   ├── proveedores.ts               # Provider directory types, stats, data
 │   ├── proyectos.ts                 # Community projects types and data
 │   └── utils.ts                     # cn() (clsx+twMerge), formatSats, formatFiat
@@ -183,7 +181,6 @@ aceptabitcoin-org/
 | `/hackathon/[edition]/resources` | **Resources Hub** — PDFs, docs, workshop recordings | `app/hackathon/[edition]/resources/page.tsx` | ✅ Functional |
 | `/hackathon/[edition]/api` | **Hackathon API** — Info + Submission endpoints | `app/hackathon/[edition]/api/route.ts` | ✅ Functional |
 | `/api/tipjar` | Lightning Tip-Jar API (Blink.sv proxy) | `app/api/tipjar/route.ts` | ✅ Live |
-| `/api/webhook/lnbits` | LNbits webhook handler | `app/api/webhook/lnbits.ts` | ✅ Live |
 
 ## 🏆 Hackathon Editions
 

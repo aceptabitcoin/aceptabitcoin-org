@@ -1,30 +1,97 @@
 // app/api/tipjar/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createLightningInvoice, getOnChainAddress } from '@/lib/blink';
+import { z } from 'zod';
+
+// ================================================
+// TIPJAR API — Caja Registradora AceptaBitcoin
+// ================================================
+
+const LIGHTNING_ADDRESS = "aceptabitcoin@blink.sv";
+
+const CreateInvoiceSchema = z.object({
+  action: z.literal('create-invoice'),
+  amount: z.number().positive().int().max(10_000_000), // ~10 BTC max
+  currency: z.enum(['SATS', 'USD']),
+  memo: z.string().optional(),
+  service: z.enum(['consultoria', 'curso', 'diseno', 'charla', 'donacion']).optional(),
+});
+
+const GetOnchainSchema = z.object({
+  action: z.literal('get-onchain'),
+});
+
+const RequestSchema = z.union([CreateInvoiceSchema, GetOnchainSchema]);
 
 export async function POST(request: NextRequest) {
   try {
-    const { action, amount, currency, memo } = await request.json();
+    const body = await request.json();
+    const parsed = RequestSchema.safeParse(body);
+
+    if (!parsed.success) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Datos inválidos', 
+          details: parsed.error.issues 
+        },
+        { status: 400 }
+      );
+    }
+
+    const { action } = parsed.data;
 
     if (action === 'create-invoice') {
-      const { invoice, expiresAt } = await createLightningInvoice({
-        amount: Number(amount),
-        currency: currency as 'BTC' | 'USD',
-        memo: memo || 'Donación - Acepta Bitcoin México',
+      const { amount, currency, memo, service } = parsed.data;
+
+      const finalMemo = memo || 
+        `Servicio: ${service || 'General'} - Acepta Bitcoin México`;
+
+      const result = await createLightningInvoice({
+        amount,
+        currency,
+        memo: finalMemo,
+        metadata: { 
+          service,
+          source: 'caja-registradora',
+          lightningAddress: LIGHTNING_ADDRESS 
+        },
       });
-      return NextResponse.json({ success: true, invoice, expiresAt });
+
+      return NextResponse.json({
+        success: true,
+        invoice: result.invoice,
+        expiresAt: result.expiresAt,
+        amountInSats: result.amountInSats, // sats reales
+        currency: currency,
+        memo: finalMemo,
+      });
     }
 
     if (action === 'get-onchain') {
-      const { address } = await getOnChainAddress();
-      return NextResponse.json({ success: true, address });
+      const result = await getOnChainAddress();
+      
+      return NextResponse.json({
+        success: true,
+        address: result.address,
+        expiresAt: result.expiresAt, // si Blink lo provee
+      });
     }
 
-    return NextResponse.json({ error: 'Acción no válida' }, { status: 400 });
+    return NextResponse.json({ success: false, error: 'Acción no soportada' }, { status: 400 });
+
   } catch (error: any) {
-    console.error('[TipJar API] Error:', error);
+    console.error('[TipJar API] Error crítico:', {
+      message: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString(),
+    });
+
     return NextResponse.json(
-      { error: error.message || 'Error interno del servidor' },
+      { 
+        success: false, 
+        error: 'Error interno del servidor. Intenta nuevamente.' 
+      },
       { status: 500 }
     );
   }
@@ -32,12 +99,11 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json({
-    message: 'TipJar API - Blink.sv Proxy',
-    endpoints: {
-      POST: {
-        'create-invoice': '{ amount, currency: "BTC"|"USD", memo? }',
-        'get-onchain': '{}',
-      },
-    },
+    name: "Caja Registradora API - Acepta Bitcoin México",
+    version: "v3.0",
+    lightningAddress: LIGHTNING_ADDRESS,
+    supportedActions: ['create-invoice', 'get-onchain'],
+    currencies: ['SATS', 'USD'],
+    documentation: "Ver TipJarSection.tsx para uso frontend",
   });
 }

@@ -1,336 +1,175 @@
 "use client";
 
-import { useMemo, useState } from "react"; // ← Agregamos useState
+import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import { Activity, RefreshCw, Bitcoin, TrendingUp, TrendingDown, Minus, ExternalLink, HelpCircle } from "lucide-react";
 import { useMarketMood } from "@/hooks/useMarketMood";
 import { formatPrice } from "@/lib/market/binance";
 
-// ============================================================
-// DCA QUALITY SIGNAL — Bitcoin Matrix Edition v3.0 (Educational)
-// Oracle System • Enfoque DCA para ahorradores principiantes
-// Compliance: design-system.md, MANTENIMIENTO.md
-// ============================================================
-
 const DEFAULT_TIMEFRAME = "4h" as const;
 
 const SPONSOR_CONFIG = {
   name: "AureoBitcoin",
-  url: "https://app.aureobitcoin.com/es/auth/signup?ref=Aldar1",
-  ctaText: "Comprar BTC en AureoBitcoin",
+  url: "https://app.aureobitcoin.com/es/auth/signup?ref=abo",
+  ctaText: "Comprar BTC con AureoBitcoin →",
+  description: "Plataforma mexicana confiable",
 };
 
-interface DCAConfig {
-  status: string;
-  color: string;
-  bgGlow: string;
-  message: string;
-  dcaImpact: string;
-  emoji: string;
-  icon: React.ElementType;
-  borderColor: string;
-}
-
-function getDCAConfig(value: number): DCAConfig {
+function getDCAConfig(value: number) {
   if (value <= 25) {
     return {
-      status: "FAVORABLE PARA DCA",
+      status: "EXCELENTE MOMENTO PARA DCA",
       color: "#00FF41",
-      bgGlow: "rgba(0, 255, 65, 0.45)",
-      message: "Bitcoin está en zona de acumulación.\nCada sat cuenta más.",
-      dcaImpact: "😊 Esta compra MEJORA tu DCA",
-      emoji: "😊",
+      glow: "rgba(0, 255, 65, 0.6)",
+      message: "Bitcoin está en zona de acumulación fuerte.\nCada sat que compres hoy vale más.",
+      impact: "😊 Esta compra MEJORA significativamente tu DCA",
+      emoji: "🚀",
       icon: TrendingDown,
-      borderColor: "border-matrix/30",
     };
   }
-  if (value >= 80) {
+  if (value >= 75) {
     return {
-      status: "MENOS FAVORABLE",
+      status: "ZONA ALTA - CAUTELA",
       color: "#ef4444",
-      bgGlow: "rgba(239, 68, 68, 0.3)",
-      message: "Bitcoin está en zona alta.\nTu compra compra menos sats.",
-      dcaImpact: "😔 Esta compra DILUYE ligeramente tu DCA",
-      emoji: "😔",
+      glow: "rgba(239, 68, 68, 0.4)",
+      message: "Precio elevado.\nTu compra rinde menos satoshis por dólar.",
+      impact: "😔 Esta compra DILUYE tu promedio",
+      emoji: "⚠️",
       icon: TrendingUp,
-      borderColor: "border-red-500/30",
     };
   }
   return {
-    status: "NEUTRAL",
+    status: "ZONA NEUTRAL",
     color: "#F7931A",
-    bgGlow: "rgba(247, 147, 26, 0.35)",
-    message: "Mercado en rango.\nSigue tu plan de acumulación.",
-    dcaImpact: "😐 Sigue acumulando sin estrés",
-    emoji: "😐",
+    glow: "rgba(247, 147, 26, 0.5)",
+    message: "Mercado en rango lateral.\nSigue tu estrategia de acumulación.",
+    impact: "😐 Buen momento para seguir tu plan DCA",
+    emoji: "🟠",
     icon: Minus,
-    borderColor: "border-bitcoin/30",
   };
-}
-
-function SponsorBadge() {
-  return (
-    <div className="pt-3 border-t border-white/5">
-      <span className="font-mono text-[10px] text-gray-500">
-        Señal por{" "}
-        <a
-          href={SPONSOR_CONFIG.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-matrix hover:text-bitcoin transition-colors inline-flex items-center gap-0.5"
-          aria-label="Crear cuenta en AureoBitcoin"
-        >
-          {SPONSOR_CONFIG.name}
-          <ExternalLink className="h-2.5 w-2.5" />
-        </a>
-      </span>
-    </div>
-  );
-}
-
-// 🔹 TOOLTIP CORREGIDO: Solo se abre con CLICK
-function DCAInfoTooltip() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        onBlur={() => setIsOpen(false)}
-        className={`p-1.5 rounded transition-colors ${
-          isOpen ? "text-matrix bg-matrix/10" : "text-gray-400 hover:text-matrix"
-        }`}
-        aria-label="¿Qué es DCA?"
-        aria-expanded={isOpen}
-      >
-        <HelpCircle className="h-4 w-4" />
-      </button>
-      
-      {isOpen && (
-        <div 
-          className="absolute right-0 top-full mt-2 w-72 p-4 bg-black/95 border border-matrix/30 rounded-lg shadow-[0_0_30px_rgba(0,255,65,0.2)] z-50"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div className="space-y-3 text-xs font-mono text-gray-300">
-            <p className="text-matrix font-bold">¿Qué es DCA?</p>
-            <p>DCA (Dollar Cost Averaging) es acumular Bitcoin en cantidades fijas, sin importar el precio. Así evitas el estrés de "adivinar" el momento perfecto.</p>
-            
-            <p className="text-matrix font-bold pt-2">¿Qué significa este indicador?</p>
-            <ul className="space-y-1">
-              <li><span className="text-matrix">😊 Verde</span> = Precio favorable → tu compra rinde más sats</li>
-              <li><span className="text-bitcoin">😐 Naranja</span> = Precio neutral → sigue tu plan</li>
-              <li><span className="text-red-400">😔 Rojo</span> = Precio alto → tu compra rinde menos sats</li>
-            </ul>
-            
-            <p className="text-matrix font-bold pt-2">¿Por qué solo 4 horas?</p>
-            <p>Usamos 4H porque filtra el "ruido" de minutos y da una señal más estable para aprender. No es trading, es educación.</p>
-            
-            <p className="text-[10px] text-gray-500 pt-2 border-t border-white/10">
-              ⚠️ Esto es educativo, no consejo financiero. El DCA funciona a largo plazo: lo importante es no dejar de acumular.
-            </p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 }
 
 export default function MarketMoodWidget() {
   const { result, loading, error, refresh, btcPrice } = useMarketMood(DEFAULT_TIMEFRAME);
 
   const dca = useMemo(() => {
-    if (!result) return null;
+    if (!result?.value) return null;
     return getDCAConfig(result.value);
   }, [result]);
 
   if (error) {
     return (
-      <Card className="bg-black/80 border border-red-500/30 p-6 backdrop-blur-md">
-        <div className="text-center text-red-400 space-y-3">
-          <Activity className="h-8 w-8 mx-auto opacity-70" />
-          <p className="font-mono text-xs">ERROR EN LA MATRIZ</p>
-          <button
-            onClick={refresh}
-            className="px-4 py-2 text-xs font-mono border border-matrix/50 hover:bg-matrix/10 text-matrix transition-all"
-          >
-            REINTENTAR CONEXIÓN →
-          </button>
-        </div>
+      <Card className="bg-black/80 border-red-500/30 p-8 text-center">
+        <p className="text-red-400 font-mono text-sm mb-4">ERROR EN LA SEÑAL DEL ORACLE</p>
+        <button onClick={refresh} className="text-matrix hover:underline">
+          Reintentar →
+        </button>
       </Card>
     );
   }
 
   return (
-    <Card className="relative overflow-hidden bg-black/70 backdrop-blur-md border border-white/10 transition-all duration-700">
-      {/* Scanlines y efectos CRT */}
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,#00ff4122_0px,#00ff4122_1px,transparent_1px,transparent_4px)] pointer-events-none opacity-40" />
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-matrix to-transparent animate-scanline" />
+    <Card className="relative overflow-hidden bg-black/80 backdrop-blur-2xl border border-white/10">
+      <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,#00ff4122_0px,#00ff4122_1px,transparent_4px)] opacity-30 pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-matrix to-transparent animate-scanline" />
 
-      {/* Corner Accents */}
-      <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-matrix/30" />
-      <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-matrix/30" />
-      <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-matrix/30" />
-      <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-matrix/30" />
-
-      <div className="p-6 space-y-5 relative">
+      <div className="p-6 sm:p-8 relative z-10 space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-2 h-2 rounded-full bg-matrix animate-pulse" />
-            <span className="font-mono text-[10px] text-matrix uppercase tracking-[0.125em] font-bold">
-              ORACLE • DCA QUALITY
-            </span>
-          </div>
-
+        <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
-            <DCAInfoTooltip />
-
-            <button
-              onClick={refresh}
-              disabled={loading}
-              className="p-2 text-gray-400 hover:text-matrix transition-colors disabled:opacity-50"
-              title="Actualizar señal"
-            >
-              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            </button>
+            <div className="h-9 w-9 rounded-lg bg-matrix/10 border border-matrix/30 flex items-center justify-center">
+              <Activity className="h-5 w-5 text-matrix" />
+            </div>
+            <div>
+              <h3 className="font-serif text-2xl font-bold tracking-tight">DCA Oracle</h3>
+              <p className="font-mono text-xs text-matrix/70">Calidad de compra • 4H</p>
+            </div>
           </div>
+
+          <button
+            onClick={refresh}
+            disabled={loading}
+            className="p-2 text-gray-400 hover:text-matrix transition-colors"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          </button>
         </div>
 
-        {/* Loading State */}
         {loading && !result ? (
-          <div className="space-y-6 py-8 animate-pulse">
-            <div className="mx-auto w-20 h-20 rounded-full border border-white/10" />
-            <div className="h-6 bg-white/5 rounded w-40 mx-auto" />
-            <div className="h-4 bg-white/5 rounded w-52 mx-auto" />
+          <div className="py-12 flex flex-col items-center justify-center animate-pulse">
+            <div className="w-16 h-16 border-2 border-matrix/30 border-t-matrix rounded-full animate-spin" />
+            <p className="text-xs font-mono text-gray-500 mt-6">Analizando mercado...</p>
           </div>
         ) : dca && result ? (
           <>
-            {/* BTC Price */}
             {btcPrice && (
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2">
                   <Bitcoin className="h-5 w-5 text-bitcoin" />
-                  <span className="font-vt323 text-3xl md:text-4xl text-white tracking-wider">
+                  <span className="font-mono text-4xl font-bold tracking-wider">
                     {formatPrice(btcPrice)}
                   </span>
                 </div>
-                {/* ✅ CORRECCIÓN #2: Sin Binance, con sponsor */}
-                <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest mt-1">
-                  Indicador educativo • 4H • <span className="text-matrix">{SPONSOR_CONFIG.name}</span>
-                </p>
               </div>
             )}
 
-            {/* DCA Core */}
-            <div className="text-center space-y-4">
-              {/* Emoji grande + glow */}
-              <div className="flex justify-center">
-                <div
-                  className="relative w-24 h-24 rounded-full flex items-center justify-center border-4 transition-all duration-500"
-                  style={{
-                    borderColor: dca.color,
-                    boxShadow: `0 0 50px ${dca.bgGlow}, inset 0 0 25px ${dca.bgGlow}`,
-                  }}
-                >
-                  <span className="text-4xl" role="img" aria-label={dca.dcaImpact}>
-                    {dca.emoji}
-                  </span>
+            {/* Indicador Principal con Carita Grande */}
+            <div className="text-center space-y-5">
+              <div
+                className="mx-auto w-28 h-28 rounded-2xl flex items-center justify-center border-[6px] transition-all duration-700 text-6xl"
+                style={{
+                  borderColor: dca.color,
+                  boxShadow: `0 0 60px ${dca.glow}`,
+                }}
+              >
+                {dca.emoji}
+              </div>
+
+              <div>
+                <div className="font-serif text-[28px] font-bold tracking-wider uppercase" style={{ color: dca.color }}>
+                  {dca.status}
+                </div>
+                <div className="font-mono text-6xl font-bold text-white mt-1 tabular-nums tracking-tighter">
+                  {result.value}
+                  <span className="text-2xl text-gray-500">/100</span>
                 </div>
               </div>
 
-              {/* Status */}
-              <div
-                className="font-serif text-2xl md:text-3xl font-bold tracking-[0.08em] uppercase drop-shadow-lg"
-                style={{ color: dca.color }}
-              >
-                {dca.status}
-              </div>
-
-              {/* Valor numérico */}
-              <div className="flex items-baseline justify-center gap-1.5">
-                <span className="font-vt323 text-5xl md:text-6xl text-white tabular-nums">
-                  {result.value}
-                </span>
-                <span className="font-mono text-sm text-gray-500">/100</span>
-              </div>
-
-              {/* Mensaje educativo */}
-              <p className="font-mono text-sm text-gray-300 whitespace-pre-line leading-relaxed max-w-[280px] mx-auto">
+              <p className="font-mono text-sm text-gray-300 max-w-xs mx-auto leading-relaxed">
                 {dca.message}
               </p>
 
-              {/* Impacto en DCA */}
+              {/* Carita en el impacto */}
               <div
-                className="inline-block px-5 py-2.5 rounded-full border text-xs font-mono font-bold tracking-wide"
+                className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium border"
                 style={{
                   color: dca.color,
-                  borderColor: `${dca.color}60`,
-                  backgroundColor: `${dca.color}10`,
-                  boxShadow: `0 0 15px ${dca.color}30`,
+                  borderColor: dca.color + "50",
+                  backgroundColor: dca.color + "10",
                 }}
               >
-                {dca.dcaImpact}
+                <span>{dca.impact}</span>
               </div>
-
-              {/* CTA contextual */}
-              <a
-                href={SPONSOR_CONFIG.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 mt-2 border border-matrix/30 bg-matrix/5 text-matrix font-mono text-[10px] hover:bg-matrix/10 hover:text-bitcoin transition-all duration-200 rounded-sm mx-auto"
-              >
-                <span>{SPONSOR_CONFIG.ctaText}</span>
-                <ExternalLink className="h-3 w-3" />
-              </a>
             </div>
 
-            {/* Sparkline histórico */}
-            {result.historicalValues.length > 1 && (
-              <div className="pt-4 border-t border-white/10">
-                <p className="text-[9px] font-mono text-gray-600 uppercase tracking-widest mb-3">
-                  HISTÓRICO • ÚLTIMAS {result.historicalValues.length} LECTURAS (4H)
-                </p>
-                <div className="h-12 flex items-end gap-px px-1">
-                  {result.historicalValues.slice(-36).map((val, i) => {
-                    const barColor = val >= 80 ? "#ef4444" : val <= 25 ? "#00FF41" : "#F7931A";
-                    return (
-                      <div
-                        key={i}
-                        className="flex-1 rounded-t transition-all duration-300 hover:opacity-100"
-                        style={{
-                          height: `${Math.max(12, val * 0.95)}%`,
-                          backgroundColor: barColor,
-                          opacity: 0.35 + (i / 36) * 0.65,
-                        }}
-                        title={`${val.toFixed(1)}`}
-                      />
-                    );
-                  })}
-                </div>
+            {/* CTA AureoBitcoin - Prominente */}
+            <a
+              href={SPONSOR_CONFIG.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block mt-6 bg-gradient-to-r from-matrix/10 via-bitcoin/5 to-matrix/10 hover:from-matrix/20 hover:to-bitcoin/20 border border-matrix/30 hover:border-matrix/60 rounded-2xl p-6 text-center transition-all duration-300"
+            >
+              <div className="flex items-center justify-center gap-2 text-lg font-bold text-matrix group-hover:text-white">
+                {SPONSOR_CONFIG.ctaText}
+                <ExternalLink className="h-5 w-5" />
               </div>
-            )}
-
-            {/* Last Update */}
-            <div className="text-center">
-              <span className="text-[9px] font-mono text-gray-700">
-                Última sincronización:{" "}
-                {new Date(result.lastUpdate).toLocaleTimeString("es-MX", {
-                  timeZone: "America/Mexico_City",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-                CST
-              </span>
-            </div>
+              <p className="text-xs text-gray-400 mt-1 font-mono">{SPONSOR_CONFIG.description}</p>
+            </a>
 
             {/* Disclaimer */}
-            <p className="text-[9px] font-mono text-gray-600 text-center italic">
-              Herramienta educativa • No es consejo financiero • El DCA funciona a largo plazo
+            <p className="text-center text-[10px] text-gray-500 font-mono pt-2">
+              Herramienta educativa • No es consejo financiero
             </p>
-
-            {/* Sponsor Badge */}
-            <SponsorBadge />
           </>
         ) : null}
       </div>

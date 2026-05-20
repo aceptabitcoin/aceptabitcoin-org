@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-19
+Estado actual del proyecto — última actualización: 2026-05-20
 
 ---
 
@@ -69,7 +69,6 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | `/nuestra-historia` | `app/nuestra-historia/page.tsx` | ✅ Project History |
 | `/proveedores` | `app/proveedores/page.tsx` + `ProveedoresClient.tsx` | ✅ Sovereign Directory |
 | `/api/tipjar` | `app/api/tipjar/route.ts` | ✅ Blink.sv Proxy |
-| `/api/webhook/lnbits` | `app/api/webhook/lnbits.ts` | ✅ Webhook Handler |
 
 ### Módulo Hackathon (`app/hackathon/`)
 
@@ -152,6 +151,54 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 |-----------|-------------|
 | 🟡 Media | API de registro hackathon son stubs (no persisten datos) |
 | 🟡 Media | Integración real de webhooks de Discord para registros |
+
+---
+
+## 📅 Actualizaciones Recientes - Mayo 2026 (Sesión de Pulido y Encerado)
+
+Se realizó una revisión y refactorización profunda de los componentes clave:
+
+### 1. Caja Registradora (TipJar) - Mayor evolución
+
+- Renombrado conceptualmente de "TipJar" → "Caja Registradora AceptaBitcoin"
+- Nueva UX alineada al funnel: Aprende → Ahorra → Acepta
+- Diseño mejorado con fuerte identidad Matrix/Cypherpunk
+- Colores dinámicos: Verde Matrix para SATS/Lightning y Naranja Bitcoin para USD
+- Mejora en selección de servicios, montos preset y experiencia general
+- Mejor integración con Blink.sv (Stablesats + On-chain)
+
+### 2. Backend de Pagos
+
+**app/api/tipjar/route.ts:**
+- Añadida validación con Zod
+- Mejor manejo de errores y logging
+- Respuestas más completas y consistentes
+
+**lib/blink.ts:**
+- Soporte real de Stablesats (lnUsdInvoiceCreate)
+- Integración con precio actual de Binance (eliminado hardcode)
+- Código más robusto y mantenible
+
+### 3. Componentes de "Ahorra" y Mercado
+
+- **PriceConverter.tsx**: Rediseño completo, mejor separación visual entre BTC-USD, BTC-MXN y SATS-MXN, más atractivo y coherente con el Design System.
+- **MarketMoodWidget.tsx (DCA Oracle):**
+  - Actualizado referral de AureoBitcoin (?ref=abo)
+  - Restauradas caritas + mejor impacto visual
+  - CTA más prominente y atractivo para el sponsor
+
+### 4. B.O.B. Chat Widget
+
+- Versión visualmente mucho más atractiva y "viva"
+- Mejores efectos glow, espaciado, empty states y personalidad cypherpunk
+- Mejora en animaciones y experiencia general
+
+### 5. Configuración y Mantenimiento
+
+- Actualizado .env.example con Lightning Address correcto (aceptabitcoin@blink.sv) y mejor organización
+- Alineación general con Design System "Bitcoin Matrix" (colores, tipografía, glassmorphism, scanlines, etc.)
+
+**Estado actual:** Gran avance en pulido visual, consistencia de marca y experiencia de usuario. La Caja Registradora ya se siente como un producto soberano y profesional.
 
 ---
 
