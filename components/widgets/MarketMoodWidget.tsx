@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { 
   Activity, RefreshCw, Bitcoin, TrendingUp, 
-  TrendingDown, Minus, ExternalLink, AlertTriangle 
+  TrendingDown, Minus, ExternalLink, AlertTriangle,
+  Info
 } from "lucide-react";
 import { useMarketMood } from "@/hooks/useMarketMood";
 import { formatPrice } from "@/lib/market/binance";
@@ -21,19 +22,21 @@ const SPONSOR_CONFIG = {
 function getDCAConfig(value: number) {
   if (value <= 25) {
     return {
-      status: "Excelente momento para DCA",
+      status: "¡Excelente momento!",
+      emoji: "🚀",
       colorClass: "text-matrix",
       borderColor: "border-matrix",
       bgClass: "bg-matrix/10",
       glow: "shadow-[0_0_15px_rgba(0,255,65,0.2)]",
       message: "Bitcoin está en zona de acumulación fuerte. Cada sat que compres hoy vale más.",
-      impact: "Esta compra MEJORA significativamente tu DCA",
+      impact: "Esta compra MEJORA tu costo promedio",
       icon: TrendingDown,
     };
   }
   if (value >= 75) {
     return {
       status: "Zona alta - Cautela",
+      emoji: "⚠️",
       colorClass: "text-red-500",
       borderColor: "border-red-500/50",
       bgClass: "bg-red-500/10",
@@ -45,18 +48,20 @@ function getDCAConfig(value: number) {
   }
   return {
     status: "Zona neutral",
+    emoji: "😐",
     colorClass: "text-bitcoin",
     borderColor: "border-bitcoin",
     bgClass: "bg-bitcoin/10",
     glow: "shadow-[0_0_20px_rgba(247,147,26,0.4)]",
     message: "Mercado en rango lateral. Sigue tu estrategia de acumulación.",
-    impact: "Buen momento para seguir tu plan DCA",
+    impact: "Buen momento para seguir tu plan",
     icon: Minus,
   };
 }
 
 export default function MarketMoodWidget() {
   const { result, loading, error, refresh, btcPrice } = useMarketMood(DEFAULT_TIMEFRAME);
+  const [showDCAInfo, setShowDCAInfo] = useState(false);
 
   const dca = useMemo(() => {
     if (!result?.value) return null;
@@ -67,13 +72,13 @@ export default function MarketMoodWidget() {
     return (
       <Card className="bg-black/80 backdrop-blur-md border border-red-500/30 p-6 text-center">
         <p className="text-red-500 font-mono text-xs mb-3 uppercase tracking-wider">
-          ⚠ Error en señal del Oracle
+          ⚠ Error en la señal
         </p>
         <button 
           onClick={refresh} 
           className="text-matrix font-mono text-xs hover:underline transition-colors"
         >
-          Reintentar conexión →
+          Reintentar →
         </button>
       </Card>
     );
@@ -88,28 +93,63 @@ export default function MarketMoodWidget() {
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-matrix/40 to-transparent animate-scanline" />
 
       <div className="p-6 sm:p-7 relative z-10 space-y-6">
-        {/* Header */}
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-md bg-matrix/10 border border-matrix/30 flex items-center justify-center">
-              <Activity className="h-4 w-4 text-matrix" />
+        {/* Header - MÁS EDUCATIVO */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-md bg-matrix/10 border border-matrix/30 flex items-center justify-center">
+                <Activity className="h-4 w-4 text-matrix" />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg font-bold text-white tracking-tight">
+                  Mejora tu Costo Promedio
+                </h3>
+                <p className="font-mono text-[10px] text-gray-400">
+                  Calidad de compra • Actualizado cada 4h
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-serif text-xl font-bold text-white tracking-tight">DCA Oracle</h3>
-              <p className="font-mono text-[10px] text-matrix/70 uppercase tracking-wide">
-                Calidad de compra • 4H
-              </p>
-            </div>
+
+            <button
+              onClick={refresh}
+              disabled={loading}
+              className="p-1.5 text-gray-500 hover:text-matrix transition-colors rounded-md hover:bg-white/5"
+              aria-label="Actualizar datos"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            </button>
           </div>
 
-          <button
-            onClick={refresh}
-            disabled={loading}
-            className="p-1.5 text-gray-500 hover:text-matrix transition-colors rounded-md hover:bg-white/5"
-            aria-label="Actualizar datos"
-          >
-            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-          </button>
+          {/* Tooltip/Explicación DCA */}
+          <div className="relative">
+            <button
+              onClick={() => setShowDCAInfo(!showDCAInfo)}
+              className="flex items-center gap-1.5 text-[10px] font-mono text-gray-500 hover:text-matrix transition-colors"
+            >
+              <Info className="h-3 w-3" />
+              <span>¿Qué es DCA y por qué importa?</span>
+            </button>
+            
+            {showDCAInfo && (
+              <div className="absolute top-full left-0 mt-2 p-3 bg-black/95 border border-matrix/30 rounded-lg z-20 text-xs font-mono text-gray-300 leading-relaxed shadow-[0_0_20px_rgba(0,255,65,0.15)]">
+                <p className="mb-2">
+                  <strong className="text-matrix">DCA</strong> (Dollar Cost Averaging) es comprar Bitcoin periódicamente sin importar el precio.
+                </p>
+                <p className="mb-2">
+                  Esta herramienta te dice si <strong className="text-bitcoin">este momento</strong> es bueno para comprar y mejorar tu precio promedio.
+                </p>
+                <p className="text-gray-500">
+                  💡 <em>Comprar en verde = mejor costo promedio<br/>Comprar en rojo = rinde menos sats</em>
+                </p>
+                <button 
+                  onClick={() => setShowDCAInfo(false)}
+                  className="mt-2 text-[10px] text-matrix hover:underline"
+                >
+                  Entendido ✓
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {loading && !result ? (
@@ -133,39 +173,50 @@ export default function MarketMoodWidget() {
               </div>
             )}
 
-            {/* Indicador Principal */}
+            {/* Indicador Principal - CON CARITA GRANDE */}
             <div className="text-center space-y-4">
-              {/* Icono dinámico con glow */}
+              {/* Emoji GRANDE y visible */}
               <div
-                className={`mx-auto w-20 h-20 rounded-xl flex items-center justify-center border-2 ${dca.borderColor} ${dca.bgClass} ${dca.glow} transition-all duration-500`}
+                className={`mx-auto w-24 h-24 rounded-2xl flex items-center justify-center border-2 ${dca.borderColor} ${dca.bgClass} ${dca.glow} transition-all duration-500`}
               >
-                <dca.icon className={`h-10 w-10 ${dca.colorClass}`} />
+                <span className="text-6xl">{dca.emoji}</span>
               </div>
 
-              <div className="space-y-1">
-                <div className={`font-serif text-lg font-bold uppercase tracking-wider ${dca.colorClass}`}>
+              <div className="space-y-2">
+                <div className={`font-serif text-xl font-bold ${dca.colorClass}`}>
                   {dca.status}
                 </div>
-                <div className="font-mono text-4xl font-bold text-white tabular-nums tracking-tighter">
+                
+                {/* Score numérico */}
+                <div className="font-mono text-5xl font-bold text-white tabular-nums tracking-tighter">
                   {result.value}
-                  <span className="text-lg text-gray-600">/100</span>
+                  <span className="text-xl text-gray-600">/100</span>
+                </div>
+
+                {/* Barra de progreso visual */}
+                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mt-2">
+                  <div 
+                    className={`h-full transition-all duration-700 ${dca.colorClass.replace('text-', 'bg-')}`}
+                    style={{ width: `${result.value}%` }}
+                  />
                 </div>
               </div>
 
-              <p className="font-mono text-xs text-gray-400 max-w-xs mx-auto leading-relaxed">
+              {/* Mensaje explicativo */}
+              <p className="font-mono text-xs text-gray-300 max-w-sm mx-auto leading-relaxed px-2">
                 {dca.message}
               </p>
 
-              {/* Badge de impacto */}
+              {/* Badge de impacto - más visible */}
               <div
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-md text-xs font-medium border ${dca.borderColor} ${dca.bgClass} ${dca.colorClass}`}
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium border ${dca.borderColor} ${dca.bgClass} ${dca.colorClass} ${dca.glow}`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-current animate-pulse" />
                 {dca.impact}
               </div>
             </div>
 
-            {/* CTA AureoBitcoin - Estilo Ghost Matrix */}
+            {/* CTA AureoBitcoin */}
             <a
               href={SPONSOR_CONFIG.url}
               target="_blank"
