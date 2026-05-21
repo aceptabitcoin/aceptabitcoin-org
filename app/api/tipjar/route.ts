@@ -9,6 +9,36 @@ import { z } from 'zod';
 
 const LIGHTNING_ADDRESS = "aceptabitcoin@blink.sv";
 
+// ─── Rate Limiter (in-memory, por IP) ─────────────────────────────────────────
+const TIP_LIMIT_PER_IP = 3;
+const TIP_LIMIT_WINDOW_MS = 5 * 60_000; // 5 minutos
+
+const tipLimits = new Map<string, number>();
+
+function getClientIp(req: NextRequest): string {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || "127.0.0.1"
+  );
+}
+
+function checkTipRateLimit(ip: string): boolean {
+  const count = (tipLimits.get(ip) || 0) + 1;
+
+  if (count > TIP_LIMIT_PER_IP) {
+    return false;
+  }
+
+  tipLimits.set(ip, count);
+
+  // Resetear el contador de esta IP después del tiempo de ventana
+  setTimeout(() => {
+    tipLimits.delete(ip);
+  }, TIP_LIMIT_WINDOW_MS);
+
+  return true;
+}
+// ───────────────────────────────────────────────────────────────────────────────
+
 const CreateInvoiceSchema = z.object({
   action: z.literal('create-invoice'),
   amount: z.number().positive().int().max(10_000_000), // ~10 BTC max
@@ -25,6 +55,16 @@ const RequestSchema = z.union([CreateInvoiceSchema, GetOnchainSchema]);
 
 export async function POST(request: NextRequest) {
   try {
+    // ── Rate Limiting ──────────────────────────────────────────────────────────
+    const ip = getClientIp(request);
+    if (!checkTipRateLimit(ip)) {
+      return NextResponse.json(
+        { error: "Límite de donaciones alcanzado" },
+        { status: 429 }
+      );
+    }
+    // ─────────────────────────────────────────────────────────────────────────
+
     const body = await request.json();
     const parsed = RequestSchema.safeParse(body);
 

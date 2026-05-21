@@ -27,8 +27,8 @@ const config = {
     extend: {
       colors: {
         // 🟢 Design System Matrix v2.0 — Colores de marca
-        matrix: "#00FF41",      // Verde neon: información técnica, borders, glow
-        bitcoin: "#F7931A",     // Naranja Bitcoin: CTAs, precios, acciones principales
+        matrix: "var(--matrix)",
+        bitcoin: "var(--bitcoin)",
         
         // ❌ REMOVIDO: `dark: "#000000"` → usar `bg-black` nativo de Tailwind
         
