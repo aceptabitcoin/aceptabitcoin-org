@@ -14,6 +14,9 @@ export const edition2026_2: HackathonEdition = {
   tagline: "Diseña la mejor experiencia de usuario para custodia avanzada de Bitcoin",
   subtitle: "Multisig + Timelocks + Miniscript — Sin perder la cabeza en el intento",
   
+  // --- Registro (CTA Principal) ---
+  registrationUrl: "https://luma.com/kzdw3pek",
+  
   // --- Fechas (PDF oficial) ---
   status: "upcoming",
   dates: {
