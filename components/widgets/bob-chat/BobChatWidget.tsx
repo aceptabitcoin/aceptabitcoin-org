@@ -79,9 +79,9 @@ export default function BobChatWidget({
     };
   }, []);
 
-  // Auto-scroll
+  // Auto-scroll corregido: Solo se ejecuta si hay mensajes en el chat
   useEffect(() => {
-    if (isMounted) {
+    if (isMounted && messages.length > 0) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }, [messages, isMounted]);

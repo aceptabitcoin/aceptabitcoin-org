@@ -12,7 +12,7 @@ export default function PriceConverter() {
   });
   const [loading, setLoading] = useState(true);
 
-  // Estados de conversión
+  // Estados de conversión (Valores numéricos crudos para evitar conflictos de tipado)
   const [btcUsd, setBtcUsd] = useState<number>(1);
   const [usdAmount, setUsdAmount] = useState<number>(65000);
 
@@ -55,7 +55,7 @@ export default function PriceConverter() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handlers
+  // Handlers robustos (Evitan el NaN al borrar todo el input)
   const handleBtcUsdChange = (value: number) => {
     setBtcUsd(value);
     setUsdAmount(value * prices.usd);
@@ -126,26 +126,27 @@ export default function PriceConverter() {
                 <Input
                   type="number"
                   step="0.00000001"
-                  value={btcUsd}
+                  value={btcUsd || ""}
                   onChange={(e) => handleBtcUsdChange(parseFloat(e.target.value) || 0)}
-                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-bitcoin focus:ring-1 focus:ring-bitcoin text-[#FAFAFA] placeholder:text-gray-600"
+                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-bitcoin focus:ring-1 focus:ring-bitcoin text-[#FAFAFA] placeholder:text-gray-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <p className="text-center text-[10px] text-gray-500 font-mono uppercase">BTC</p>
               </div>
               <div className="text-bitcoin/50 font-mono">↔</div>
               <div className="space-y-1">
                 <Input
-                  type="text"
-                  value={usdAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                  onChange={(e) => handleUsdChange(parseFloat(e.target.value.replace(/,/g, "")) || 0)}
-                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-bitcoin focus:ring-1 focus:ring-bitcoin text-[#FAFAFA] placeholder:text-gray-600"
+                  type="number"
+                  step="0.01"
+                  value={usdAmount || ""}
+                  onChange={(e) => handleUsdChange(parseFloat(e.target.value) || 0)}
+                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-bitcoin focus:ring-1 focus:ring-bitcoin text-[#FAFAFA] placeholder:text-gray-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <p className="text-center text-[10px] text-gray-500 font-mono uppercase">USD</p>
               </div>
             </div>
           </div>
 
-          {/* 2. BTC ↔ MXN - Bitcoin Orange (CORREGIDO: antes orange-400) */}
+          {/* 2. BTC ↔ MXN - Bitcoin Orange */}
           <div className="group">
             <div className="flex items-center gap-2 mb-2">
               <Bitcoin className="h-4 w-4 text-bitcoin" />
@@ -156,19 +157,20 @@ export default function PriceConverter() {
                 <Input
                   type="number"
                   step="0.00000001"
-                  value={btcMxn}
+                  value={btcMxn || ""}
                   onChange={(e) => handleBtcMxnChange(parseFloat(e.target.value) || 0)}
-                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-bitcoin focus:ring-1 focus:ring-bitcoin text-[#FAFAFA] placeholder:text-gray-600"
+                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-bitcoin focus:ring-1 focus:ring-bitcoin text-[#FAFAFA] placeholder:text-gray-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <p className="text-center text-[10px] text-gray-500 font-mono uppercase">BTC</p>
               </div>
               <div className="text-bitcoin/50 font-mono">↔</div>
               <div className="space-y-1">
                 <Input
-                  type="text"
-                  value={mxnAmount.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                  onChange={(e) => handleMxnChange(parseFloat(e.target.value.replace(/,/g, "")) || 0)}
-                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-bitcoin focus:ring-1 focus:ring-bitcoin text-[#FAFAFA] placeholder:text-gray-600"
+                  type="number"
+                  step="0.01"
+                  value={mxnAmount || ""}
+                  onChange={(e) => handleMxnChange(parseFloat(e.target.value) || 0)}
+                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-bitcoin focus:ring-1 focus:ring-bitcoin text-[#FAFAFA] placeholder:text-gray-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <p className="text-center text-[10px] text-gray-500 font-mono uppercase">MXN</p>
               </div>
@@ -185,19 +187,21 @@ export default function PriceConverter() {
               <div className="space-y-1">
                 <Input
                   type="number"
-                  value={sats}
+                  step="1"
+                  value={sats || ""}
                   onChange={(e) => handleSatsChange(Math.floor(parseFloat(e.target.value)) || 0)}
-                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-matrix focus:ring-1 focus:ring-matrix text-matrix placeholder:text-matrix/30"
+                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-matrix focus:ring-1 focus:ring-matrix text-matrix placeholder:text-matrix/30 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <p className="text-center text-[10px] text-matrix/70 font-mono uppercase">SATS</p>
               </div>
               <div className="text-matrix/50 font-mono">↔</div>
               <div className="space-y-1">
                 <Input
-                  type="text"
-                  value={satsMxn.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                  onChange={(e) => handleSatsMxnChange(parseFloat(e.target.value.replace(/,/g, "")) || 0)}
-                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-matrix focus:ring-1 focus:ring-matrix text-[#FAFAFA] placeholder:text-gray-600"
+                  type="number"
+                  step="0.01"
+                  value={satsMxn || ""}
+                  onChange={(e) => handleSatsMxnChange(parseFloat(e.target.value) || 0)}
+                  className="h-14 bg-white/5 border-white/20 font-mono text-2xl font-bold focus:border-matrix focus:ring-1 focus:ring-matrix text-[#FAFAFA] placeholder:text-gray-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 <p className="text-center text-[10px] text-matrix/70 font-mono uppercase">MXN</p>
               </div>
