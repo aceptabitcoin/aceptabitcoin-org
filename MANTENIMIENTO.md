@@ -156,6 +156,54 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 
 ---
 
+## ⚠️ Referencia: Errores React UMD #425, #418, #423 y NotFoundError
+
+### Códigos de Error y Causas Raíz
+
+| Error | Significado | Causa Típica |
+|-------|-------------|--------------|
+| **#425** | Cannot insert component into DOM | SSR/CSR mismatch - estructura de árbol diferente entre servidor y cliente |
+| **#418** | Cannot remove node at this time | Nodo DOM no existe o fue removido externamente |
+| **#423** | Hydration mismatch | HTML del servidor no coincide con lo esperado por el cliente |
+| **NotFoundError** | insertBefore/removeChild failed | Cascada por #423 - React intenta operar en nodo inexistente |
+
+### Soluciones Implementadas
+
+1. **React.memo → memo import** (`60ccb9a`):
+   ```tsx
+   // ❌ Incorrecto - causa error UMD global
+   import React from 'react';
+   const Memoized = React.memo(Component);
+   
+   // ✅ Correcto - import nombrado
+   import { memo } from 'react';
+   const Memoized = memo(Component);
+   ```
+
+2. **Tipos de metadata alignados** (`2496da6`):
+   ```typescript
+   // Agregado 'general' para consistencia SSR/CSR
+   export interface BlinkInvoiceMetadata {
+     service?: 'general' | 'consultoria' | 'curso' | 'diseno' | 'charla' | 'donacion';
+   }
+   ```
+
+3. **Patrón isMounted para valores dinámicos**:
+   ```tsx
+   const [mounted, setMounted] = useState(false);
+   useEffect(() => setMounted(true), []);
+   // Render consistente tanto en SSR como CSR
+   ```
+
+### Prevenir Futuros Errores
+
+- Usar siempre `memo` importado de React, nunca `React.memo`
+- Evitar valores dinámicos (`new Date()`, `Math.random()`) en render sin guards
+- Incluir `suppressHydrationWarning` solo cuando sea necesario y documentado
+- Verificar que tipos TypeScript coincidan entre interfaces y esquemas Zod
+
+---
+
 ## 📅 Actualizaciones Recientes - Mayo 2026 (Sesión de Pulido y Encerado)
 
 Se realizó una revisión y refactorización profunda de los componentes clave:
