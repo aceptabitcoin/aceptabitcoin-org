@@ -1,13 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { Clock, Hash, Link as LinkIcon, Calendar, Zap, Users } from "lucide-react";
+import { 
+  Clock, Hash, Link as LinkIcon, Calendar, Zap, Users,
+  Sprout, Store, ShoppingCart, Trophy, Coins, Palette, 
+  ClipboardList, MapPin, Rocket 
+} from "lucide-react";
 
 // ============================================================
 // BITCOIN TIMECHAIN — Nuestra Historia
 // Cada evento es un bloque minado en la cadena de Acepta Bitcoin
+// Design System: Bitcoin Matrix v2.0
 // ============================================================
 
 interface TimechainBlock {
@@ -135,11 +140,111 @@ const timechainBlocks: TimechainBlock[] = [
   }
 ];
 
+// 🔹 Componente memoizado para íconos de categoría (Lucide React)
+const CategoryIcon = ({ category }: { category: string }) => {
+  const icons = useMemo(() => ({
+    genesis: <Sprout className="h-6 w-6 text-matrix" />,
+    infrastructure: <Zap className="h-6 w-6 text-bitcoin" />,
+    adoption: <Store className="h-6 w-6 text-matrix/80" />,
+    community: <Users className="h-6 w-6 text-bitcoin/80" />
+  }), []);
+  
+  return icons[category as keyof typeof icons] || <Hash className="h-6 w-6 text-gray-400" />;
+};
+
+// 🔹 Bloque memoizado para optimizar re-renders
+const TimechainBlock = ({ block, isMounted }: { 
+  block: TimechainBlock; 
+  isMounted: boolean;
+}) => {
+  const categoryStyle = useMemo(() => {
+    switch (block.category) {
+      case "genesis": return "border-matrix text-matrix bg-matrix/10 shadow-[0_0_15px_rgba(0,255,65,0.2)]";
+      case "infrastructure": return "border-bitcoin text-bitcoin bg-bitcoin/10 shadow-[0_0_20px_rgba(247,147,26,0.4)]";
+      case "adoption": return "border-matrix/70 text-gray-300 bg-matrix/5";
+      case "community": return "border-bitcoin/70 text-gray-300 bg-bitcoin/5";
+      default: return "border-white/20 text-gray-400";
+    }
+  }, [block.category]);
+
+  return (
+    <div className={`group relative border-2 ${categoryStyle} bg-black/90 backdrop-blur-md rounded-2xl overflow-hidden hover:border-matrix/50 transition-all duration-500`}>
+      {/* Block Header */}
+      <div className="px-8 py-5 border-b border-white/10 flex items-center justify-between bg-black/50">
+        <div className="flex items-center gap-4">
+          <div className="font-vt323 text-4xl text-white">#{block.height.toString().padStart(3, '0')}</div>
+          <div className={`px-3 py-1 text-[10px] font-mono uppercase tracking-widest border ${categoryStyle}`}>
+            {block.category.toUpperCase()}
+          </div>
+        </div>
+        <div className="text-2xl" aria-hidden="true">
+          <CategoryIcon category={block.category} />
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-8 space-y-6">
+        <div>
+          <div className="text-xs font-mono text-gray-500 uppercase">{block.quarter}</div>
+          <h3 className="font-serif text-3xl font-bold mt-1 text-white group-hover:text-matrix transition-colors">
+            {block.title}
+          </h3>
+        </div>
+
+        <p className="font-mono text-gray-300 leading-relaxed">
+          {block.desc}
+        </p>
+
+        <div className="pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+          <div className="flex items-center gap-2 text-gray-500">
+            <LinkIcon className="h-3.5 w-3.5 flex-shrink-0" />
+            Prev: <span className="text-gray-600 truncate cursor-help" title={block.prevHash}>{block.prevHash.slice(0, 12)}...</span>
+          </div>
+          <div className="flex items-center gap-2 text-matrix">
+            <Hash className="h-3.5 w-3.5 flex-shrink-0" />
+            Hash: <span className="truncate cursor-help" title={block.hash}>{block.hash.slice(0, 12)}...</span>
+          </div>
+        </div>
+
+        <div className="text-[10px] font-mono text-gray-600 uppercase flex items-center gap-2 pt-2">
+          <Calendar className="h-3 w-3 flex-shrink-0" />
+          {isMounted ? (
+            new Date(block.timestamp).toLocaleDateString("es-MX", { 
+              timeZone: "America/Mexico_City",
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })
+          ) : (
+            "Cargando bloque..."
+          )}
+        </div>
+      </div>
+
+      {/* Corner Accents - Design System Spec */}
+      <div className="absolute top-4 right-4 w-6 h-6 border-t border-r border-current opacity-30" />
+      <div className="absolute bottom-4 left-4 w-6 h-6 border-b border-l border-current opacity-30" />
+    </div>
+  );
+};
+
+// 🔹 Memoización del componente completo
+TimechainBlock.displayName = "TimechainBlock";
+const MemoizedBlock = memo(TimechainBlock);
+
 export default function NuestraHistoriaPage() {
+  const [isMounted, setIsMounted] = useState(false);
   const [timeUntilNext, setTimeUntilNext] = useState("10:00");
+
+  // Guard de montaje para hidratación
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // 🔹 Timer de 10 minutos (simulando block time de Bitcoin)
   useEffect(() => {
+    if (!isMounted) return;
+
     const updateTimer = () => {
       const now = new Date();
       const minutes = now.getMinutes();
@@ -163,36 +268,25 @@ export default function NuestraHistoriaPage() {
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, []);
-
-  // 🔹 Estilos estrictos: SOLO matrix/bitcoin/gris (design-system.md compliant)
-  const getCategoryStyle = (cat: string) => {
-    switch (cat) {
-      case "genesis": return "border-matrix text-matrix bg-matrix/10";
-      case "infrastructure": return "border-bitcoin text-bitcoin bg-bitcoin/10";
-      case "adoption": return "border-matrix/70 text-gray-300 bg-matrix/5";
-      case "community": return "border-bitcoin/70 text-gray-300 bg-bitcoin/5";
-      default: return "border-white/20 text-gray-400";
-    }
-  };
+  }, [isMounted]);
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-black text-white relative overflow-hidden">
-        {/* Background Grid - Ajustado para ser sutil y no distraer */}
-        <div className="absolute inset-0 bg-[radial-gradient(rgba(0,255,65,0.08)_1px,transparent_1px)] bg-[length:50px_50px] opacity-40" />
+      <div className="min-h-screen bg-black text-[#FAFAFA] relative overflow-hidden">
+        {/* Background Grid - Design System v2.0 Spec */}
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(0,255,65,0.15)_1px,transparent_1px)] bg-[size:50px_50px] opacity-40 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black pointer-events-none" />
 
         <div className="container mx-auto px-4 py-16 relative z-10">
           
           {/* Header */}
           <div className="text-center mb-20 space-y-6">
-            <div className="inline-flex items-center gap-3 bg-black/80 border border-matrix/30 px-6 py-2.5 rounded-full font-mono text-xs text-matrix tracking-[0.1em]">
-              <Hash className="h-4 w-4" /> BITCOIN TIMECHAIN
+            <div className="inline-flex items-center gap-3 bg-black/80 border border-matrix/30 px-6 py-2.5 rounded-full font-mono text-xs text-matrix tracking-[0.1em] uppercase">
+              <Hash className="h-4 w-4" /> Bitcoin Timechain
             </div>
             
-            <h1 className="font-serif text-6xl md:text-7xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="font-serif text-6xl md:text-7xl font-bold tracking-tight text-[#FAFAFA] leading-tight drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">
               Nuestra Historia<br />
               <span className="text-matrix drop-shadow-[0_0_25px_rgba(0,255,65,0.5)]">está escrita en bloques</span>
             </h1>
@@ -203,20 +297,21 @@ export default function NuestraHistoriaPage() {
             </p>
           </div>
 
-          {/* Mining Status */}
+          {/* Mining Status - Glassmorphism Bunker */}
           <div className="max-w-2xl mx-auto mb-24">
-            <div className="bg-black/80 border border-matrix/30 backdrop-blur-xl rounded-3xl p-10 text-center space-y-4">
+            <div className="bg-black/80 border border-matrix/30 backdrop-blur-md rounded-3xl p-10 text-center space-y-4">
               <div className="uppercase tracking-[0.2em] text-xs text-matrix mb-2 flex items-center justify-center gap-2">
                 <Clock className="h-4 w-4 animate-pulse" /> Próximo Bloque
               </div>
               <div 
-                className="font-vt323 text-8xl md:text-9xl text-matrix tracking-widest drop-shadow-[0_0_30px_#00FF41] tabular-nums"
+                className="font-vt323 text-8xl md:text-9xl text-matrix tracking-widest tabular-nums"
                 aria-live="polite"
-                aria-label="Tiempo restante para el próximo bloque"
+                aria-atomic="true"
+                aria-label={`Tiempo restante para el próximo bloque: ${timeUntilNext} minutos`}
               >
-                {timeUntilNext || "10:00"}
+                {isMounted ? timeUntilNext : "10:00"}
               </div>
-              <div className="mt-4 text-xs font-mono text-gray-500">
+              <div className="mt-4 text-xs font-mono text-gray-500 uppercase">
                 Block Height: <span className="text-matrix">#{timechainBlocks.length}</span> • Dificultad: <span className="text-matrix">0000...</span>
               </div>
             </div>
@@ -231,71 +326,21 @@ export default function NuestraHistoriaPage() {
                   <div className="absolute left-8 md:left-12 top-24 bottom-0 w-px bg-gradient-to-b from-matrix/50 to-transparent hidden md:block" />
                 )}
 
-                <div className={`group relative border-2 ${getCategoryStyle(block.category)} bg-black/90 backdrop-blur-md rounded-2xl overflow-hidden hover:border-matrix transition-all duration-500`}>
-                  {/* Block Header */}
-                  <div className="px-8 py-5 border-b border-white/10 flex items-center justify-between bg-black/50">
-                    <div className="flex items-center gap-4">
-                      <div className="font-vt323 text-4xl text-white">#{block.height.toString().padStart(3, '0')}</div>
-                      <div className={`px-3 py-1 text-[10px] font-mono uppercase tracking-widest border ${getCategoryStyle(block.category)}`}>
-                        {block.category.toUpperCase()}
-                      </div>
-                    </div>
-                    <div className="text-matrix text-2xl" aria-hidden="true">{block.icon}</div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-8 space-y-6">
-                    <div>
-                      <div className="text-xs font-mono text-gray-500">{block.quarter}</div>
-                      <h3 className="font-serif text-3xl font-bold mt-1 text-white group-hover:text-matrix transition-colors">
-                        {block.title}
-                      </h3>
-                    </div>
-
-                    <p className="font-mono text-gray-300 leading-relaxed">
-                      {block.desc}
-                    </p>
-
-                    <div className="pt-6 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
-                      <div className="flex items-center gap-2 text-gray-500">
-                        <LinkIcon className="h-3.5 w-3.5 flex-shrink-0" />
-                        Prev: <span className="text-gray-600 truncate">{block.prevHash.slice(0, 12)}...</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-matrix">
-                        <Hash className="h-3.5 w-3.5 flex-shrink-0" />
-                        Hash: <span className="truncate">{block.hash.slice(0, 12)}...</span>
-                      </div>
-                    </div>
-
-                    <div className="text-[10px] font-mono text-gray-600 flex items-center gap-2 pt-2">
-                      <Calendar className="h-3 w-3 flex-shrink-0" />
-                      {new Date(block.timestamp).toLocaleDateString("es-MX", { 
-                        timeZone: "America/Mexico_City",
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Corner Accents */}
-                  <div className="absolute top-4 right-4 w-6 h-6 border-t border-r border-current opacity-30" />
-                  <div className="absolute bottom-4 left-4 w-6 h-6 border-b border-l border-current opacity-30" />
-                </div>
+                <MemoizedBlock block={block} isMounted={isMounted} />
               </div>
             ))}
           </div>
 
-          {/* Final CTA */}
+          {/* Final CTA - ArcadeButton Style */}
           <div className="mt-28 text-center space-y-6">
-            <div className="inline-flex items-center gap-2 bg-bitcoin/10 border border-bitcoin/30 px-6 py-3 rounded-full font-mono text-xs text-bitcoin tracking-[0.1em]">
-              <Users className="h-4 w-4" /> MINA EL SIGUIENTE BLOQUE
+            <div className="inline-flex items-center gap-2 bg-bitcoin/10 border border-bitcoin/30 px-6 py-3 rounded-full font-mono text-xs text-bitcoin tracking-[0.1em] uppercase">
+              <Users className="h-4 w-4" /> Mina el siguiente bloque
             </div>
             <a
               href="/tianguis"
-              className="inline-flex items-center gap-4 px-10 py-5 bg-bitcoin text-black font-vt323 text-2xl md:text-3xl rounded-2xl transition-all duration-200 hover:bg-bitcoin/90 hover:scale-105 shadow-[0_0_40px_rgba(247,147,26,0.6)] hover:shadow-[0_0_50px_rgba(247,147,26,0.8)]"
+              className="inline-flex items-center justify-center gap-4 px-10 py-5 bg-bitcoin text-black font-vt323 text-2xl md:text-3xl rounded-2xl transition-all duration-200 hover:bg-bitcoin/90 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-matrix focus:ring-offset-2 focus:ring-offset-black shadow-[0_0_20px_rgba(247,147,26,0.4)] hover:shadow-[0_0_25px_rgba(247,147,26,0.6)]"
             >
-              MINAR AHORA <Zap className="h-7 w-7" />
+              Minar Ahora <Zap className="h-7 w-7" />
             </a>
           </div>
         </div>
