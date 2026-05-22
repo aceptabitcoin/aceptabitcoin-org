@@ -64,6 +64,7 @@ const STANDARD_RESOURCES = [
     icon: Code,
     href: "#",
     type: "Docs",
+    external: false,
   },
   {
     title: "Lightning Setup Guide",
@@ -71,6 +72,7 @@ const STANDARD_RESOURCES = [
     icon: Download,
     href: "/hackathon/docs/lightning-setup-guide.pdf",
     type: "PDF",
+    external: true,
   },
   {
     title: "NIP-99 Cheatsheet",
@@ -78,13 +80,16 @@ const STANDARD_RESOURCES = [
     icon: FileText,
     href: "/hackathon/docs/nip99-cheatsheet.pdf",
     type: "PDF",
+    external: true,
   },
   {
     title: "Workshop Recordings",
     description: "Grabaciones de talleres previos",
     icon: Video,
-    href: "#",
+    // ✅ Link actualizado a la playlist oficial de YouTube
+    href: "https://youtube.com/playlist?list=PLDoK2v4GlcLedQyeUbY2S-xb6gQUd9kGL&si=Gq-EOFW25Un0viHS",
     type: "Video",
+    external: true,
   },
 ];
 
@@ -137,18 +142,14 @@ export default async function ResourcesPage({
               target={resource.external ? "_blank" : undefined}
               rel={resource.external ? "noopener noreferrer" : undefined}
               className={`hackathon-resource-card ${
-                resource.featured
-                  ? "hackathon-resource-card--featured"
-                  : ""
+                resource.featured ? "hackathon-resource-card--featured" : ""
               }`}
             >
               <div className="flex items-start gap-3">
                 {/* Icono dinámico */}
                 <div
                   className={`hackathon-resource-icon ${
-                    resource.badge === "ai"
-                      ? "hackathon-resource-icon--ai"
-                      : ""
+                    resource.badge === "ai" ? "hackathon-resource-icon--ai" : ""
                   }`}
                 >
                   <resource.icon className="w-5 h-5" />
@@ -172,9 +173,7 @@ export default async function ResourcesPage({
                   {/* CTA contextual */}
                   <div className="flex items-center gap-2">
                     <span className="hackathon-btn hackathon-btn--ghost text-xs py-1 px-2">
-                      {resource.external
-                        ? "Abrir en nueva pestaña →"
-                        : "Descargar PDF ↓"}
+                      {resource.external ? "Abrir en nueva pestaña →" : "Descargar PDF ↓"}
                     </span>
                     {resource.type === "PDF" && (
                       <span className="font-mono text-[10px] text-gray-500">
@@ -194,29 +193,42 @@ export default async function ResourcesPage({
           Materiales Adicionales
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {STANDARD_RESOURCES.map((resource, idx) => (
-            <Link
-              key={idx}
-              href={resource.href}
-              className="hackathon-resource-card group"
-              target={resource.type === "PDF" ? "_blank" : undefined}
-            >
-              <div className="hackathon-resource-icon group-hover:text-bitcoin transition-colors">
-                <resource.icon className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="hackathon-resource-title">{resource.title}</h3>
-                <p className="hackathon-resource-desc">
-                  {resource.description}
-                </p>
-                <div className="mt-2">
-                  <span className="hackathon-badge hackathon-badge--matrix">
-                    {resource.type}
-                  </span>
+          {STANDARD_RESOURCES.map((resource, idx) => {
+            const isExternal = resource.external;
+            const CardContent = (
+              <>
+                <div className="hackathon-resource-icon group-hover:text-bitcoin transition-colors">
+                  <resource.icon className="h-6 w-6" />
                 </div>
-              </div>
-            </Link>
-          ))}
+                <div>
+                  <h3 className="hackathon-resource-title">{resource.title}</h3>
+                  <p className="hackathon-resource-desc">{resource.description}</p>
+                  <div className="mt-2">
+                    <span className="hackathon-badge hackathon-badge--matrix">
+                      {resource.type}
+                    </span>
+                  </div>
+                </div>
+              </>
+            );
+
+            // ✅ Si es externo (como YouTube o PDFs externos), usamos <a> para evitar problemas de enrutamiento interno en Next.js
+            return isExternal ? (
+              <a
+                key={idx}
+                href={resource.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hackathon-resource-card group"
+              >
+                {CardContent}
+              </a>
+            ) : (
+              <Link key={idx} href={resource.href} className="hackathon-resource-card group">
+                {CardContent}
+              </Link>
+            );
+          })}
         </div>
 
         {/* ===== EDITION-SPECIFIC RESOURCES (from config) ===== */}
@@ -245,13 +257,9 @@ export default async function ResourcesPage({
                     )}
                   </div>
                   <div>
-                    <h3 className="hackathon-resource-title">
-                      {resource.title}
-                    </h3>
+                    <h3 className="hackathon-resource-title">{resource.title}</h3>
                     {resource.description && (
-                      <p className="hackathon-resource-desc">
-                        {resource.description}
-                      </p>
+                      <p className="hackathon-resource-desc">{resource.description}</p>
                     )}
                     <div className="mt-2">
                       <span className="hackathon-badge hackathon-badge--upcoming">

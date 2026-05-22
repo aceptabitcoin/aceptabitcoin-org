@@ -23,7 +23,9 @@ import AntiPatternsSection from "@/components/hackathon/content/AntiPatternsSect
 import StackSection from "@/components/hackathon/content/StackSection";
 import FAQSection from "@/components/hackathon/content/FAQSection";
 import RulesSection from "@/components/hackathon/content/RulesSection";
-import GoogleFormButton from "@/components/hackathon/interactive/GoogleFormButton";
+
+// ✅ Componente Arcade/CTA adaptado para Links Externos (Luma Events)
+import ArcadeButton from "@/components/ui/ArcadeButton"; 
 
 // Lib
 import { getEditionConfig, listActiveEditions } from "@/lib/hackathon/editions";
@@ -96,6 +98,9 @@ export default async function EditionPage({ params }: EditionPageProps) {
     notFound(); // ✅ Esto debe ejecutarse antes del return
   }
 
+  // ✅ Nueva URL Única de Registro en Luma
+  const registrationUrl = "https://luma.com/kzdw3pek";
+
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero Section */}
@@ -165,14 +170,21 @@ export default async function EditionPage({ params }: EditionPageProps) {
           <section id="register" className="py-20 border-t border-matrix/20 text-center">
             <h2 className="font-serif text-4xl text-white mb-6">¿Listo para el reto?</h2>
             <p className="font-mono text-gray-400 mb-10 max-w-2xl mx-auto">
-              Las inscripciones están abiertas. Forma tu equipo de 2 a 4 personas y asegura tu lugar en el hub de tu elección.
+              Las inscripciones están abiertas a través de nuestra plataforma oficial en Luma. Forma tu equipo de 2 a 4 personas y asegura tu lugar.
             </p>
-            <GoogleFormButton 
-              formUrl="https://docs.google.com/forms/d/e/1FAIpQLSdB1g3h7jpuUPxvHzMAJtlM7Q8wkuZcfBDpOgOU8mlbfpYkTA/viewform"
-              label="🌽 REGISTRAR MI EQUIPO"
-              variant="primary"
-              showBadge={true}
-            />
+            <div className="flex justify-center">
+              {/* Usamos la etiqueta nativa <a> con ArcadeButton para enlaces externos obedeciendo el Design System */}
+              <a 
+                href={registrationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block"
+              >
+                <ArcadeButton className="px-10 py-4 bg-bitcoin text-black font-bold hover:shadow-[0_0_20px_rgba(247,147,26,0.5)] transition-all uppercase tracking-wider text-base">
+                  ⚡ REGISTRAR MI EQUIPO EN LUMA
+                </ArcadeButton>
+              </a>
+            </div>
           </section>
         )}
 
@@ -180,14 +192,18 @@ export default async function EditionPage({ params }: EditionPageProps) {
         {edition.faqs && (
           <section id="faq">
             <FAQSection faqs={edition.faqs} />
-            <div className="mt-8 text-center">
-              <span className="text-gray-500 text-xs font-mono">¿Tienes dudas específicas? </span>
-              <GoogleFormButton 
-                formUrl="https://docs.google.com/forms/d/e/1FAIpQLSdB1g3h7jpuUPxvHzMAJtlM7Q8wkuZcfBDpOgOU8mlbfpYkTA/viewform"
-                label="Formulario de soporte/registro"
-                variant="compact"
-                showBadge={false}
-              />
+            <div className="mt-12 text-center border-t border-white/5 pt-8">
+              <span className="text-gray-500 text-xs font-mono block mb-4">
+                ¿Tienes dudas específicas o requieres soporte con tu registro?
+              </span>
+              <a 
+                href={registrationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-matrix hover:text-matrix-glow font-mono text-sm underline transition-colors"
+              >
+                Ir a la página del evento de Luma →
+              </a>
             </div>
           </section>
         )}
