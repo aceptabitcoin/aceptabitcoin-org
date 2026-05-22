@@ -158,17 +158,20 @@ export default function EditionHero({
           </span>
         </div>
 
-        {/* CTA — DS: ArcadeButton style + glow */}
+        {/* CTA — DS: ArcadeButton style + enhanced glow */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
           <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLScxpASJWpkpUN_2aSweOLiReRVy4ujXmID04XO7V8rR_DYWiA/viewform"
+            href="https://luma.com/kzdw3pek"
             target="_blank"
             rel="noopener noreferrer"
             className={cn(
               "group relative inline-flex items-center justify-center px-8 py-4",
               "font-vt323 font-bold text-lg rounded-xl",
-              "bg-bitcoin text-black transition-all duration-300",
-              "hover:shadow-[0_0_30px_rgba(247,147,26,0.5)]",
+              "bg-bitcoin text-black",
+              "transition-all duration-300",
+              "hover:shadow-[0_0_20px_rgba(247,147,26,0.5)]",
+              "hover:shadow-[0_0_60px_rgba(247,147,26,0.3)]",
+              "hover:scale-105 active:scale-95",
               "focus:outline-none focus:ring-2 focus:ring-bitcoin/50"
             )}
           >
@@ -176,6 +179,8 @@ export default function EditionHero({
               Registrarse Ahora
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
             </span>
+            {/* Arcadepad glow overlay */}
+            <span className="absolute -inset-1 bg-gradient-to-r from-bitcoin/20 via-amber-500/10 to-transparent rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
           </a>
           <a
             href={`/hackathon/${edition?.slug ?? "custody-ui-2026"}/resources`}
@@ -183,7 +188,11 @@ export default function EditionHero({
               "group inline-flex items-center justify-center px-8 py-4",
               "font-vt323 font-bold text-lg rounded-xl",
               "border border-matrix/30 text-matrix",
-              "hover:border-matrix hover:bg-matrix/10 transition-all duration-300"
+              "hover:border-matrix hover:bg-matrix/10",
+              "hover:shadow-[0_0_20px_rgba(0,255,65,0.3)]",
+              "hover:shadow-[0_0_40px_rgba(0,255,65,0.2)]",
+              "transition-all duration-300",
+              "hover:scale-105 active:scale-95"
             )}
           >
             Explorar Recursos
