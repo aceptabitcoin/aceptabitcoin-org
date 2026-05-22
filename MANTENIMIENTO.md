@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-20
+Estado actual del proyecto — última actualización: 2026-05-22
 
 ---
 
@@ -51,6 +51,8 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | `HackathonNavbar` | — | — | — | ✅ OK (`"use client"`, `useState` al final del archivo) |
 | `AhorraSectionHeader` | ✅ | — | — | ✅ OK (IntersectionObserver + framer-motion) |
 | `AceptaBitcoinSectionHeader` | ✅ | — | — | ✅ OK (IntersectionObserver + framer-motion) |
+| `PriceConverter` | — | — | — | ✅ OK (datos estáticos al montar, sin mismatches) |
+| `TimechainBlock` | — | — | ✅ (via `memo`) | ✅ OK |
 
 ---
 
@@ -166,6 +168,7 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 - Colores dinámicos: Verde Matrix para SATS/Lightning y Naranja Bitcoin para USD
 - Mejora en selección de servicios, montos preset y experiencia general
 - Mejor integración con Blink.sv (Stablesats + On-chain)
+- **Fix crítico de tipos**: Agregado `'general'` al enum de servicios y `expiresAt: string | null` en metadata
 
 ### 2. Backend de Pagos
 
@@ -177,6 +180,7 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 **lib/blink.ts:**
 - Soporte real de Stablesats (lnUsdInvoiceCreate)
 - Integración con precio actual de Binance (eliminado hardcode)
+- **Agregado `'general'` a `BlinkInvoiceMetadata` interface y `SERVICE_LABELS`**
 - Código más robusto y mantenible
 
 ### 3. Componentes de "Ahorra" y Mercado
@@ -193,7 +197,12 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 - Mejores efectos glow, espaciado, empty states y personalidad cypherpunk
 - Mejora en animaciones y experiencia general
 
-### 5. Configuración y Mantenimiento
+### 5. Fixes Técnicos Mayores
+
+- **React.memo → memo**: Reemplazado `React.memo` por `memo` importado de React para resolver error UMD global en Next.js
+- Todos los componentes ahora usan patrones correctos de hidratación SSR/CSR
+
+### 6. Configuración y Mantenimiento
 
 - Actualizado .env.example con Lightning Address correcto (aceptabitcoin@blink.sv) y mejor organización
 - Alineación general con Design System "Bitcoin Matrix" (colores, tipografía, glassmorphism, scanlines, etc.)
@@ -206,6 +215,9 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 
 | Hash | Mensaje |
 |------|---------|
+| `60ccb9a` | fix: use memo import instead of React.memo to resolve UMD global type error |
+| `fd512d6` | fix(hydration): resolve dynamic time and date mismatches in PriceConverter using isMounted |
+| `2496da6` | feat(tipjar): integrate Blink.sv GraphQL API and fix hydration mismatches in payment flow |
 | `ae43409` | fix(hydration): eliminate severe DOM mismatches in dynamic hackathon sections |
 | `e61d0e5` | fix(compile): remove density prop usages + fix string.getTime() in CountdownTimer |
 | `7f82ede` | fix(hydration): resolve React #425/#423 errors in CountdownTimer + MatrixRain |
