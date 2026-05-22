@@ -146,6 +146,7 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | Orange palette CSS vars | Variables `--orange-500`, `--orange-400`, `--orange-glow` no definidas | Agregadas a `app/globals.css` y `tailwind.config.ts` |
 | `AhorraSectionHeader` sin estandarizar | Necesario componente estandarizado para sección de ahorro | Creado con props `marketTrend`, `isLive`, memoización |
 | `AceptaBitcoinSectionHeader` faltante | Header para calculadora de pagos/conversiones | Creado con IntersectionObserver, chips financieros, badge realtime |
+| `ArcadeButton` href required error | `Property 'href' is missing` en hackathon edition pages | Hecho `href` opcional para soportar tanto Link como button modes |
 
 ### Issues Abiertos
 
@@ -263,8 +264,11 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 
 | Hash | Mensaje |
 |------|---------|
-| `60ccb9a` | fix: use memo import instead of React.memo to resolve UMD global type error |
+| `a267cd5` | fix(ArcadeButton): make href optional to support both Link and button modes |
+| `e8df9bb` | docs: document React UMD error codes (#425, #418, #423) and NotFoundError solutions |
+| `acf8d30` | docs: update MANTENIMIENTO.md with current project state and recent fixes |
 | `fd512d6` | fix(hydration): resolve dynamic time and date mismatches in PriceConverter using isMounted |
+| `60ccb9a` | fix: use memo import instead of React.memo to resolve UMD global type error |
 | `2496da6` | feat(tipjar): integrate Blink.sv GraphQL API and fix hydration mismatches in payment flow |
 | `ae43409` | fix(hydration): eliminate severe DOM mismatches in dynamic hackathon sections |
 | `e61d0e5` | fix(compile): remove density prop usages + fix string.getTime() in CountdownTimer |
