@@ -1,18 +1,19 @@
-// components/hackathon/interactive/GoogleFormButton.tsx
+// components/hackathon/interactive/RegistrationButton.tsx
 // ============================================================
-// GOOGLE FORM CTA — Hackathon Registration Button
+// REGISTRATION CTA — Hackathon Registration Button (Luma Events)
 // Acepta Bitcoin México | Oracle System v2.0
 // Compliance: design-system.md, MANTENIMIENTO.md
+// Registration Platform: https://luma.com/kzdw3pek
 // ============================================================
 
 "use client";
 
-import { ArrowUpRight, ExternalLink } from "lucide-react";
+import { ArrowUpRight, ExternalLink, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface GoogleFormButtonProps {
-  /** URL del Google Form (fallback a env var si no se proporciona) */
-  formUrl?: string;
+interface RegistrationButtonProps {
+  /** URL de registro en Luma (fallback a env var si no se proporciona) */
+  registrationUrl?: string;
   /** Texto del botón (default: "Registrarse Ahora") */
   label?: string;
   /** Variante de estilo: 'primary' (Bitcoin Orange), 'ghost' (Matrix Green) o 'compact' (inline) */
@@ -21,24 +22,24 @@ interface GoogleFormButtonProps {
   className?: string;
   /** Si es true, abre en nueva pestaña (default: true) */
   openInNewTab?: boolean;
-  /** Si es true, muestra una insignia/icono de registro oficial (default: false) */
+  /** Si es true, muestra insignia "OFICIAL" + ícono Zap (default: false) */
   showBadge?: boolean;
 }
 
-export default function GoogleFormButton({
-  formUrl,
+// ✅ URL ÚNICA DE REGISTRO — Luma Events
+const DEFAULT_REGISTRATION_URL =
+  process.env.NEXT_PUBLIC_HACKATHON_REGISTRATION_URL ||
+  "https://luma.com/kzdw3pek";
+
+export default function RegistrationButton({
+  registrationUrl,
   label = "Registrarse Ahora",
   variant = "primary",
   className,
   openInNewTab = true,
   showBadge = false,
-}: GoogleFormButtonProps) {
-  // URL por defecto desde env var o fallback hardcodeado
-  const DEFAULT_FORM_URL =
-    process.env.NEXT_PUBLIC_HACKATHON_REGISTRATION_FORM_URL ||
-    "https://docs.google.com/forms/d/e/1FAIpQLScxpASJWpkpUN_2aSweOLiReRVy4ujXmID04XO7V8rR_DYWiA/viewform";
-
-  const href = formUrl || DEFAULT_FORM_URL;
+}: RegistrationButtonProps) {
+  const href = registrationUrl || DEFAULT_REGISTRATION_URL;
   const isPrimary = variant === "primary";
   const isCompact = variant === "compact";
 
@@ -49,10 +50,10 @@ export default function GoogleFormButton({
       rel={openInNewTab ? "noopener noreferrer" : undefined}
       aria-label={label}
       className={cn(
-        // Base styles
+        // Base styles — Design System: Bitcoin Matrix v2.0
         "group inline-flex items-center justify-center gap-2 font-vt323 tracking-wide rounded-xl transition-all duration-300",
         
-        // Primary variant (Bitcoin Orange)
+        // Primary variant (Bitcoin Orange) — DS: CTA principal
         isPrimary && [
           "bg-bitcoin text-black px-8 py-4 text-lg font-bold",
           "hover:bg-bitcoin/90",
@@ -61,7 +62,7 @@ export default function GoogleFormButton({
           "active:scale-95",
         ],
         
-        // Ghost variant (Matrix Green)
+        // Ghost variant (Matrix Green) — DS: Acción secundaria/técnica
         !isPrimary && !isCompact && [
           "border border-matrix/30 text-matrix px-8 py-4 text-lg",
           "hover:border-matrix hover:bg-matrix/10",
@@ -69,7 +70,7 @@ export default function GoogleFormButton({
           "hover:shadow-[0_0_25px_rgba(0,255,65,0.25)]",
         ],
         
-        // Compact variant (inline, subtle)
+        // Compact variant (inline, subtle) — DS: Enlaces técnicos
         isCompact && [
           "text-matrix hover:text-bitcoin text-sm font-mono",
           "underline-offset-4 hover:underline",
@@ -80,8 +81,11 @@ export default function GoogleFormButton({
         className
       )}
     >
-      {/* Label */}
+      {/* Label + Badge */}
       <span className="relative z-10 flex items-center gap-2">
+        {showBadge && (
+          <Zap className="h-4 w-4 text-bitcoin animate-pulse flex-shrink-0" aria-hidden="true" />
+        )}
         {label}
         {showBadge && (
           <span className="text-[10px] font-mono bg-white/20 px-1.5 py-0.5 rounded border border-white/30">
@@ -92,12 +96,18 @@ export default function GoogleFormButton({
       
       {/* Icon (hidden for compact variant) */}
       {!isCompact && openInNewTab ? (
-        <ExternalLink className="h-5 w-5 opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        <ExternalLink 
+          className="h-5 w-5 opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" 
+          aria-hidden="true"
+        />
       ) : !isCompact && !openInNewTab ? (
-        <ArrowUpRight className="h-5 w-5 opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        <ArrowUpRight 
+          className="h-5 w-5 opacity-90 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+          aria-hidden="true"
+        />
       ) : null}
       
-      {/* Subtle glow overlay on hover (skip for compact) */}
+      {/* Subtle glow overlay on hover (skip for compact) — DS: Efectos visuales */}
       {!isCompact && (
         <span
           className={cn(
