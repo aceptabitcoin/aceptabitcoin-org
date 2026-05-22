@@ -5,13 +5,14 @@ import React from "react";
 import { cn } from "@/lib/utils";
 
 interface ArcadeButtonProps {
-  href: string;
+  href?: string;
   children?: React.ReactNode;
   target?: string;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
   label?: string;
   variant?: "bitcoin" | "matrix" | "primary" | "outline";
+  onClick?: () => void;
 }
 
 // 🔹 Bitcoin Icon SVG
@@ -29,6 +30,7 @@ export default function ArcadeButton({
   size = "lg",
   label,
   variant = "bitcoin",
+  onClick,
 }: ArcadeButtonProps) {
   const sizeClasses = {
     sm: "w-14 h-14 text-lg",
@@ -64,26 +66,48 @@ export default function ArcadeButton({
     <div className={cn("relative group inline-block", className)}>
       <div className={`absolute -inset-3 bg-gradient-to-r from-black via-${actualVariant === "bitcoin" ? "bitcoin" : "matrix"}/20 to-black rounded-full blur-xl opacity-50 group-hover:opacity-80 transition-all duration-300`} />
 
-      <Link
-        href={href}
-        target={target}
-        rel="noopener noreferrer"
-        className={cn(
-          "relative flex items-center justify-center",
-          sizeClasses[size],
-          "font-vt323 font-bold text-white",
-          "bg-black border-[6px]",
-          style.border,
-          "rounded-full overflow-hidden",
-          style.hoverBorder,
-          "hover:scale-105 active:scale-95 transition-all duration-200",
-          style.glow
-        )}
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none animate-scanline" />
-        <BitcoinIcon className={cn("w-11/12 h-11/12", style.icon, "group-hover:scale-105 transition-transform")} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-active:opacity-100 transition-opacity" />
-      </Link>
+      {href ? (
+        <Link
+          href={href}
+          target={target}
+          rel="noopener noreferrer"
+          className={cn(
+            "relative flex items-center justify-center",
+            sizeClasses[size],
+            "font-vt323 font-bold text-white",
+            "bg-black border-[6px]",
+            style.border,
+            "rounded-full overflow-hidden",
+            style.hoverBorder,
+            "hover:scale-105 active:scale-95 transition-all duration-200",
+            style.glow
+          )}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none animate-scanline" />
+          <BitcoinIcon className={cn("w-11/12 h-11/12", style.icon, "group-hover:scale-105 transition-transform")} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-active:opacity-100 transition-opacity" />
+        </Link>
+      ) : (
+        <button
+          onClick={onClick}
+          className={cn(
+            "relative flex items-center justify-center",
+            sizeClasses[size],
+            "font-vt323 font-bold text-white",
+            "bg-black border-[6px]",
+            style.border,
+            "rounded-full overflow-hidden",
+            style.hoverBorder,
+            "hover:scale-105 active:scale-95 transition-all duration-200",
+            style.glow,
+            "cursor-pointer"
+          )}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none animate-scanline" />
+          <BitcoinIcon className={cn("w-11/12 h-11/12", style.icon, "group-hover:scale-105 transition-transform")} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-active:opacity-100 transition-opacity" />
+        </button>
+      )}
 
       {(children || label) && (
         <p className={cn("text-center mt-3 text-sm font-mono tracking-widest", style.label, "drop-shadow-sm whitespace-nowrap")}>
