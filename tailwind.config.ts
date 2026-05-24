@@ -7,37 +7,48 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    // ✅ Rutas explícitas para nuevos componentes
+    // ✅ Rutas explícitas para componentes custom
     "./components/widgets/bob-chat/**/*.{ts,tsx}",
-    "./components/ui/MatrixArcadeWhatsApp.{ts,tsx}",
     "./components/ui/icons/**/*.{ts,tsx}",
-    "./lib/prompts/**/*.{ts,tsx}",
-    "./lib/vector/**/*.{ts,tsx}",
+    // ⚠️ REMOVIDO: "./components/ui/MatrixArcadeWhatsApp.{ts,tsx}" 
+    // (era ruta de archivo único, ya cubierto por components/**/*)
+    // ⚠️ REMOVIDO: lib/prompts y lib/vector (no contienen clases Tailwind)
   ],
 
   prefix: "",
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "2rem",
+        lg: "4rem",
+        xl: "5rem",
+        "2xl": "6rem",
+      },
       screens: {
         "2xl": "1400px",
       },
     },
     extend: {
       colors: {
-        // 🟢 Design System Matrix v2.0 — Colores de marca
-        matrix: "var(--matrix)",
-        bitcoin: "var(--bitcoin)",
+        // 🟢 Design System Matrix v2.0 — Colores de marca (CSS variables)
+        matrix: "var(--matrix)",        // #00FF41
+        bitcoin: "var(--bitcoin)",      // #F7931A
         
-        // ❌ REMOVIDO: `dark: "#000000"` → usar `bg-black` nativo de Tailwind
+        // 🟠 Orange palette — para acentos financieros secundarios
+        orange: {
+          500: "var(--orange-500)",
+          400: "var(--orange-400)",
+          300: "var(--orange-300)",
+        },
         
-        // shadcn/ui variables (HSL) — no interferir con colores custom
+        // shadcn/ui variables (HSL) — mantener para compatibilidad
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        foreground: "hsl(var(--foreground))", // #FAFAFA según DS
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -66,22 +77,20 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // 🟠 Orange palette — uses CSS variables for consistency
-        orange: {
-          500: "var(--orange-500)",
-          400: "var(--orange-400)",
-          300: "var(--orange-300)",
-        },
       },
       
-      // ✨ NUEVO: Utilities de glow para sombras neon (DS v2.0)
+      // ✨ Glow utilities — sombras neon para estados hover/active (DS v2.0)
       boxShadow: {
-        'matrix': '0 0 15px rgba(0,255,65,0.2), 0 0 30px rgba(0,255,65,0.1)',
-        'matrix-hover': '0 0 25px rgba(0,255,65,0.4), 0 0 50px rgba(0,255,65,0.25)',
+        // Matrix Green glow (base + hover)
+        'matrix': '0 0 15px rgba(0,255,65,0.2)',
+        'matrix-hover': '0 0 25px rgba(0,255,65,0.4), 0 0 50px rgba(0,255,65,0.2)',
+        // Bitcoin Orange glow (base + hover)
         'bitcoin': '0 0 20px rgba(247,147,26,0.4)',
         'bitcoin-hover': '0 0 35px rgba(247,147,26,0.6)',
-        'orange': 'var(--orange-glow)',
-        'orange-hover': '0 0 25px rgba(249,115,22,0.5), 0 0 40px rgba(249,115,22,0.25)',
+        // Orange palette glow
+        'orange': '0 0 15px rgba(249,115,22,0.3)',
+        'orange-hover': '0 0 25px rgba(249,115,22,0.5)',
+        // Terminal subtle glow (for inputs/cards)
         'terminal': '0 0 12px rgba(0,255,65,0.15)',
       },
       
@@ -116,10 +125,10 @@ const config = {
         // Tilt sutil (efecto hover en cards)
         tilt: {
           "0%, 50%, 100%": { transform: "rotate(0deg)" },
-          "25%": { transform: "rotate(1deg)" },
-          "75%": { transform: "rotate(-1deg)" },
+          "25%": { transform: "rotate(0.5deg)" },
+          "75%": { transform: "rotate(-0.5deg)" },
         },
-        // Blink (cursor parpadeante)
+        // Blink (cursor parpadeante estilo terminal)
         blink: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
@@ -129,9 +138,14 @@ const config = {
           "0%, 100%": { opacity: "0.3" },
           "50%": { opacity: "1" },
         },
-        // Ping suave para partículas
+        // Ping suave para partículas / status indicators
         "ping-soft": {
           "75%, 100%": { transform: "scale(2)", opacity: "0" },
+        },
+        // Fade in sutil para componentes que aparecen
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
       },
       
@@ -144,6 +158,7 @@ const config = {
         blink: "blink 1s step-end infinite",
         loading: "loading 1.5s ease-in-out infinite",
         "ping-soft": "ping-soft 1.2s cubic-bezier(0, 0, 0.2, 1) infinite",
+        "fade-in": "fade-in 0.3s ease-out",
       },
       
       // 🎨 Utilidades adicionales para el DS
@@ -151,10 +166,17 @@ const config = {
         // Grid sutil estilo terminal (para fondos decorativos)
         'matrix-grid': 'radial-gradient(rgba(0,255,65,0.03) 1px, transparent 1px)',
         'bitcoin-grid': 'radial-gradient(rgba(247,147,26,0.03) 1px, transparent 1px)',
+        'noise': 'url("/noise.png")', // opcional: textura de ruido
       },
       backgroundSize: {
         'grid-40': '40px 40px',
         'grid-50': '50px 50px',
+      },
+      
+      // 🔦 Utilidad para drop-shadow en títulos sobre fondos complejos
+      dropShadow: {
+        'matrix': '0 0 8px rgba(0,255,65,0.5)',
+        'bitcoin': '0 0 8px rgba(247,147,26,0.5)',
       },
     },
   },

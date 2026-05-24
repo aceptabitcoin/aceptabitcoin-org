@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Terminal, MapPin, Mail, X, Cpu, Hash } from "lucide-react";
+import { Terminal, MapPin, Mail, X, Cpu, Hash, MessageSquare } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -132,6 +132,22 @@ export default function Footer() {
                 >
                   <X className="h-4 w-4 group-hover:scale-110 transition-transform" />
                   <span>@AceptaBitcoin21</span>
+                </a>
+
+                {/* Discord */}
+                <a
+                  href="https://discord.gg/FX2Cch7F"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 text-gray-400 hover:text-matrix transition-colors"
+                  aria-label="Únete a nuestra comunidad en Discord"
+                >
+                  <MessageSquare className="h-4 w-4 group-hover:drop-shadow-[0_0_8px_rgba(0,255,65,0.6)] transition-all" />
+                  <span className="relative">
+                    discord
+                    <span className="absolute -right-3 top-0 text-[10px] text-matrix/60 animate-pulse">●</span>
+                  </span>
+                  <span className="sr-only">Comunidad Discord</span>
                 </a>
 
                 <Link href="/#agenda" className="inline-flex items-center gap-2 text-bitcoin hover:text-white transition-colors bg-bitcoin/5 px-2 py-1 rounded border border-bitcoin/20 group-hover:border-bitcoin/50">
