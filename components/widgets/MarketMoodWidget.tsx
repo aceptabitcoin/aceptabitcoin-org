@@ -1,23 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { 
   Activity, RefreshCw, Bitcoin, TrendingUp, 
   TrendingDown, Minus, ExternalLink, AlertTriangle,
-  Info
+  Info, Terminal
 } from "lucide-react";
 import { useMarketMood } from "@/hooks/useMarketMood";
 import { formatPrice } from "@/lib/market/binance";
 
 const DEFAULT_TIMEFRAME = "4h" as const;
 
-const SPONSOR_CONFIG = {
-  name: "AureoBitcoin",
-  url: "https://app.aureobitcoin.com/es/auth/signup?ref=abo",
-  ctaText: "Comprar BTC con AureoBitcoin",
-  description: "Plataforma mexicana confiable",
-};
+// FRASES EDUCATIVAS ROTATIVAS
+const WISDOM_LOGS = [
+  "Time in the market > Timing the market.",
+  "El precio es lo que pagas. El valor es lo que obtienes.",
+  "La acumulación constante elimina el estrés de predecir."
+];
 
 function getDCAConfig(value: number) {
   if (value <= 25) {
@@ -62,6 +62,17 @@ function getDCAConfig(value: number) {
 export default function MarketMoodWidget() {
   const { result, loading, error, refresh, btcPrice } = useMarketMood(DEFAULT_TIMEFRAME);
   const [showDCAInfo, setShowDCAInfo] = useState(false);
+  
+  // Estado para el rotador de frases
+  const [wisdomIndex, setWisdomIndex] = useState(0);
+
+  // Efecto para rotar las frases cada 6 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWisdomIndex((prev) => (prev + 1) % WISDOM_LOGS.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   const dca = useMemo(() => {
     if (!result?.value) return null;
@@ -216,21 +227,20 @@ export default function MarketMoodWidget() {
               </div>
             </div>
 
-            {/* CTA AureoBitcoin */}
-            <a
-              href={SPONSOR_CONFIG.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group block mt-4 border border-matrix/30 text-matrix hover:bg-matrix/10 hover:border-matrix/60 rounded-lg p-4 text-center transition-all duration-200"
-            >
-              <div className="flex items-center justify-center gap-2 font-mono text-xs font-bold uppercase tracking-wide">
-                {SPONSOR_CONFIG.ctaText}
-                <ExternalLink className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+            {/* NUEVO: Panel de Sabiduría Rotativa (Reemplaza a Aureo) */}
+            <div className="mt-6 pt-4 border-t border-white/5">
+              <div className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10 hover:border-matrix/30 transition-colors group">
+                <Terminal className="h-4 w-4 text-matrix mt-0.5 shrink-0" />
+                <div className="space-y-1">
+                  <p className="text-[10px] font-mono text-gray-500 uppercase tracking-wider">
+                    System Log • Wisdom Module
+                  </p>
+                  <p className="text-xs font-mono text-gray-300 leading-relaxed transition-opacity duration-500 key={wisdomIndex}">
+                    &gt; {WISDOM_LOGS[wisdomIndex]}
+                  </p>
+                </div>
               </div>
-              <p className="text-[10px] text-gray-500 mt-1.5 font-mono">
-                {SPONSOR_CONFIG.description}
-              </p>
-            </a>
+            </div>
 
             {/* Disclaimer */}
             <p className="text-center text-[9px] text-gray-600 font-mono uppercase tracking-wider pt-1">
