@@ -8,9 +8,9 @@ import Link from "next/link";
 import { getNextEdition } from "@/lib/hackathon/editions";
 
 // 🆕 RESTAURADOS: Imports para Bob y los Headers de Sección
-import { BobChatWidget } from "@/components/widgets/bob-chat/BobChatWidget";
-import { AhorraSectionHeader } from "@/components/widgets/AhorraSectionHeader";
-import { AceptaBitcoinSectionHeader } from "@/components/widgets/AceptaBitcoinSectionHeader";
+import BobChatWidget from "@/components/widgets/bob-chat/BobChatWidget";
+import AhorraSectionHeader from "@/components/widgets/AhorraSectionHeader";
+import AceptaBitcoinSectionHeader from "@/components/widgets/AceptaBitcoinSectionHeader";
 
 export default async function HomePage() {
   const nextEdition = await getNextEdition();
@@ -64,8 +64,8 @@ export default async function HomePage() {
       {/* 3. SECCIÓN AHORRA / DCA (Con Header Restaurado) */}
       <section className="w-full py-12 sm:py-16 bg-slate-950/30 border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          {/* 🆕 HEADER RESTAURADO: Título animado de la sección Ahorra */}
-          <AhorraSectionHeader />
+{/* 🆕 HEADER RESTAURADO: Título animado de la sección Ahorra */}
+           <AhorraSectionHeader title="Ahorra" marketTrend="bullish" />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
             {/* Card: Tianguis */}
@@ -108,12 +108,12 @@ export default async function HomePage() {
          </div>
       </section>
 
-      {/* 5. BOB THE BITCOIN AGENT (🤖 RESTAURADO) */}
-      <section className="w-full py-12 bg-black border-t border-white/5">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-           <BobChatWidget />
-        </div>
-      </section>
+{/* 5. BOB THE BITCOIN AGENT (🤖 RESTAURADO) */}
+       <section className="w-full py-12 bg-black border-t border-white/5">
+         <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <BobChatWidget mode="hero" />
+         </div>
+       </section>
 
       {/* 6. TIP JAR SECTION */}
       <TipJarSection />
