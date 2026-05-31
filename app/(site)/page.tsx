@@ -9,7 +9,6 @@ import Link from "next/link";
 // ============================================
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/layout/Hero";
-import Footer from "@/components/layout/Footer";
 
 // ============================================
 // 3. SECCIONES PRINCIPALES
@@ -308,7 +307,6 @@ export default async function Home() {
 
       </main>
 
-      <Footer />
     </>
   );
 }
