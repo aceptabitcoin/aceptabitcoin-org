@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-22
+Estado actual del proyecto — última actualización: 2026-05-31
 
 ---
 
@@ -258,30 +258,65 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 
 **Estado actual:** Gran avance en pulido visual, consistencia de marca y experiencia de usuario. La Caja Registradora ya se siente como un producto soberano y profesional.
 
+### 7. Actualizaciones finales de mayo 2026
+- Eliminado Footer duplicado en `page.tsx` (manejado en layout)
+- Restaurada estructura de producción del homepage con integración de MarketMood educativo y PartnersCarousel
+- Corrección de imports y adición de props requeridos en layout
+- Restaurada estructura site con Navbar, Footer, Bob Chat y Section Headers; integración de Educational MarketMood y PartnersCarousel
+- Actualización de MarketMood a modo educativo y PartnersCarousel
+- Alineación de Footer con DS v2.0, enlace Discord, eliminación de secciones muertas, optimización de tailwind
+- Actualización de URLs de registro de hackathon en `.env.example` y en página
+- Actualización de CTA de EditionHero a registro Luma
+- Adición de guards de hidratación a Hero y GoogleFormButton per MANTENIMIENTO.md
+- Adición de guards de hidratación a EditionHero per MANTENIMIENTO.md
+- Documentación de fix de ArcadeButton href
+- `ArcadeButton`: hecho `href` opcional para soportar tanto Link como button modes
+- Actualización de páginas de edición de hackathon y TipJarSection
+- Limpieza de formato y manejo de errores en TipJarSection
+- Resolución de bloqueo de input controlado en campos de moneda
+- Documentación de códigos de error React UMD (#425, #418, #423) y NotFoundError
+- Actualización de MANTENIMIENTO.md con estado actual y recientes fixes
+- Fijación de mismatches dinámicos de tiempo y fecha en PriceConverter usando `isMounted`
+- Uso de `memo` import en lugar de `React.memo` para resolver error UMD global
+- Integración de Blink.sv GraphQL API y fijación de mismatches de hidratación en flujo de pago
+- Eliminación de prop `density` obsoleta y fijación de `string.getTime()` en CountdownTimer
+- Resolución de errores React #425/#423 en CountdownTimer + MatrixRain
+- Migración de hackathon de route group `(hackathon)` a flat `app/hackathon/`
+- Eliminación de route group para mapear correctamente a `/hackathon`
+- Implementación robusta de CountdownTimer
+- Adición de página 404 personalizada
+- Actualización de CTA de hero con enlace a eventos Luma
+- Corrección de import predeterminado para MatrixRain y fijación de tipo `isActive`
+- Resolución de errores de tipo enum Zod en esquema de validación
+- Corrección de import predeterminado para Navbar y Footer en layout
+- Resolución de advertencia TS posiblemente undefined en EditionHero
+
 ---
 
 ## 🔄 Últimos Commits Relevantes
 
 | Hash | Mensaje |
 |------|---------|
+| `0ecc2a7` | fix: remove duplicate Footer from page.tsx (handled in layout) |
+| `96cbae3` | feat: restore production homepage structure and integrate Educational MarketMood + PartnersCarousel |
+| `e999651` | fix: correct imports for layout and add required props to components |
+| `42e04da` | fix: restore site structure with Navbar, Footer, Bob Chat and Section Headers; integrate Educational MarketMood and PartnersCarousel |
+| `5869bbe` | feat: update MarketMood to educational mode and integrate PartnersCarousel |
+| `bccbcc1` | chore(ui): align Footer with DS v2.0, add Discord link, remove dead sections, optimize tailwind config |
+| `516a676` | fix: update hackathon registration URLs in .env.example |
+| `79c2263` | fix: update hackathon registration URLs (Hero CTA + Edition config) |
+| `a9de1f3` | fix(hackathon): EditionHero CTA → Luma registration (kzdw3pek) |
+| `c722423` | fix(hackathon): add hydration guards to Hero and GoogleFormButton per MANTENIMIENTO.md |
+| `a5786f7` | fix(hackathon): add hydration guards to EditionHero per MANTENIMIENTO.md |
+| `5aa9722` | docs: document ArcadeButton href fix in maintenance log |
 | `a267cd5` | fix(ArcadeButton): make href optional to support both Link and button modes |
+| `6668def` | feat: update hackathon edition pages and TipJarSection |
+| `9f53ca5` | style(tipjar): cleanup formatting and error handling in TipJarSection |
+| `7e5de69` | fix(oracle): resolve controlled input blocking on currency fields |
 | `e8df9bb` | docs: document React UMD error codes (#425, #418, #423) and NotFoundError solutions |
 | `acf8d30` | docs: update MANTENIMIENTO.md with current project state and recent fixes |
 | `fd512d6` | fix(hydration): resolve dynamic time and date mismatches in PriceConverter using isMounted |
 | `60ccb9a` | fix: use memo import instead of React.memo to resolve UMD global type error |
-| `2496da6` | feat(tipjar): integrate Blink.sv GraphQL API and fix hydration mismatches in payment flow |
-| `ae43409` | fix(hydration): eliminate severe DOM mismatches in dynamic hackathon sections |
-| `e61d0e5` | fix(compile): remove density prop usages + fix string.getTime() in CountdownTimer |
-| `7f82ede` | fix(hydration): resolve React #425/#423 errors in CountdownTimer + MatrixRain |
-| `d9d6e6c` | refactor(hackathon): migrate from (hackathon) route group to flat app/hackathon/ |
-| `7ce9674` | fix(routing): remove route group to map correctly to /hackathon |
-| `9e5f23f` | feat(hackathon): update CountdownTimer with robust implementation |
-| `e9126b4` | feat(core): add custom 404 not found page |
-| `08556dd` | feat(hero): update CTA buttons with Luma events link |
-| `1fa392b` | fix(hackathon): correct default import for MatrixRain and fix isActive type error |
-| `198fd38` | fix(hackathon): resolve zod enum type errors in validation schema |
-| `3cdecfe` | fix(hackathon): correct default imports for Navbar and Footer in layout |
-| `1c5a144` | fix(hackathon): resolve ts warning possibly undefined in EditionHero |
 
 ---
 

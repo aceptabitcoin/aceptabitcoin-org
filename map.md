@@ -39,6 +39,14 @@ aceptabitcoin-org/
 │   ├── proveedores/                 # Sovereign Provider Directory
 │   │   ├── page.tsx                 #   Server data fetching
 │   │   └── ProveedoresClient.tsx    #   Client component — MatrixRain bg, filter/search, ProviderCard grid
+│   ├── ahorro/                     # Savings section
+│   │   ├── layout.tsx              # Ahorro layout
+│   │   ├── page.tsx                # Ahorro homepage
+│   │   ├── access/                 # Access subroute
+│   │   │   └── page.tsx            # Access page
+│   │   └── dashboard/              # Dashboard subroute
+│   │       ├── layout.tsx          # Dashboard layout
+│   │       └── page.tsx            # Dashboard page
 │   ├── api/
 │   │   └── tipjar/route.ts          # Blink.sv Lightning tip-jar proxy (GraphQL)
 │   │   └── tipjar/route.test.ts
@@ -175,6 +183,9 @@ aceptabitcoin-org/
 | `/agenda` | **Consultas** — Cal.com booking iframe | `app/agenda/page.tsx` | ✅ Integrated v2.0 |
 | `/nuestra-historia` | Project History & Mission | `app/nuestra-historia/page.tsx` | ✅ Functional |
 | `/proveedores` | **Sovereign Directory** — Filterable provider grid w/ MatrixRain | `app/proveedores/page.tsx` + `ProveedoresClient.tsx` | ✅ Functional |
+| `/ahorro` | **Ahorro** — Savings and investment section | `app/ahorro/page.tsx` | 🚧 WIP |
+| `/ahorro/access` | **Access** — Access management for ahorro | `app/ahorro/access/page.tsx` | 🚧 WIP |
+| `/ahorro/dashboard` | **Dashboard** — User dashboard for ahorro | `app/ahorro/dashboard/page.tsx` | 🚧 WIP |
 | `/hackathon/[edition]` | **Hackathon Landing** — Edition-specific page (Hero, Timeline, Prizes, FAQ, CTA) | `app/hackathon/[edition]/page.tsx` | ✅ Live — slugs: `custody-ui-2026`, `tianguis-2026`, `2026-1` |
 | `/hackathon/[edition]/register` | **External Registration** — Redirect to Google Forms | `app/hackathon/[edition]/register/page.tsx` | ✅ Redirect |
 | `/hackathon/[edition]/projects` | **Project Gallery** — ProjectGrid w/ edition data | `app/hackathon/[edition]/projects/page.tsx` | ✅ Functional |
