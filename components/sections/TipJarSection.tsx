@@ -1,438 +1,286 @@
 'use client';
 
-import { useState, useCallback, useEffect } from "react";
-import dynamic from "next/dynamic";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { QRCodeSVG } from 'qrcode.react';
 import { 
-  Zap, Copy, Check, Bitcoin, DollarSign, QrCode, Wallet, 
-  AlertCircle, Receipt, Sparkles, RefreshCw
+  Zap, Copy, Check, CreditCard, ExternalLink, Coins, 
+  Terminal, ShieldCheck, Receipt 
 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import MatrixRain from "@/components/ui/MatrixRain";
 
-// Carga dinámica del código QR sin SSR para blindar la hidratación de Next.js
-// ✅ MANTENIMIENTO.md: QRCodeSVG debe ser client-only para evitar hydration mismatch
-const QRCodeSVG = dynamic(
-  () => import("qrcode.react").then((mod) => mod.QRCodeSVG),
-  { ssr: false, loading: () => <div className="w-60 h-60 bg-black/40 rounded-xl animate-pulse" /> }
-);
-
 // ============================================================
-// CAJA REGISTRADORA — Acepta Bitcoin México (Oracle System v2.0)
+// CONFIGURACIÓN DE INFRAESTRUCTURA EXTERNA
 // ============================================================
-
-const LIGHTNING_ADDRESS = "aceptabitcoin@blink.sv";
+const CONFIG = {
+  // Blink POS Base URL
+  blinkBasePos: "https://pay.blink.sv/aceptabitcoin",
+  
+  // Lightning Address para copiar manual
+  lightningAddress: "aceptabitcoin@blink.sv", 
+  
+  // Dirección On-Chain (Reemplazar con la tuya actual si cambia)
+  onChainAddress: "bc1qg6r7xugjlr4yzrqu5nal526e757pe3hnkp2jlg",
+  
+  // Mercado Pago Link (Ejemplo genérico, actualizar con el real)
+  mercadoPagoLink: "https://mpago.la/2wXyZz1", 
+};
 
 const SERVICE_LABELS = {
-  consultoria: "🔧 Consultoría Técnica",
-  curso: "🎓 Curso / Capacitación",
-  diseno: "🎨 Diseño Web Bitcoin",
-  charla: "🎤 Charla o Evento",
-  donacion: "⭐ Donación / Apoyo",
+  consultoria: "CONSULTORIA_TECNICA",
+  curso: "CURSO_BITCOIN",
+  diseno: "DISENO_WEB",
+  charla: "CHARLA_EVENTO",
+  donacion: "DONACION_SOBERANA",
 } as const;
 
 type ServiceType = keyof typeof SERVICE_LABELS;
-type CurrencyMode = "SATS" | "USD";
-type QrMode = "lnaddress" | "bolt11" | "onchain";
-
-const PRESET_AMOUNTS = {
-  SATS: ["5000", "10000", "25000", "50000", "100000"],
-  USD: ["50", "100", "250", "500", "1000"],
-};
-
-// ✅ Design System: Glow tokens exactos por tipo de pago
-const GLOW_TOKENS = {
-  // USD/Stablesats → Matrix Green (estabilidad, código, liquidación inmediata)
-  USD: {
-    bg: "bg-matrix",
-    text: "text-matrix",
-    border: "border-matrix",
-    shadow: "shadow-[0_0_15px_rgba(0,255,65,0.2)]",
-    shadowStrong: "shadow-[0_0_20px_rgba(0,255,65,0.4)]",
-    bgHover: "hover:bg-matrix/90",
-    bgActive: "bg-matrix/10",
-  },
-  // SATS/Bitcoin nativo → Bitcoin Orange (energía, valor, capa base)
-  SATS: {
-    bg: "bg-bitcoin",
-    text: "text-bitcoin",
-    border: "border-bitcoin",
-    shadow: "shadow-[0_0_20px_rgba(247,147,26,0.4)]",
-    shadowStrong: "shadow-[0_0_25px_rgba(247,147,26,0.5)]",
-    bgHover: "hover:bg-bitcoin/90",
-    bgActive: "bg-bitcoin/10",
-  },
-} as const;
+type TabId = 'lightning' | 'onchain' | 'fiat';
 
 export default function TipJarSection() {
   const [isMounted, setIsMounted] = useState(false);
-
-  const [state, setState] = useState({
-    currency: "USD" as CurrencyMode,
-    qrMode: "lnaddress" as QrMode,
-    amount: "250",
-    customAmount: "",
-    service: "consultoria" as ServiceType,
-    invoice: null as string | null,
-    onChainAddress: null as string | null,
-    amountInSats: null as number | null,
-    loading: false,
-    copied: false,
-    error: null as string | null,
-    paid: false,
-  });
+  const [activeTab, setActiveTab] = useState<TabId>('lightning');
+  const [copied, setCopied] = useState(false);
+  
+  // Estado para construir el link dinámico
+  const [selectedService, setSelectedService] = useState<ServiceType>('consultoria');
+  const [amount, setAmount] = useState<string>("250");
+  const [currency, setCurrency] = useState<"USD" | "SATS">("USD");
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // ✅ Helper: Obtener tokens de estilo según moneda (Design System compliant)
-  const getCurrencyStyles = useCallback((currency: CurrencyMode) => {
-    return GLOW_TOKENS[currency];
-  }, []);
+  // Construcción dinámica del Link de Blink
+  const getBlinkPosLink = () => {
+    const memo = `${SERVICE_LABELS[selectedService]}_${amount}${currency}`;
+    // Blink soporta amount=0 para que el usuario elija, o un monto fijo
+    return `${CONFIG.blinkBasePos}?amount=${amount}&currency=${currency === 'USD' ? 'USD' : 'BTC'}&memo=${encodeURIComponent(memo)}&display=${currency}`;
+  };
 
-  const generateInvoice = useCallback(async () => {
-    setState(s => ({ ...s, loading: true, error: null, invoice: null, onChainAddress: null }));
+  const handleCopy = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(30);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
-    try {
-      const targetAmount = Number(state.customAmount || state.amount);
-      if (!targetAmount || targetAmount <= 0) throw new Error("Por favor, ingresa un monto válido.");
+  if (!isMounted) return null;
 
-      const res = await fetch('/api/tipjar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'create-invoice',
-          amount: targetAmount,
-          currency: state.currency,
-          memo: `${SERVICE_LABELS[state.service]} - Acepta Bitcoin México`,
-          service: state.service,
-        }),
-      });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || "Error en el nodo de Blink. Reintenta.");
-    }
-
-    setState(s => ({
-      ...s,
-      loading: false,
-      invoice: data.invoice,
-      amountInSats: data.amountInSats || (s.currency === "SATS" ? targetAmount : null),
-      qrMode: 'bolt11',
-      paid: false,
-    }));
-  } catch (err: any) {
-    setState(s => ({
-      ...s,
-      loading: false,
-      error: err.message,
-    }));
-  }
-}, [state.amount, state.customAmount, state.currency, state.service]);
-
-const fetchOnChainAddress = useCallback(async () => {
-  setState(s => ({ ...s, loading: true, error: null, invoice: null, onChainAddress: null }));
-
-  try {
-    const res = await fetch('/api/tipjar', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'get-onchain' }),
-    });
-
-    const data = await res.json();
-    if (!res.ok || !data.success) throw new Error(data.error || "No se pudo generar dirección on-chain.");
-
-    setState(s => ({
-      ...s,
-      loading: false,
-      onChainAddress: data.address,
-      amountInSats: null,
-      qrMode: 'onchain',
-    }));
-  } catch (err: any) {
-    setState(s => ({ ...s, loading: true, error: err.message }));
-  }
-}, []);
-
-const copyToClipboard = useCallback(async (text: string) => {
-  if (!text) return;
-  await navigator.clipboard.writeText(text);
-  setState(s => ({ ...s, copied: true }));
-  setTimeout(() => setState(s => ({ ...s, copied: false })), 2000);
-}, []);
-
-const getQrValue = () => {
-  if (state.qrMode === "bolt11" && state.invoice) return `lightning:${state.invoice}`;
-  if (state.qrMode === "onchain" && state.onChainAddress) return `bitcoin:${state.onChainAddress}`;
-  // ✅ Retorna la codificación LNURL nativa para la Lightning Address fija
-  return `lightning:${LIGHTNING_ADDRESS.toLowerCase()}`;
-};
-
-const getCopyableText = () => {
-  if (state.qrMode === "bolt11") return state.invoice || "";
-  if (state.qrMode === "onchain") return state.onChainAddress || "";
-  return LIGHTNING_ADDRESS;
-};
-
-const getButtonLabelText = () => {
-  if (state.qrMode === "bolt11" && state.invoice) return `${state.invoice.slice(0, 12)}...${state.invoice.slice(-8)}`;
-  if (state.qrMode === "onchain" && state.onChainAddress) return `${state.onChainAddress.slice(0, 12)}...${state.onChainAddress.slice(-8)}`;
-  return LIGHTNING_ADDRESS;
-};
-
-const toggleCurrency = (currency: CurrencyMode) => {
-  setState(s => ({
-    ...s,
-    currency,
-    amount: PRESET_AMOUNTS[currency][2],
-    customAmount: "",
-    invoice: null,
-    onChainAddress: null,
-    amountInSats: null,
-    qrMode: "lnaddress",
-    error: null,
-  }));
-};
-
-const selectService = (service: ServiceType) => {
-  setState(s => ({
-    ...s,
-    service,
-    invoice: null,
-    onChainAddress: null,
-    amountInSats: null,
-    qrMode: "lnaddress",
-    error: null,
-  }));
-};
-
-// ✅ MANTENIMIENTO.md: Guard de hidratación para componentes con datos dinámicos
-if (!isMounted) return null;
-
-const qrValue = getQrValue();
-const styles = getCurrencyStyles(state.currency);
-
-return (
-  <section 
-    id="pagar-servicios" 
-    className="relative py-20 sm:py-28 overflow-hidden bg-black scroll-mt-24"
-    suppressHydrationWarning // ✅ MANTENIMIENTO.md: Elementos dinámicos requieren suppressHydrationWarning
-  >
-    <MatrixRain className="opacity-10" speed={0.6} />
-    <div className="absolute inset-0 bg-[radial-gradient(rgba(0,255,65,0.04)_1px,transparent_1px)] bg-[length:60px_60px]" />
-
-    <div className="container relative z-10 px-4 max-w-6xl mx-auto">
+  return (
+    <section id="pagar-servicios" className="relative py-20 overflow-hidden bg-black scroll-mt-24">
+      <MatrixRain className="opacity-10" speed={0.5} />
       
-      {/* Header al estilo Terminal de Datos */}
-      <div className="text-center mb-12 sm:mb-16">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-black/70 border border-matrix/30 rounded-full font-mono text-xs text-matrix tracking-widest mb-6 uppercase">
-          <Receipt className="h-3.5 w-3.5 text-matrix" /> Sistema de Liquidación v2.0
+      <div className="container relative z-10 px-4 max-w-4xl mx-auto">
+        
+        {/* Header Matrix */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-black border border-matrix/30 rounded-full font-mono text-[10px] text-matrix tracking-widest uppercase mb-4">
+            <Terminal className="h-3 w-3" /> Infraestructura de Pago Externa
+          </div>
+          <h2 className="font-serif text-4xl font-black text-white uppercase tracking-tight">
+            Terminal de <span className="text-bitcoin">Liquidación</span>
+          </h2>
+          <p className="mt-2 font-mono text-xs text-gray-500 uppercase">
+            Proceso seguro gestionado por Blink.sv & Mercado Pago
+          </p>
         </div>
 
-        <h2 className="font-serif text-4xl sm:text-5xl font-black uppercase tracking-tight text-white drop-shadow-lg">
-          PAGA CON <span className={styles.text}>BITCOIN</span>
-        </h2>
-        <p className="mt-4 font-mono text-xs text-gray-500 max-w-2xl mx-auto uppercase tracking-wider">
-          Canal de cobro inmediato para Servicios Profesionales y Soporte Soberano
-        </p>
-      </div>
-
-      <Card className="bg-neutral-900/60 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-        <div className="p-6 sm:p-10 lg:p-12">
+        <Card className="bg-neutral-900/80 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
           
-          {/* Control Principal de Divisa */}
-          <div className="flex justify-center mb-10">
-            <div className="inline-flex bg-black border border-white/10 rounded-xl p-1 font-mono">
+          {/* Tabs de Navegación Estilo Terminal */}
+          <div className="flex p-1.5 gap-1 bg-black/50 border-b border-white/10">
+            {[
+              { id: 'lightning', label: 'LIGHTNING ⚡', icon: <Zap size={14} /> },
+              { id: 'onchain', label: 'ON-CHAIN 🟠', icon: <Coins size={14} /> },
+              { id: 'fiat', label: 'FIAT / SPEI 💳', icon: <CreditCard size={14} /> },
+            ].map((tab) => (
               <button
-                onClick={() => toggleCurrency("SATS")}
-                className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase flex items-center gap-2 transition-all ${
-                  state.currency === "SATS" 
-                    ? `${GLOW_TOKENS.SATS.bg} text-black ${GLOW_TOKENS.SATS.shadowStrong}` 
-                    : "text-gray-400 hover:text-white"
-                }`}
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as TabId)}
+                className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-lg 
+                           font-mono text-xs font-bold transition-all duration-300 uppercase tracking-wider
+                           ${activeTab === tab.id 
+                             ? 'text-black bg-matrix shadow-[0_0_15px_rgba(0,255,65,0.4)]' 
+                             : 'text-gray-500 hover:text-white hover:bg-white/5'
+                           }`}
               >
-                <Bitcoin className="h-3.5 w-3.5" /> SATOSHIS
+                {tab.icon}
+                <span className="hidden sm:inline">{tab.label}</span>
               </button>
-              <button
-                onClick={() => toggleCurrency("USD")}
-                className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase flex items-center gap-2 transition-all ${
-                  state.currency === "USD" 
-                    ? `${GLOW_TOKENS.USD.bg} text-black ${GLOW_TOKENS.USD.shadowStrong}` 
-                    : "text-gray-400 hover:text-white"
-                }`}
-              >
-                <DollarSign className="h-3.5 w-3.5" /> DÓLARES (USD)
-              </button>
-            </div>
+            ))}
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-10 items-start">
-            
-            {/* Bloque de Configuración / Inputs */}
-            <div className="lg:col-span-7 space-y-8">
+          <div className="p-8 md:p-12 min-h-[400px] flex flex-col items-center justify-center">
+            <AnimatePresence mode="wait">
               
-              {/* Selector de Servicios */}
-              <div>
-                <p className="font-mono text-[10px] text-matrix mb-3 tracking-widest uppercase">1. PROPÓSITO DEL PAGO</p>
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(SERVICE_LABELS).map(([key, label]) => (
-                    <button
-                      key={key}
-                      onClick={() => selectService(key as ServiceType)}
-                      className={`px-4 py-2 text-xs font-mono rounded-lg border transition-all ${
-                        state.service === key 
-                          ? `${styles.bgActive} ${styles.border} ${styles.text} ${styles.shadow}` 
-                          : "border-white/10 hover:border-white/30 text-gray-400 bg-black/40"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Selección y entrada de Montos */}
-              <div>
-                <p className="font-mono text-[10px] text-matrix mb-3 tracking-widest uppercase">2. SELECCIÓN DE IMPORTE</p>
-                <div className="grid grid-cols-5 gap-2 font-mono">
-                  {PRESET_AMOUNTS[state.currency].map((amt) => (
-                    <button
-                      key={amt}
-                      onClick={() => setState(s => ({ ...s, amount: amt, customAmount: "" }))}
-                      className={`py-3 text-xs font-bold rounded-lg border transition-all ${
-                        state.amount === amt && !state.customAmount
-                          ? `${styles.bg} text-black ${styles.border} font-black` 
-                          : "border-white/10 hover:border-white/20 bg-black/40 text-gray-400"
-                      }`}
-                    >
-                      {state.currency === "SATS" ? `${(+amt / 1000)}k` : `$${amt}`}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="relative mt-3">
-                  <input
-                    type="number"
-                    placeholder="Especificar otro monto de forma manual"
-                    value={state.customAmount}
-                    onChange={(e) => setState(s => ({ ...s, customAmount: e.target.value, amount: "" }))}
-                    className="w-full bg-black/60 border border-white/20 rounded-xl px-5 py-3.5 text-left font-mono text-sm text-white focus:border-matrix focus:ring-1 focus:ring-matrix/30 outline-none transition-all placeholder:text-gray-600"
-                  />
-                  <div className="absolute right-4 top-3.5 font-mono text-xs text-gray-500 uppercase">
-                    {state.currency}
+              {/* TAB 1: LIGHTNING NETWORK (Principal) */}
+              {activeTab === 'lightning' && (
+                <motion.div
+                  key="lightning"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="w-full max-w-md flex flex-col items-center"
+                >
+                  {/* Selector de Servicio y Monto (Para generar el Memo correcto) */}
+                  <div className="w-full mb-8 space-y-4">
+                    <div className="grid grid-cols-2 gap-2">
+                      <select 
+                        value={selectedService}
+                        onChange={(e) => setSelectedService(e.target.value as ServiceType)}
+                        className="bg-black border border-white/20 rounded-lg px-3 py-2 font-mono text-xs text-white focus:border-matrix outline-none"
+                      >
+                        {Object.entries(SERVICE_LABELS).map(([key, label]) => (
+                          <option key={key} value={key}>{label.replace(/_/g, ' ')}</option>
+                        ))}
+                      </select>
+                      <div className="relative">
+                        <input
+                          type="number"
+                          value={amount}
+                          onChange={(e) => setAmount(e.target.value)}
+                          className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 font-mono text-xs text-white focus:border-matrix outline-none"
+                        />
+                        <span className="absolute right-3 top-2 text-[10px] text-gray-500 font-mono">USD</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Mensaje de Error */}
-              {state.error && (
-                <div className="flex items-center gap-3 bg-red-950/40 border border-red-500/30 rounded-xl p-4 font-mono text-xs text-red-400">
-                  <AlertCircle className="h-4 w-4 shrink-0" />
-                  <span>{state.error}</span>
-                </div>
+                  {/* Botón Principal: Abrir POS */}
+                  <a
+                    href={getBlinkPosLink()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full mb-6 py-4 px-6 rounded-xl bg-bitcoin hover:bg-orange-500 text-black font-mono font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(247,147,26,0.3)] transition-all transform hover:-translate-y-1"
+                  >
+                    <Zap size={16} fill="currentColor" />
+                    INICIAR SESIÓN DE PAGO (BLINK)
+                    <ExternalLink size={14} />
+                  </a>
+
+                  {/* QR Nativo SVG */}
+                  <div className="relative p-4 rounded-xl bg-white border-2 border-matrix/50 shadow-[0_0_15px_rgba(0,255,65,0.2)] mb-4">
+                    <QRCodeSVG
+                      value={getBlinkPosLink()}
+                      size={160}
+                      level="H"
+                      includeMargin={false}
+                      fgColor="#000000"
+                      bgColor="#FFFFFF"
+                    />
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-matrix text-black text-[9px] font-mono font-bold px-2 py-0.5 rounded shadow-md whitespace-nowrap">
+                      ESCANEAR PARA PAGAR
+                    </div>
+                  </div>
+
+                  {/* Copiar Address como respaldo */}
+                  <button
+                    onClick={() => handleCopy(CONFIG.lightningAddress)}
+                    className="inline-flex items-center justify-between w-full px-4 py-2.5 rounded-lg 
+                              bg-white/5 border border-white/10 hover:border-matrix/50
+                              font-mono text-[10px] text-gray-400 hover:text-matrix transition-all group"
+                  >
+                    <span className="truncate mr-2">{CONFIG.lightningAddress}</span>
+                    {copied ? <Check size={12} className="text-matrix" /> : <Copy size={12} className="opacity-50 group-hover:opacity-100" />}
+                  </button>
+                </motion.div>
               )}
 
-              {/* Ejecución y generación de Factura */}
-              <div className="space-y-3">
-                <Button
-                  onClick={generateInvoice}
-                  disabled={state.loading}
-                  className={`w-full h-14 font-mono text-xs font-bold uppercase rounded-xl tracking-wider transition-all ${styles.bg} ${styles.bgHover} text-black ${styles.shadow}`}
+              {/* TAB 2: BITCOIN ON-CHAIN */}
+              {activeTab === 'onchain' && (
+                <motion.div
+                  key="onchain"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="w-full max-w-md text-center"
                 >
-                  {state.loading ? (
-                    <span className="flex items-center gap-2 justify-center">
-                      <RefreshCw className="h-4 w-4 animate-spin" /> ESTABLECIENDO ENLACE CON BLINK...
+                  <div className="mb-6 p-4 rounded-xl bg-black/50 border border-dashed border-bitcoin/30">
+                    <p className="font-mono text-[10px] uppercase tracking-wider text-bitcoin font-bold mb-1 flex items-center justify-center gap-2">
+                      <ShieldCheck size={12} /> Capa Base Segura
+                    </p>
+                    <p className="font-mono text-[10px] text-gray-500 leading-relaxed">
+                      Para montos mayores o cold storage.
+                      <br/>
+                      <span className="text-gray-400">Confirmación: ~10-60 min.</span>
+                    </p>
+                  </div>
+
+                  <p className="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-2">
+                    Dirección Bitcoin (Bech32):
+                  </p>
+                  
+                  <button
+                    onClick={() => handleCopy(CONFIG.onChainAddress)}
+                    className={`group relative w-full p-4 rounded-xl border transition-all duration-300 text-left
+                               ${copied 
+                                 ? 'border-matrix bg-matrix/10' 
+                                 : 'border-white/10 bg-black hover:border-bitcoin'
+                               }`}
+                  >
+                    <code className="font-mono text-xs text-bitcoin break-all block pr-8 font-medium">
+                      {CONFIG.onChainAddress}
+                    </code>
+                    
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                      {copied ? <Check size={14} className="text-matrix" /> : <Copy size={14} className="text-gray-600 group-hover:text-bitcoin" />}
+                    </div>
+                  </button>
+                </motion.div>
+              )}
+
+              {/* TAB 3: FIAT (MERCADO PAGO) */}
+              {activeTab === 'fiat' && (
+                <motion.div
+                  key="fiat"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="w-full max-w-sm text-center"
+                >
+                  <div className="mb-6">
+                    <h4 className="font-serif text-xl text-white mb-2">
+                      Pago Tradicional
+                    </h4>
+                    <p className="font-mono text-xs text-gray-500">
+                      Tarjetas, SPEI o Efectivo vía Mercado Pago.
+                    </p>
+                  </div>
+
+                  <a
+                    href={CONFIG.mercadoPagoLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative inline-flex items-center justify-center gap-3 
+                               w-full py-3.5 px-6 rounded-xl overflow-hidden
+                               bg-[#009EE3] hover:bg-[#008bc9] text-white
+                               font-mono font-bold text-sm transition-all duration-300
+                               shadow-md hover:shadow-lg"
+                  >
+                    <span className="relative z-10 flex items-center gap-2 tracking-wide">
+                      IR A MERCADO PAGO
+                      <ExternalLink size={14} className="group-hover:translate-x-0.5 transition-transform" />
                     </span>
-                  ) : (
-                    `GENERAR FACTURA LIGHTNING (BOLT11) ⚡`
-                  )}
-                </Button>
+                  </a>
 
-                {/* Vías alternativas de pago */}
-                <div className="grid grid-cols-2 gap-2 font-mono">
-                  <button 
-                    onClick={() => setState(s => ({...s, qrMode: "lnaddress", invoice: null, onChainAddress: null, amountInSats: null, error: null}))}
-                    className={`h-11 text-[11px] uppercase tracking-wider rounded-lg border transition-all ${
-                      state.qrMode === "lnaddress" 
-                        ? `${GLOW_TOKENS.USD.bgActive} ${GLOW_TOKENS.USD.border} ${GLOW_TOKENS.USD.text}` 
-                        : "border-white/10 hover:bg-white/5 text-gray-400"
-                    }`}
-                  >
-                    Lightning Address
-                  </button>
-                  <button 
-                    onClick={fetchOnChainAddress}
-                    disabled={state.loading}
-                    className={`h-11 text-[11px] uppercase tracking-wider rounded-lg border transition-all ${
-                      state.qrMode === "onchain" 
-                        ? `${GLOW_TOKENS.SATS.bgActive} ${GLOW_TOKENS.SATS.border} ${GLOW_TOKENS.SATS.text}` 
-                        : "border-white/10 hover:bg-white/5 text-gray-400"
-                    }`}
-                  >
-                    Capa 1 On-Chain BTC
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Bloque de Visualización del QR */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center border-t lg:border-t-0 lg:border-l border-white/10 pt-8 lg:pt-0 lg:pl-10">
-              <div className="relative">
-                {/* ✅ Design System: Glow dinámico basado en CURRENCY */}
-                <div className={`absolute -inset-6 blur-2xl rounded-full opacity-40 transition-all duration-500 ${styles.bg}`} />
-                
-                {/* Contenedor del código QR */}
-                <div className="relative bg-white p-4 rounded-xl shadow-2xl">
-                  <QRCodeSVG
-                    value={qrValue}
-                    size={240}
-                    level="H"
-                    bgColor="#ffffff"
-                    fgColor="#000000"
-                  />
-                </div>
-              </div>
-
-              {/* Información contextual del tipo de QR activo */}
-              <div className="mt-4 font-mono text-[10px] text-gray-500 uppercase tracking-widest text-center">
-                PROTOCOLO ACTIVO: <span className={styles.text}>{state.qrMode === "lnaddress" ? "Lightning Address" : state.qrMode}</span>
-                {state.amountInSats && (
-                  <div className="text-white font-bold text-xs mt-1">
-                    Monto estimado: {state.amountInSats.toLocaleString()} SATS
+                  <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-center gap-4 opacity-30 grayscale">
+                    <span className="text-[10px] font-mono font-bold">VISA</span>
+                    <span className="text-[10px] font-mono font-bold">MC</span>
+                    <span className="text-[10px] font-mono font-bold">SPEI</span>
                   </div>
-                )}
-              </div>
-
-              {/* Botón interactivo de Copiado Segurizado */}
-              {qrValue && (
-                <button
-                  onClick={() => copyToClipboard(getCopyableText())}
-                  className="mt-6 w-full max-w-xs flex items-center justify-between bg-black border border-white/10 hover:border-matrix/60 rounded-xl px-4 py-3 text-xs font-mono transition-all text-gray-300 group"
-                >
-                  <span className="truncate pr-4 text-left">
-                    {getButtonLabelText()}
-                  </span>
-                  <div className={`shrink-0 group-hover:scale-110 transition-transform ${state.copied ? styles.text : "text-gray-400"}`}>
-                    {state.copied ? <Check className={`h-4 w-4 ${styles.text}`} /> : <Copy className="h-4 w-4" />}
-                  </div>
-                </button>
+                </motion.div>
               )}
-            </div>
 
+            </AnimatePresence>
           </div>
+        </Card>
 
+        <div className="text-center mt-6 font-mono text-[10px] text-gray-600 uppercase tracking-widest">
+          Transacción procesada externamente • Sin custodia local
         </div>
-      </Card>
-
-      {/* Footer institucional de Cumplimiento Técnico */}
-      <div className="text-center mt-8 font-mono text-[10px] text-gray-600 uppercase tracking-widest">
-        Infraestructura Soberana No Custodial provista mediante el API de <span className={GLOW_TOKENS.USD.text}>Blink.sv</span>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
 }
