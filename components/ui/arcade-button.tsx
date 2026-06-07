@@ -1,41 +1,129 @@
+'use client';
+
 import Link from "next/link";
 import React from "react";
 
 interface ArcadeButtonProps {
-  href: string;
+  href?: string;
   children: React.ReactNode;
   target?: string;
   className?: string;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void;
+  type?: "button" | "submit" | "reset";
 }
 
-export default function ArcadeButton({ href, children, target = "_blank", className }: ArcadeButtonProps) {
-  return (
-    <div className={`relative group z-10 ${className || ""}`}>
-      {/* Efecto de resplandor (Glow) detrás del botón */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-orange-600 to-yellow-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-200 group-hover:duration-200 animate-tilt"></div>
-      
-      <Link
-        href={href}
+export default function ArcadeButton({
+  href,
+  children,
+  target = "_blank",
+  className = "",
+  onClick,
+  type = "button",
+}: ArcadeButtonProps) {
+  
+  // Estilos CSS compartidos para la tapa interactiva del botón arcade
+  const innerContentClasses = `
+    relative 
+    w-full 
+    inline-flex 
+    items-center 
+    justify-center 
+    px-8 md:px-10 
+    py-4 
+    text-xl md:text-3xl 
+    font-bold 
+    text-black 
+    bg-[#F7931A] 
+    font-vt323 
+    uppercase 
+    tracking-wider
+    border-2 
+    border-[#FAFAFA] 
+    rounded-xl 
+    transition-all 
+    duration-100
+    touch-manipulation
+    
+    /* Elevación inicial en el eje Y */
+    -translate-y-2 
+    
+    /* Efecto 3D de relieve en los bordes internos */
+    shadow-[inset_0_4px_0_rgba(255,255,255,0.4),_inset_0_-4px_0_rgba(0,0,0,0.3)]
+    
+    /* Hover: Brillo de neón de energía firme */
+    group-hover:bg-[#ffaa3b]
+    group-hover:shadow-[0_0_20px_rgba(247,147,26,0.6),_inset_0_4px_0_rgba(255,255,255,0.4),_inset_0_-4px_0_rgba(0,0,0,0.3)]
+    
+    /* Active: El botón baja físicamente y se acopla a la base negra */
+    group-active:translate-y-0
+    group-active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]
+    
+    focus:outline-none
+    focus-visible:ring-2 focus-visible:ring-matrix focus-visible:ring-offset-2 focus-visible:ring-offset-black
+  `;
+
+  // Contenido interno con elementos gráficos de terminal cypherpunk
+  const renderInner = () => (
+    <>
+      {/* Línea de escaneo retro integrada (usa animate-scanline de globals.css) */}
+      <span className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden rounded-xl">
+        <span className="absolute top-0 left-0 w-full h-1 bg-white/30 opacity-40 animate-scanline"></span>
+      </span>
+
+      <span className="flex items-center gap-3 select-none">
+        {children}
+        {/* Icono Power / Play rígido estilo retro */}
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          className="h-6 w-6 md:h-7 md:w-7 text-black fill-current shrink-0" 
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </span>
+    </>
+  );
+
+  // Contenedor base: chasis/hueco oscuro del gabinete arcade
+  const containerClasses = `relative group inline-block font-mono active:outline-none ${className}`;
+
+  // Fondo/Chasis: relieve negro sólido que absorbe el movimiento
+  const renderChassis = () => (
+    <span 
+      className="absolute inset-0 w-full h-full bg-black border-2 border-[#F7931A]/40 rounded-xl shadow-[0_4px_0_#000] translate-y-0"
+      aria-hidden="true"
+    ></span>
+  );
+
+  // Renderizado condicional dinámico
+  if (href) {
+    return (
+      <Link 
+        href={href} 
         target={target}
-        rel="noopener noreferrer"
-        className="relative inline-flex items-center justify-center px-12 py-6 text-3xl font-bold text-white transition-all duration-200 bg-gray-900 font-vt323 border-2 border-orange-500 rounded-lg hover:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 hover:scale-105 active:scale-95"
-        style={{
-          textShadow: "0 0 5px rgba(255, 165, 0, 0.7), 0 0 10px rgba(255, 165, 0, 0.5)",
-          boxShadow: "inset 0 0 15px rgba(255, 69, 0, 0.3)"
-        }}
+        rel={target === "_blank" ? "noopener noreferrer" : undefined}
+        onClick={onClick}
+        className={containerClasses}
       >
-        {/* Elemento decorativo de línea de escaneo (Scanline) */}
-        <span className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-400 to-transparent opacity-50 animate-[scanline_2s_linear_infinite]"></span>
-        
-        <span className="flex items-center gap-3">
-          {children}
-          {/* Icono decorativo de "Power" o "Play" */}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-orange-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+        {renderChassis()}
+        <span className={innerContentClasses}>
+          {renderInner()}
         </span>
       </Link>
-    </div>
+    );
+  }
+
+  return (
+    <button 
+      type={type}
+      onClick={onClick}
+      className={containerClasses}
+    >
+      {renderChassis()}
+      <span className={innerContentClasses}>
+        {renderInner()}
+      </span>
+    </button>
   );
 }

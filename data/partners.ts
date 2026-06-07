@@ -6,9 +6,9 @@ export interface Partner {
   url: string;
   tagline: string;
   description: string;
-  // Por ahora usamos iconos de Lucide. Cuando tengas logos, cambiaremos esto por 'logoUrl'
-  icon: string; 
-  color: string; // Color de acento para el glow (ej. 'amber', 'orange', 'blue')
+  icon: string; // Nombre del icono de Lucide (ej: "Bitcoin", "Globe")
+  protocol?: string; // Protocolo técnico (ej: "Lightning Network", "P2P Escrow")
+  status?: 'online' | 'maintenance' | 'offline'; // Estado del nodo para UI técnica
 }
 
 export const PARTNERS: Partner[] = [
@@ -18,8 +18,9 @@ export const PARTNERS: Partner[] = [
     url: "https://www.aureobitcoin.com/",
     tagline: "La plataforma mexicana confiable",
     description: "Compra y vende Bitcoin fácilmente con SPEI. Soberanía financiera desde México.",
-    icon: "Bitcoin", // Nombre del icono de Lucide
-    color: "amber",
+    icon: "Bitcoin",
+    protocol: "SPEI / On-Chain",
+    status: "online"
   },
   {
     id: "arcadia",
@@ -28,7 +29,8 @@ export const PARTNERS: Partner[] = [
     tagline: "Tu puerta a Lightning Network",
     description: "Exchange enfocado en privacidad y velocidad. Conecta tu nodo y toma el control.",
     icon: "Zap",
-    color: "cyan", // Usaremos cyan como 'matrix-tech' si no hay naranja
+    protocol: "Lightning Network",
+    status: "online"
   },
   {
     id: "bullbitcoin",
@@ -37,7 +39,8 @@ export const PARTNERS: Partner[] = [
     tagline: "Non-custodial & Privacy First",
     description: "Intercambio P2P sin KYC. Diseñado para cypherpunks que valoran su privacidad.",
     icon: "Shield",
-    color: "green",
+    protocol: "P2P Non-Custodial",
+    status: "online"
   },
   {
     id: "hodlhodl",
@@ -46,6 +49,7 @@ export const PARTNERS: Partner[] = [
     tagline: "Trade Bitcoin without giving up custody",
     description: "Plataforma P2P global. Tú tienes las llaves, tú tienes el Bitcoin.",
     icon: "Globe",
-    color: "purple",
+    protocol: "Multisig Escrow",
+    status: "online"
   },
 ];

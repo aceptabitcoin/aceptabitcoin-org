@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
 import { useEffect, useRef, useCallback, useState } from "react";
 
 // ============================================================
-// MATRIX RAIN — The Falling Code Effect
+// MATRIX RAIN — The Falling Code Effect (With White Glowing Head)
 // Acepta Bitcoin México | Oracle System v2.0
 // ============================================================
 
 interface MatrixRainProps {
   className?: string;
-  speed?: number;        // Fall speed multiplier (default: 1)
-  opacity?: number;      // Base opacity (default: 0.15)
-  color?: string;        // Matrix green or custom
+  speed?: number;        // Multiplicador de velocidad de caída (default: 1)
+  opacity?: number;      // Opacidad base para la estela (default: 0.12)
+  color?: string;        // Color del tema activo (ej: #F7931A, #00FF41)
 }
 
 const CHARS = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/=[]{}";
@@ -28,9 +28,7 @@ export default function MatrixRain({
   const [isMounted, setIsMounted] = useState(false);
 
   const initDrops = useCallback((columns: number) => {
-    dropsRef.current = Array.from({ length: columns }, () =>
-      Math.random() * -100
-    );
+    dropsRef.current = Array.from({ length: columns }, () => Math.random() * -100);
   }, []);
 
   useEffect(() => {
@@ -62,25 +60,51 @@ export default function MatrixRain({
     window.addEventListener("resize", resize);
 
     const draw = () => {
+      // 1. Efecto de desvanecimiento de la estela
       ctx.fillStyle = `rgba(0, 0, 0, 0.05)`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = color;
       ctx.font = `${fontSize}px 'Fira Code', monospace`;
-      ctx.globalAlpha = opacity;
 
       for (let i = 0; i < dropsRef.current.length; i++) {
         const char = CHARS[Math.floor(Math.random() * CHARS.length)];
         const x = i * fontSize;
         const y = dropsRef.current[i] * fontSize;
 
-        ctx.globalAlpha = opacity * 2;
+        // Omitir dibujar si la gota está muy arriba fuera de la pantalla
+        if (y < 0) {
+          dropsRef.current[i] += speed * (0.5 + Math.random() * 0.5);
+          continue;
+        }
+
+        // Determinar si es la "cabeza" de la gota
+        const isHead = Math.random() > 0.93; 
+
+        if (isHead) {
+          // --- EFECTO PELÍCULA: Cabecera brillante casi blanca ---
+          ctx.fillStyle = "#FAFAFA"; 
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 8 + Math.random() * 4; // Glow variable para realismo CRT
+          ctx.globalAlpha = 1.0;
+        } else {
+          // --- Estela estándar con color temático ---
+          ctx.fillStyle = color;
+          ctx.shadowBlur = 0;
+          ctx.globalAlpha = opacity * 1.8;
+        }
+
         ctx.fillText(char, x, y);
+
+        // Resetear propiedades globales para la siguiente iteración
+        ctx.shadowBlur = 0;
         ctx.globalAlpha = opacity;
 
+        // Reiniciar la gota al llegar al fondo
         if (y > canvas.height && Math.random() > 0.975) {
           dropsRef.current[i] = 0;
         }
+
+        // Progreso de caída con aleatoriedad fluida
         dropsRef.current[i] += speed * (0.5 + Math.random() * 0.5);
       }
 

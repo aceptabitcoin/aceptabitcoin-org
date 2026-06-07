@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-05-31
+Estado actual del proyecto — última actualización: 2026-06-07
 
 ---
 
@@ -14,6 +14,46 @@ Estado actual del proyecto — última actualización: 2026-05-31
 | **Tests (Vitest)** | ✅ Pasando | `app/api/tipjar/route.test.ts`, `lib/proveedores.test.ts` |
 | **Despliegue (Vercel)** | ✅ Configurado | Variables de entorno: `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` |
 | **Módulo Hackathon** | ✅ Live | Migrado de route group `(hackathon)` a `app/hackathon/` — rutas activas |
+
+---
+
+## 🚀 Sprint Update: Bitcoin Only Infrastructure & Matrix UI Refinement (v2.1)
+
+### ✅ Completed Tasks
+
+#### 1. TipJar Section — Serverless Payment Architecture (v2.1)
+- **Refactor:** Eliminación completa del backend `/api/tipjar`. Migración a enlaces directos de Blink POS con memos dinámicos estructurados (`SERVICIO_MONTO_DIVISA`).
+- **UI/UX:** Implementación de tabs reactivas (Lightning / On-Chain / Fiat) con transiciones suaves.
+- **Visuals:** Integración de `MatrixRain` con color dinámico (`theme.hex`) que cambia entre Naranja Bitcoin y Cian Cypherpunk según la pestaña activa. Efecto de "cabeza blanca brillante" en la lluvia matrix para realismo CRT.
+- **DS Compliance:** Uso estricto de `font-serif` para títulos, `font-mono` para datos técnicos, y tokens de color semánticos.
+- **Files Modified:** `components/sections/TipJarSection.tsx`, `components/ui/MatrixRain.tsx`, `TIPJAR.md`.
+
+#### 2. Partners Carousel & Card — Sovereign Node Aesthetic
+- **Data Structure:** Refactorización de `data/partners.ts`. Eliminación de prop `color` dinámica. Adición de metadatos técnicos: `protocol` y `status`.
+- **PartnerCard Component:** Rediseño como "Módulo de Hardware". Contenedor de icono con borde matrix, punto de estado parpadeante, footer técnico con protocolo y status. Botón CTA estilo arcade mini con `font-vt323`.
+- **Carousel:** Animación automática respetando `prefers-reduced-motion`. Badge "Infraestructura Bitcoin Only" con `ShieldCheck` y glow naranja. Dots indicadores estilizados con sombra activa.
+- **DS Compliance:** Eliminación total de colores no aprobados (cian/púrpura). Paleta restringida a Matrix Green + Bitcoin Orange. Jerarquía tipográfica institucional/técnica/retro aplicada correctamente.
+- **Files Modified:** `components/ui/PartnerCard.tsx`, `components/sections/PartnersCarousel.tsx`, `data/partners.ts`.
+
+#### 3. ArcadeButton & MatrixArcadeWhatsApp — Hardware Metaphor
+- **ArcadeButton:** Reparación de problema de texto encimado. Implementación de metáfora "chasis + tapa mecánica" con elevación `-translate-y-2` y acople en active. Scanline optimizada usando `animate-scanline` de globals.css.
+- **WhatsApp Widget:** Reposicionamiento de label debajo del switch para legibilidad. Integración de status badge dentro del label. Icono de teléfono cyberpunk optimizado para nitidez en tamaños pequeños.
+- **Files Modified:** `components/ui/ArcadeButton.tsx`, `components/ui/MatrixArcadeWhatsApp.tsx`.
+
+### 🔧 Technical Debt Addressed
+- Eliminación de deuda técnica en pagos: cero API keys en repo, cero endpoints de facturación.
+- Limpieza de código obsoleto: marcado `route.ts` y `lib/blink.ts` como deprecated (pendiente de eliminación tras confirmar webhooks).
+- Accesibilidad: Todos los componentes nuevos respetan `prefers-reduced-motion` y tienen focus states visibles con `ring-matrix`.
+
+### 🎨 Design System v2.0 Enforcement
+- **Colores:** Prohibición explícita de cian/púrpura en componentes públicos. Solo Matrix Green (#00FF41) y Bitcoin Orange (#F7931A) permitidos.
+- **Tipografía:** Serif = autoridad, Mono = sistema, VT323 = acción retro. Regla aplicada en todos los componentes modificados.
+- **Efectos:** Glow semántico por contexto (naranja para valor, verde para infraestructura). Grid background matrix en tarjetas técnicas.
+
+### ⚠️ Pending Actions
+- [ ] Eliminar `app/api/tipjar/route.ts` y `lib/blink.ts` tras configurar webhook en Blink dashboard.
+- [ ] Verificar que `tailwind.config.ts` tenga mapeadas correctamente las fuentes `vt323`, `fira-code`, `ibm-plex-serif`.
+- [ ] Testear `MatrixArcadeWhatsApp` en iOS Safari para confirmar deep-linking funcional.
 
 ---
 
@@ -297,6 +337,8 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 
 | Hash | Mensaje |
 |------|---------|
+| `1cf8f6c` | refactor(tipjar): migrate to serverless blink POS architecture (v2.1) |
+| `d8f857a` | docs: update documentation and finalize merchant onboarding form with Google Forms integration |
 | `0ecc2a7` | fix: remove duplicate Footer from page.tsx (handled in layout) |
 | `96cbae3` | feat: restore production homepage structure and integrate Educational MarketMood + PartnersCarousel |
 | `e999651` | fix: correct imports for layout and add required props to components |
