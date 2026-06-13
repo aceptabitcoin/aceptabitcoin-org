@@ -15,7 +15,8 @@ export const PARTNERS: Partner[] = [
   {
     id: "aureo",
     name: "AureoBitcoin",
-    url: "https://www.aureobitcoin.com/",
+    // CAMBIO: Enlace de referido actualizado
+    url: "https://app.aureobitcoin.com/es/auth/signup?ref=abo",
     tagline: "La plataforma mexicana confiable",
     description: "Compra y vende Bitcoin fácilmente con SPEI. Soberanía financiera desde México.",
     icon: "Bitcoin",
@@ -35,7 +36,8 @@ export const PARTNERS: Partner[] = [
   {
     id: "bullbitcoin",
     name: "Bull Bitcoin",
-    url: "https://www.bullbitcoin.com/",
+    // CAMBIO: Enlace de referido actualizado
+    url: "https://app.bullbitcoin.com/registration/trtxx1",
     tagline: "Non-custodial & Privacy First",
     description: "Intercambio P2P sin KYC. Diseñado para cypherpunks que valoran su privacidad.",
     icon: "Shield",

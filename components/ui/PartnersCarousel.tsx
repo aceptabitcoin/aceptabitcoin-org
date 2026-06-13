@@ -38,10 +38,11 @@ export function PartnersCarousel() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-bitcoin/30 bg-bitcoin/5 mb-4"
+            // CAMBIO 1: Quitamos animate-pulse y agregamos drop-shadow para un glow estático elegante
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-bitcoin/30 bg-bitcoin/5 mb-4 drop-shadow-[0_0_8px_rgba(247,147,26,0.3)]"
           >
             <ShieldCheck className="w-3.5 h-3.5 text-bitcoin" />
-            <span className="text-[10px] font-mono text-bitcoin uppercase tracking-[2px] animate-pulse">
+            <span className="text-[10px] font-mono text-bitcoin uppercase tracking-[2px]">
               Infraestructura Bitcoin Only
             </span>
           </motion.div>
@@ -50,9 +51,9 @@ export function PartnersCarousel() {
             Nodos de Intercambio Verificados
           </h2>
           
+          {/* CAMBIO 2: Texto limpio sin la parte de "sin stablecoins..." */}
           <p className="mt-3 font-mono text-xs sm:text-sm text-gray-400 max-w-xl mx-auto leading-relaxed">
-            Plataformas auditadas por la comunidad que operan <span className="text-bitcoin font-bold">exclusivamente</span> con Bitcoin. 
-            Sin stablecoins, sin fiat on-ramp, sin compromisos.
+            Plataformas auditadas por la comunidad que operan <span className="text-bitcoin font-bold">exclusivamente</span> con Bitcoin.
           </p>
         </div>
 
@@ -67,6 +68,9 @@ export function PartnersCarousel() {
               transition={{ duration: 0.4, ease: "easeInOut" }}
               className="w-full max-w-md"
             >
+              {/* CAMBIO 3: Los links se manejan dentro de PartnerCard o pasándolos aquí si es necesario.
+                  Asumiendo que PartnerCard usa los datos de PARTNERS, asegúrate de actualizar 
+                  el archivo @/data/partners.ts con las nuevas URLs de referido. */}
               <PartnerCard partner={PARTNERS[currentIndex]} />
             </motion.div>
           </AnimatePresence>

@@ -32,11 +32,12 @@ export default function ArcadeButton({
   variant = "bitcoin",
   onClick,
 }: ArcadeButtonProps) {
+  // Ajustamos tamaños para dar más "aire" al icono
   const sizeClasses = {
-    sm: "w-14 h-14 text-lg",
-    md: "w-18 h-18 text-xl",
-    lg: "w-24 h-24 text-3xl",
-    xl: "w-28 h-28 text-4xl",
+    sm: "w-16 h-16 text-xl border-b-[6px]",
+    md: "w-20 h-20 text-2xl border-b-[8px]",
+    lg: "w-24 h-24 text-3xl border-b-[10px]",
+    xl: "w-28 h-28 text-4xl border-b-[12px]",
   };
 
   const actualVariant = variant === "primary" ? "bitcoin" : variant === "outline" ? "matrix" : variant;
@@ -44,73 +45,67 @@ export default function ArcadeButton({
   const variantStyles = {
     bitcoin: {
       border: "border-bitcoin",
-      text: "text-bitcoin",
-      glow: "shadow-[0_0_30px_rgba(247,147,26,0.5)] hover:shadow-[0_0_50px_rgba(247,147,26,0.7)]",
-      hoverBorder: "hover:border-bitcoin/80",
+      bg: "bg-bitcoin",
+      text: "text-black", // Texto negro sobre naranja para contraste arcade
+      glow: "shadow-[0_0_20px_rgba(247,147,26,0.4)]",
+      hoverGlow: "hover:shadow-[0_0_35px_rgba(247,147,26,0.6)]",
       label: "text-bitcoin",
-      icon: "text-bitcoin drop-shadow-[0_0_12px_#F7931A]",
+      icon: "drop-shadow-sm",
     },
     matrix: {
       border: "border-matrix",
-      text: "text-matrix",
-      glow: "shadow-[0_0_30px_rgba(0,255,65,0.5)] hover:shadow-[0_0_50px_rgba(0,255,65,0.7)]",
-      hoverBorder: "hover:border-matrix/80",
+      bg: "bg-matrix",
+      text: "text-black",
+      glow: "shadow-[0_0_20px_rgba(0,255,65,0.4)]",
+      hoverGlow: "hover:shadow-[0_0_35px_rgba(0,255,65,0.6)]",
       label: "text-matrix",
-      icon: "text-matrix drop-shadow-[0_0_12px_#00FF41]",
+      icon: "drop-shadow-sm",
     },
   };
 
   const style = variantStyles[actualVariant as "bitcoin" | "matrix"] || variantStyles.bitcoin;
 
-  return (
-    <div className={cn("relative group inline-block", className)}>
-      <div className={`absolute -inset-3 bg-gradient-to-r from-black via-${actualVariant === "bitcoin" ? "bitcoin" : "matrix"}/20 to-black rounded-full blur-xl opacity-50 group-hover:opacity-80 transition-all duration-300`} />
+  const ButtonContent = ({ isLink = false }: { isLink?: boolean }) => (
+    <div
+      className={cn(
+        "relative flex items-center justify-center rounded-full",
+        "font-vt323 font-bold",
+        sizeClasses[size],
+        style.bg,
+        style.border,
+        "transition-all duration-100 ease-out",
+        "hover:brightness-110 hover:-translate-y-1", // Efecto de "levantarse" al hover
+        "active:border-b-0 active:translate-y-[10px]", // Efecto de "hundirse" al click
+        style.glow,
+        style.hoverGlow,
+        "group"
+      )}
+    >
+      {/* Reflejo superior (Plástico) */}
+      <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/40 to-transparent rounded-t-full pointer-events-none" />
+      
+      {/* Icono centrado con margen interno */}
+      <BitcoinIcon className={cn("w-1/2 h-1/2", style.text, style.icon, "relative z-10")} />
+      
+      {/* Sombra interna para profundidad */}
+      <div className="absolute inset-0 rounded-full shadow-[inset_0_-4px_6px_rgba(0,0,0,0.2)] pointer-events-none" />
+    </div>
+  );
 
+  return (
+    <div className={cn("relative inline-block group/root", className)}>
       {href ? (
-        <Link
-          href={href}
-          target={target}
-          rel="noopener noreferrer"
-          className={cn(
-            "relative flex items-center justify-center",
-            sizeClasses[size],
-            "font-vt323 font-bold text-white",
-            "bg-black border-[6px]",
-            style.border,
-            "rounded-full overflow-hidden",
-            style.hoverBorder,
-            "hover:scale-105 active:scale-95 transition-all duration-200",
-            style.glow
-          )}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none animate-scanline" />
-          <BitcoinIcon className={cn("w-11/12 h-11/12", style.icon, "group-hover:scale-105 transition-transform")} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-active:opacity-100 transition-opacity" />
+        <Link href={href} target={target} rel="noopener noreferrer">
+          <ButtonContent isLink />
         </Link>
       ) : (
-        <button
-          onClick={onClick}
-          className={cn(
-            "relative flex items-center justify-center",
-            sizeClasses[size],
-            "font-vt323 font-bold text-white",
-            "bg-black border-[6px]",
-            style.border,
-            "rounded-full overflow-hidden",
-            style.hoverBorder,
-            "hover:scale-105 active:scale-95 transition-all duration-200",
-            style.glow,
-            "cursor-pointer"
-          )}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none animate-scanline" />
-          <BitcoinIcon className={cn("w-11/12 h-11/12", style.icon, "group-hover:scale-105 transition-transform")} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-active:opacity-100 transition-opacity" />
+        <button onClick={onClick}>
+          <ButtonContent />
         </button>
       )}
 
       {(children || label) && (
-        <p className={cn("text-center mt-3 text-sm font-mono tracking-widest", style.label, "drop-shadow-sm whitespace-nowrap")}>
+        <p className={cn("text-center mt-4 text-sm font-mono tracking-widest uppercase", style.label, "drop-shadow-md")}>
           {children || label}
         </p>
       )}

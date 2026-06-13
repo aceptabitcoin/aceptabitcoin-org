@@ -1,6 +1,6 @@
 # Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
 
-Estado actual del proyecto — última actualización: 2026-06-07
+Estado actual del proyecto — última actualización: 2026-06-13
 
 ---
 
@@ -49,6 +49,48 @@ Estado actual del proyecto — última actualización: 2026-06-07
 - **Colores:** Prohibición explícita de cian/púrpura en componentes públicos. Solo Matrix Green (#00FF41) y Bitcoin Orange (#F7931A) permitidos.
 - **Tipografía:** Serif = autoridad, Mono = sistema, VT323 = acción retro. Regla aplicada en todos los componentes modificados.
 - **Efectos:** Glow semántico por contexto (naranja para valor, verde para infraestructura). Grid background matrix en tarjetas técnicas.
+
+---
+
+## 🚀 Sprint Update: Bitcoin Matrix Refinement & UX Polish (June 13, 2026)
+
+### ✅ Completed Tasks
+
+#### 1. Hero Section (components/layout/Hero.tsx)
+**Actualización de Estado:** Transición post-Hackatón #2.
+- **Cambio en CTA Principal:** Texto actualizado a "PRÓXIMAMENTE HACKATÓN #3".
+- **Efecto visual reducido:** Se eliminó el animate-pulse intenso y se suavizó el glow para un estado de "espera" más discreto.
+- **Enlace apuntando a /hackathon** general mientras se define la edición 3.
+
+#### 2. Proveedores / Partners (components/sections/PartnersCarousel.tsx & data/partners.ts)
+**Limpieza de Copy:** Eliminada la frase "Sin stablecoins, sin fiat on-ramp..." por solicitud del cliente.
+- **Optimización Visual:** Reemplazo del efecto animate-pulse en el badge "Infraestructura Bitcoin Only" por un Glow estático (drop-shadow) para evitar conflicto visual con el escudo.
+- **Actualización de Enlaces de Referido:**
+  - Bull Bitcoin: `https://app.bullbitcoin.com/registration/trtxx1`
+  - Aureo Bitcoin: `https://app.aureobitcoin.com/es/auth/signup?ref=abo`
+- **Fix de Build:** Corrección de definición duplicada de `PARTNERS` y `Partner` interface (eliminado contenido duplicado que causaba error de compilación).
+
+#### 3. Botón Flotante WhatsApp (components/ui/MatrixArcadeWhatsApp.tsx)
+- **Redimensión:** Ajuste de tamaño base a `md` (más compacto) para evitar saturación en pantalla.
+- **Layout del Label:** Se añadió `max-w-[120px]` al contenedor de texto para evitar que el label expanda horizontalmente el botón.
+- **Estética:** Tipografía ajustada (`text-base`) y tracking reducido para mejor integración.
+
+#### 4. Efecto Matrix Rain (components/ui/MatrixRain.tsx)
+- **Espaciado:** Aumento de `fontSize` a 18px para separar columnas y dejar "respirar" al fondo negro.
+- **Limpieza de Rastro:** Aumento de opacidad del borrado de fondo a 0.15 para evitar la saturación blanca/halo después de unos segundos.
+- **Contraste:** Estela reducida a `opacity: 0.08` manteniendo la cabeza de la gota en blanco puro (#FFFFFF) con glow.
+
+#### 5. Arcade Button (components/ui/ArcadeButton.tsx)
+**Rediseño 3D Mecánico:**
+- Implementación de borde inferior grueso (`border-b-[10px]`) para simular profundidad física.
+- Fondo sólido (`bg-bitcoin` / `bg-matrix`) en lugar de solo bordes.
+- Animación de Presión: Efecto `active:border-b-0 active:translate-y-[10px]` para simular el hundimiento real de un botón de arcade.
+- Añadido reflejo superior (gradiente blanco) para efecto de plástico curvo.
+
+#### 6. Formulario Onboarding (app/(site)/crea-tu-tienda/page.tsx)
+**Integración Google Forms:**
+- Actualización de `GOOGLE_FORM_URL` y mapeo correcto de todos los `entry.IDs` extraídos de la URL del formulario real.
+- Campos verificados: Nombre, Email, Negocio, Categoría, Volumen, Nivel Técnico e Infraestructura.
 
 ### ⚠️ Pending Actions
 - [ ] Eliminar `app/api/tipjar/route.ts` y `lib/blink.ts` tras configurar webhook en Blink dashboard.
@@ -187,6 +229,7 @@ Todos los componentes con datos dinámicos o dependientes del navegador incluyen
 | `AhorraSectionHeader` sin estandarizar | Necesario componente estandarizado para sección de ahorro | Creado con props `marketTrend`, `isLive`, memoización |
 | `AceptaBitcoinSectionHeader` faltante | Header para calculadora de pagos/conversiones | Creado con IntersectionObserver, chips financieros, badge realtime |
 | `ArcadeButton` href required error | `Property 'href' is missing` en hackathon edition pages | Hecho `href` opcional para soportar tanto Link como button modes |
+| Definición duplicada PARTNERS | Error de compilación: `PARTNERS` definido múltiples veces | Eliminado contenido duplicado en `data/partners.ts` (líneas 59-113) |
 
 ### Issues Abiertos
 

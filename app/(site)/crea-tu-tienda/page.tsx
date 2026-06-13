@@ -6,20 +6,19 @@ import { Terminal, Store, MapPin, Cpu, CheckCircle2, AlertTriangle } from "lucid
 import Link from "next/link";
 
 // ============================================================================
-// CONFIGURACIÓN DE GOOGLE FORMS
+// CONFIGURACIÓN DE GOOGLE FORMS (ACTUALIZADA)
 // ============================================================================
-// ️ REEMPLAZA ESTOS VALORES CON LOS DE TU FORMULARIO REAL
-const GOOGLE_FORM_URL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSe...TU_ID_AQUI.../formResponse";
+const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdDF1PBjQ6gRZWhAByPvrVNDI0p-inmoA8fLn1opynz26kYdQ/formResponse";
 
-// ⚠️ ASEGÚRATE DE QUE LOS entry.XXXXXX COINCIDAN CON TU FORMULARIO DE GOOGLE
+// IDs extraídos de la URL proporcionada
 const FIELD_IDS = {
-  name: "entry.111111111",       // Ejemplo: Campo "Nombre"
-  email: "entry.222222222",      // Ejemplo: Campo "Email"
-  businessName: "entry.333333333", // Ejemplo: Campo "Nombre del Negocio"
-  category: "entry.444444444",   // Ejemplo: Campo "Categoría"
-  volume: "entry.555555555",     // Ejemplo: Campo "Volumen"
-  techLevel: "entry.666666666",  // Ejemplo: Campo "Nivel Técnico"
-  currentInfra: "entry.777777777" // Ejemplo: Campo "Infraestructura Actual"
+  name: "entry.814057944",       
+  email: "entry.1860323184",      
+  businessName: "entry.1006340635", 
+  category: "entry.225296628",   
+  volume: "entry.311501453",     
+  techLevel: "entry.1076724167",  
+  currentInfra: "entry.544920794" 
 };
 
 export default function CreaTuTiendaPage() {
@@ -40,28 +39,24 @@ export default function CreaTuTiendaPage() {
     e.preventDefault();
     setStatus("loading");
 
-    // Construir el payload para Google Forms
     const googleFormData = new FormData();
     
-    // Mapeo dinámico: Enviamos TODOS los campos, incluso si están vacíos ("")
-    // Esto asegura que Google registre la estructura completa del formulario.
     Object.entries(FIELD_IDS).forEach(([key, entryId]) => {
       const value = formData[key as keyof typeof formData];
-      googleFormData.append(entryId, value); 
+      if (value) { // Solo enviamos si hay valor, aunque Google acepta vacíos también
+        googleFormData.append(entryId, value); 
+      }
     });
 
     try {
-      // Fetch con no-cors es obligatorio para Google Forms desde el cliente
       await fetch(GOOGLE_FORM_URL, {
         method: "POST",
         mode: "no-cors",
         body: googleFormData
       });
 
-      // Si llega aquí, asumimos éxito (Google no devuelve JSON ni CORS headers legibles)
       setStatus("success");
       
-      // Resetear formulario después de 3 segundos
       setTimeout(() => {
         setFormData({
           name: "",
@@ -73,7 +68,7 @@ export default function CreaTuTiendaPage() {
           currentInfra: ""
         });
         setStatus("idle");
-      }, 3000);
+      }, 5000); // Dejamos el mensaje de éxito un poco más visible
 
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -199,7 +194,6 @@ export default function CreaTuTiendaPage() {
                     className="w-full bg-black border border-white/20 text-white p-3 font-mono text-sm focus:border-matrix focus:outline-none rounded-sm disabled:opacity-50"
                   >
                     <option value="">-- SELECCIONAR --</option>
-                    {/* ⚠️ IMPORTANTE: Estos values deben coincidir EXACTAMENTE con las opciones en Google Forms */}
                     <option value="Gastronomía & Bebidas">Gastronomía & Bebidas</option>
                     <option value="Retail & Tiendas">Retail & Tiendas</option>
                     <option value="Servicios Profesionales">Servicios Profesionales</option>
@@ -217,7 +211,6 @@ export default function CreaTuTiendaPage() {
                     className="w-full bg-black border border-white/20 text-white p-3 font-mono text-sm focus:border-bitcoin focus:outline-none rounded-sm disabled:opacity-50"
                   >
                     <option value="">-- SELECCIONAR --</option>
-                    {/* ⚠️ IMPORTANTE: Estos values deben coincidir EXACTAMENTE con las opciones en Google Forms */}
                     <option value="Micro (< $10k MXN)">Micro (&lt; $10k MXN)</option>
                     <option value="Medio ($10k - $100k MXN)">Medio ($10k - $100k MXN)</option>
                     <option value="Alto (> $100k MXN)">Alto (&gt; $100k MXN)</option>
@@ -233,7 +226,6 @@ export default function CreaTuTiendaPage() {
               </label>
               
               <div className="grid gap-3">
-                {/* Opción Novato */}
                 <label className={`flex items-center gap-4 p-4 border ${formData.techLevel === 'Novato / Soy solo el dueño' ? 'border-bitcoin bg-bitcoin/5' : 'border-white/10 bg-white/5'} hover:border-bitcoin/50 cursor-pointer transition-all rounded-sm group ${status === 'loading' || status === 'success' ? 'opacity-50 pointer-events-none' : ''}`}>
                   <input 
                     type="radio" 
@@ -250,7 +242,6 @@ export default function CreaTuTiendaPage() {
                   </div>
                 </label>
                 
-                {/* Opción Intermedio */}
                 <label className={`flex items-center gap-4 p-4 border ${formData.techLevel === 'Intermedio / Tengo POS' ? 'border-matrix bg-matrix/5' : 'border-white/10 bg-white/5'} hover:border-matrix/50 cursor-pointer transition-all rounded-sm group ${status === 'loading' || status === 'success' ? 'opacity-50 pointer-events-none' : ''}`}>
                   <input 
                     type="radio" 
@@ -267,7 +258,6 @@ export default function CreaTuTiendaPage() {
                   </div>
                 </label>
 
-                {/* Opción Avanzado */}
                 <label className={`flex items-center gap-4 p-4 border ${formData.techLevel === 'Avanzado / Run Node' ? 'border-bitcoin bg-bitcoin/5' : 'border-white/10 bg-white/5'} hover:border-bitcoin/50 cursor-pointer transition-all rounded-sm group ${status === 'loading' || status === 'success' ? 'opacity-50 pointer-events-none' : ''}`}>
                   <input 
                     type="radio" 
@@ -299,7 +289,6 @@ export default function CreaTuTiendaPage() {
                 className="w-full bg-black border border-white/20 text-white p-3 font-mono text-sm focus:border-matrix focus:outline-none focus:ring-1 focus:ring-matrix rounded-sm disabled:opacity-50"
               >
                 <option value="">-- SELECCIONAR SISTEMA --</option>
-                {/* ⚠️ IMPORTANTE: Values explícitos para evitar bugs de React */}
                 <option value="Tienda Física (Solo Presencial)">Tienda Física (Solo Presencial)</option>
                 <option value="E-commerce (Sitio Web existente)">E-commerce (Sitio Web existente)</option>
                 <option value="Solo Redes Sociales">Solo Redes Sociales</option>
