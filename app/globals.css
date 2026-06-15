@@ -1,15 +1,21 @@
 /* ============================================
-   app/globals.css — Design System v2.0
+   app/globals.css — Design System v2.0 (UPDATED)
    ============================================
+   ✅ Fuentes Importadas (VT323, IBM Plex, Fira Code)
    ✅ Variables en :root directo
    ✅ Keyframes globales fuera de layers
    ✅ Utilidades organizadas por propósito
-   ✅ Accesibilidad y responsive first
+   ✅ Fix: Regla button permite fuentes custom (Arcade)
    ============================================ */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================
+   0. FUENTES (FONTS)
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Fira+Code:wght@300;400;500;600&family=VT323&display=swap');
 
 /* ============================================
    1. VARIABLES GLOBALES (:root)
@@ -42,7 +48,7 @@
   --bitcoin-glow: 0 0 20px rgba(247, 147, 26, 0.4);
   --bitcoin-glow-hover: 0 0 35px rgba(247, 147, 26, 0.6);
 
-  /* 🟠 Orange Palette — For UI consistency (headers, CTAs) */
+  /* 🟠 Orange Palette — For UI consistency */
   --orange-500: #f97316;
   --orange-400: #fb923c;
   --orange-300: #fdba74;
@@ -126,13 +132,19 @@
     @apply font-serif font-bold tracking-tight;
   }
 
-  p, span, label, input, button {
+  /* Textos generales */
+  p, span, label, input, a {
     @apply font-sans;
   }
 
-  /* Enlaces */
-  a {
-    @apply transition-colors duration-200;
+  /* 
+     ⚠️ FIX CRÍTICO PARA ARCADE BUTTON:
+     No forzar 'font-sans' en todos los botones.
+     Dejamos que el botón decida su fuente (ej. VT323).
+     Si usas componentes shadcn/ui estándar, ellos tienen su propia clase.
+  */
+  button {
+    /* @apply font-sans;  <-- COMENTADO O ELIMINADO */
   }
 
   /* Imágenes responsivas por defecto */
@@ -478,16 +490,3 @@
     max-width: 1280px;
   }
 }
-
-/* ============================================
-   6. DEBUG UTILITIES (remover en producción)
-   ============================================ */
-/* 
-.debug-outline * { outline: 1px solid rgba(0, 255, 65, 0.3) !important; }
-.debug-grid { 
-  background-image: 
-    linear-gradient(rgba(0,255,65,0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,65,0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-*/

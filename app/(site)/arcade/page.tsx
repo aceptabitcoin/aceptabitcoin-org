@@ -208,10 +208,11 @@ export default async function ArcadePage() {
                     <div className="mt-6">
                       <ArcadeButton
                         href={plataformaDestacada.url || '#'}
-                        label="ENTRAR AL LABORATORIO"
                         variant="matrix"
                         className="w-full md:w-auto"
-                      />
+                      >
+                        ENTRAR AL LABORATORIO
+                      </ArcadeButton>
                     </div>
                   </div>
                 </div>
@@ -269,10 +270,11 @@ export default async function ArcadePage() {
             <div className="mt-10 flex justify-center">
               <ArcadeButton
                 href={juegosArcade.find(j => j.estado === 'active')?.url || '#'}
-                label="🎮 JUGAR AHORA"
                 variant="bitcoin"
                 className="min-w-[200px]"
-              />
+              >
+                🎮 JUGAR AHORA
+              </ArcadeButton>
             </div>
             
             {/* Nota de inclusión */}

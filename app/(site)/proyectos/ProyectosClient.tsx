@@ -234,10 +234,11 @@ export default function ProyectosClient({ proyectos }: ProyectosClientProps) {
             {/* ✅ CORREGIDO: Usar ArcadeButton en lugar de link manual */}
             <ArcadeButton
               href="mailto:proyectos@aceptabitcoin.org"
-              label="ENVIAR PROYECTO"
               variant="matrix"
               className="min-w-[200px]"
-            />
+            >
+              ENVIAR PROYECTO
+            </ArcadeButton>
           </div>
 
         </div>

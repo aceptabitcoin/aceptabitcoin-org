@@ -6,108 +6,123 @@ import { cn } from "@/lib/utils";
 
 interface ArcadeButtonProps {
   href?: string;
-  children?: React.ReactNode;
+  children: React.ReactNode; // Texto principal del botón
   target?: string;
   className?: string;
-  size?: "sm" | "md" | "lg" | "xl";
-  label?: string;
-  variant?: "bitcoin" | "matrix" | "primary" | "outline";
+  size?: "sm" | "md" | "lg";
+  variant?: "bitcoin" | "matrix";
+  icon?: React.ReactNode; // Icono opcional (ej. el SVG de Bitcoin)
   onClick?: () => void;
+  disabled?: boolean;
 }
-
-// 🔹 Bitcoin Icon SVG
-const BitcoinIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className={className} xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 1.5l.3 1.9c-1.3.1-2.6.5-3.8 1.1l-.8-1.7-1.5.7.8 1.7C4.6 6.3 3.3 7.8 2.4 9.5L.5 9l-.3 1.6 1.9.4c-.1.7-.2 1.4-.2 2.1 0 .7.1 1.4.2 2.1l-1.9.4.3 1.6 1.9-.4c.9 1.7 2.2 3.2 3.8 4.3l-.8 1.7 1.5.7.8-1.7c1.2.6 2.5 1 3.8 1.1l-.3 1.9 1.6.3.3-1.9c.7.1 1.4.1 2.1.1.7 0 1.4 0 2.1-.1l.3 1.9 1.6-.3-.3-1.9c1.3-.1 2.6-.5 3.8-1.1l.8 1.7 1.5-.7-.8-1.7c1.6-1.1 2.9-2.6 3.8-4.3l1.9.4.3-1.6-1.9-.4c.1-.7.2-1.4.2-2.1 0-.7-.1-1.4-.2-2.1l1.9-.4-.3-1.6-1.9.4c-.9-1.7-2.2-3.2-3.8-4.3l.8-1.7-1.5-.7-.8 1.7c-1.2-.6-2.5-1-3.8-1.1l.3-1.9-1.6-.3-.3 1.9c-.7-.1-1.4-.1-2.1-.1s-1.4.1-2.1.1L12.8 0l-1.6.3-1.6 1.2zm7.6 10.5c.3 1.8-.8 3.5-2.6 3.8l-5.6.8c-1.8.3-3.5-.8-3.8-2.6l-.8-5.6c-.3-1.8.8-3.5 2.6-3.8l5.6-.8c1.8-.3 3.5.8 3.8 2.6l.8 5.6z" />
-  </svg>
-);
 
 export default function ArcadeButton({
   href,
   children,
   target = "_blank",
   className = "",
-  size = "lg",
-  label,
+  size = "md",
   variant = "bitcoin",
+  icon,
   onClick,
+  disabled = false,
 }: ArcadeButtonProps) {
-  // Ajustamos tamaños para dar más "aire" al icono
+
+  // 1. Configuración de Tamaños (Aspecto Terminal)
   const sizeClasses = {
-    sm: "w-16 h-16 text-xl border-b-[6px]",
-    md: "w-20 h-20 text-2xl border-b-[8px]",
-    lg: "w-24 h-24 text-3xl border-b-[10px]",
-    xl: "w-28 h-28 text-4xl border-b-[12px]",
+    sm: "px-6 py-2 text-xl tracking-widest", 
+    md: "px-8 py-3 text-2xl tracking-widest", 
+    lg: "px-12 py-4 text-3xl tracking-[0.2em]", 
   };
 
-  const actualVariant = variant === "primary" ? "bitcoin" : variant === "outline" ? "matrix" : variant;
-
+  // 2. Definición de Variantes (Colors & Glow)
+  // Usamos valores RGB para poder manipular la opacidad en las sombras arbitrarias
   const variantStyles = {
     bitcoin: {
-      border: "border-bitcoin",
       bg: "bg-bitcoin",
-      text: "text-black", // Texto negro sobre naranja para contraste arcade
-      glow: "shadow-[0_0_20px_rgba(247,147,26,0.4)]",
-      hoverGlow: "hover:shadow-[0_0_35px_rgba(247,147,26,0.6)]",
-      label: "text-bitcoin",
-      icon: "drop-shadow-sm",
+      text: "text-black", 
+      // RGB de #F7931A es 247, 147, 26
+      shadowColor: "247, 147, 26", 
+      borderDepth: "border-orange-700", // Borde inferior oscuro simulado
     },
     matrix: {
-      border: "border-matrix",
       bg: "bg-matrix",
-      text: "text-black",
-      glow: "shadow-[0_0_20px_rgba(0,255,65,0.4)]",
-      hoverGlow: "hover:shadow-[0_0_35px_rgba(0,255,65,0.6)]",
-      label: "text-matrix",
-      icon: "drop-shadow-sm",
+      text: "text-black", 
+      // RGB de #00FF41 es 0, 255, 65
+      shadowColor: "0, 255, 65", 
+      borderDepth: "border-green-800",
     },
   };
 
-  const style = variantStyles[actualVariant as "bitcoin" | "matrix"] || variantStyles.bitcoin;
+  const currentStyle = variantStyles[variant];
 
-  const ButtonContent = ({ isLink = false }: { isLink?: boolean }) => (
-    <div
-      className={cn(
-        "relative flex items-center justify-center rounded-full",
-        "font-vt323 font-bold",
-        sizeClasses[size],
-        style.bg,
-        style.border,
-        "transition-all duration-100 ease-out",
-        "hover:brightness-110 hover:-translate-y-1", // Efecto de "levantarse" al hover
-        "active:border-b-0 active:translate-y-[10px]", // Efecto de "hundirse" al click
-        style.glow,
-        style.hoverGlow,
-        "group"
-      )}
-    >
-      {/* Reflejo superior (Plástico) */}
-      <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/40 to-transparent rounded-t-full pointer-events-none" />
+  // Clases base comunes para el botón físico
+  const buttonBaseClasses = cn(
+    // Layout & Tipografía Arcade
+    "relative flex items-center justify-center gap-3 font-vt323 font-bold uppercase rounded-sm",
+    
+    // Tamaño dinámico
+    sizeClasses[size],
+    
+    // Base Colors
+    currentStyle.bg,
+    currentStyle.text,
+    
+    // El borde inferior grueso simula la profundidad física del botón mecánico
+    "border-b-[6px]",
+    currentStyle.borderDepth,
+
+    // Transiciones Mecánicas
+    "transition-all duration-100 ease-out",
+    
+    // Cursor
+    "cursor-pointer select-none",
+
+    // Estados Hover/Active
+    !disabled && [
+      "hover:-translate-y-1 hover:brightness-110",
+      // Sombra dinámica usando el RGB definido arriba
+      `hover:shadow-[0_0_25px_rgba(${currentStyle.shadowColor},0.6)]`,
       
-      {/* Icono centrado con margen interno */}
-      <BitcoinIcon className={cn("w-1/2 h-1/2", style.text, style.icon, "relative z-10")} />
+      // Estado Active: Se "hunde" (reduce el borde inferior y traslada Y)
+      "active:translate-y-[4px] active:border-b-[2px] active:shadow-none"
+    ],
+    
+    disabled && "opacity-50 cursor-not-allowed grayscale"
+  );
+
+  const content = (
+    <>
+      {/* Icono opcional */}
+      {icon && <span className="pointer-events-none drop-shadow-md">{icon}</span>}
       
-      {/* Sombra interna para profundidad */}
-      <div className="absolute inset-0 rounded-full shadow-[inset_0_-4px_6px_rgba(0,0,0,0.2)] pointer-events-none" />
-    </div>
+      {/* Texto */}
+      <span className="pointer-events-none drop-shadow-sm">{children}</span>
+
+      {/* Efecto "Scanline/Brillo" sutil encima para dar toque retro/plástico */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent opacity-0 hover:opacity-100 pointer-events-none transition-opacity rounded-sm" />
+    </>
   );
 
   return (
-    <div className={cn("relative inline-block group/root", className)}>
+    <div className={cn("relative inline-block", className)}>
       {href ? (
-        <Link href={href} target={target} rel="noopener noreferrer">
-          <ButtonContent isLink />
+        <Link 
+          href={href} 
+          target={target} 
+          rel="noopener noreferrer"
+          className={buttonBaseClasses}
+        >
+          {content}
         </Link>
       ) : (
-        <button onClick={onClick}>
-          <ButtonContent />
+        <button 
+          onClick={onClick}
+          disabled={disabled}
+          className={buttonBaseClasses}
+        >
+          {content}
         </button>
-      )}
-
-      {(children || label) && (
-        <p className={cn("text-center mt-4 text-sm font-mono tracking-widest uppercase", style.label, "drop-shadow-md")}>
-          {children || label}
-        </p>
       )}
     </div>
   );

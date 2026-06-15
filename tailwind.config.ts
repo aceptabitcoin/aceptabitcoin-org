@@ -7,12 +7,7 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    // ✅ Rutas explícitas para componentes custom
     "./components/widgets/bob-chat/**/*.{ts,tsx}",
-    "./components/ui/icons/**/*.{ts,tsx}",
-    // ⚠️ REMOVIDO: "./components/ui/MatrixArcadeWhatsApp.{ts,tsx}" 
-    // (era ruta de archivo único, ya cubierto por components/**/*)
-    // ⚠️ REMOVIDO: lib/prompts y lib/vector (no contienen clases Tailwind)
   ],
 
   prefix: "",
@@ -32,23 +27,23 @@ const config = {
     },
     extend: {
       colors: {
-        // 🟢 Design System Matrix v2.0 — Colores de marca (CSS variables)
-        matrix: "var(--matrix)",        // #00FF41
-        bitcoin: "var(--bitcoin)",      // #F7931A
+        // 🟢 Design System Matrix v2.0 — Variables CSS
+        matrix: "var(--matrix)",
+        bitcoin: "var(--bitcoin)",
         
-        // 🟠 Orange palette — para acentos financieros secundarios
+        // 🟠 Orange palette
         orange: {
           500: "var(--orange-500)",
           400: "var(--orange-400)",
           300: "var(--orange-300)",
         },
         
-        // shadcn/ui variables (HSL) — mantener para compatibilidad
+        // shadcn/ui variables (HSL)
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))", // #FAFAFA según DS
+        foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -79,18 +74,14 @@ const config = {
         },
       },
       
-      // ✨ Glow utilities — sombras neon para estados hover/active (DS v2.0)
+      // ✨ Glow utilities (Neon Shadows)
       boxShadow: {
-        // Matrix Green glow (base + hover)
         'matrix': '0 0 15px rgba(0,255,65,0.2)',
         'matrix-hover': '0 0 25px rgba(0,255,65,0.4), 0 0 50px rgba(0,255,65,0.2)',
-        // Bitcoin Orange glow (base + hover)
         'bitcoin': '0 0 20px rgba(247,147,26,0.4)',
         'bitcoin-hover': '0 0 35px rgba(247,147,26,0.6)',
-        // Orange palette glow
         'orange': '0 0 15px rgba(249,115,22,0.3)',
         'orange-hover': '0 0 25px rgba(249,115,22,0.5)',
-        // Terminal subtle glow (for inputs/cards)
         'terminal': '0 0 12px rgba(0,255,65,0.15)',
       },
       
@@ -100,14 +91,19 @@ const config = {
         sm: "calc(var(--radius) - 4px)",
       },
       
-      // 🔤 Tipografía semántica (DS v2.0)
+      // 🔤 CRITICAL FIX: Nombres exactos de variables de Next.js
       fontFamily: {
-        serif: ["var(--font-ibm-plex)", "serif"],    // Títulos: autoridad institucional
-        mono: ["var(--font-fira-code)", "monospace"], // Datos, código, logs técnicos
-        vt323: ["var(--font-vt323)", "monospace"],    // Arcade, botones especiales, metadata
+        // IBM Plex Serif -> --font-ibm-plex-serif
+        serif: ["var(--font-ibm-plex-serif)", "serif"],
+        // Fira Code -> --font-fira-code
+        mono: ["var(--font-fira-code)", "monospace"],
+        // VT323 -> --font-vt323
+        vt323: ["var(--font-vt323)", "monospace"], 
+        // Agregamos sans por si acaso usas font-sans en shadcn
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
       },
       
-      // 🎬 Keyframes custom (animaciones del sistema)
+      // 🎬 Keyframes custom
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -117,39 +113,32 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        // Scanline vertical (barrido de terminal)
         scanline: {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(200%)" },
         },
-        // Tilt sutil (efecto hover en cards)
         tilt: {
           "0%, 50%, 100%": { transform: "rotate(0deg)" },
           "25%": { transform: "rotate(0.5deg)" },
           "75%": { transform: "rotate(-0.5deg)" },
         },
-        // Blink (cursor parpadeante estilo terminal)
         blink: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
         },
-        // Loading pulse (estados de carga)
         loading: {
           "0%, 100%": { opacity: "0.3" },
           "50%": { opacity: "1" },
         },
-        // Ping suave para partículas / status indicators
         "ping-soft": {
           "75%, 100%": { transform: "scale(2)", opacity: "0" },
         },
-        // Fade in sutil para componentes que aparecen
         "fade-in": {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
       },
       
-      // 🎞️ Animaciones registradas para uso con `animate-*`
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
@@ -161,19 +150,18 @@ const config = {
         "fade-in": "fade-in 0.3s ease-out",
       },
       
-      // 🎨 Utilidades adicionales para el DS
+      // 🎨 Background Utilities
       backgroundImage: {
-        // Grid sutil estilo terminal (para fondos decorativos)
         'matrix-grid': 'radial-gradient(rgba(0,255,65,0.03) 1px, transparent 1px)',
         'bitcoin-grid': 'radial-gradient(rgba(247,147,26,0.03) 1px, transparent 1px)',
-        'noise': 'url("/noise.png")', // opcional: textura de ruido
+        'noise': 'url("/noise.png")',
       },
       backgroundSize: {
         'grid-40': '40px 40px',
         'grid-50': '50px 50px',
       },
       
-      // 🔦 Utilidad para drop-shadow en títulos sobre fondos complejos
+      // 🔦 Drop Shadows (Neon text glow)
       dropShadow: {
         'matrix': '0 0 8px rgba(0,255,65,0.5)',
         'bitcoin': '0 0 8px rgba(247,147,26,0.5)',
