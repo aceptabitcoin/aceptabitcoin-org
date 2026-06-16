@@ -10,8 +10,9 @@ Estado actual del proyecto — última actualización: 2026-06-13
 |------|--------|-------|
 | **Build (npm run build)** | ✅ Pasando | 0 errores TypeScript, 0 warnings de hidratación |
 | **Tipado (TypeScript strict)** | ✅ Sin errores | `tsconfig.json` en modo estricto |
-| **Linting** | ✅ Sin errores bloqueadores | — |
+| **Linting** | ⚠️ Sin configuración | ESLint pendiente de configuración inicial |
 | **Tests (Vitest)** | ✅ Pasando | `app/api/tipjar/route.test.ts`, `lib/proveedores.test.ts` |
+| **Assets Proveedores** | ✅ Actualizado | 4 SVGs nuevos, 9 eliminados, data sync |
 | **Despliegue (Vercel)** | ✅ Configurado | Variables de entorno: `NEXT_PUBLIC_TIP_JAR_LN_ADDRESS` |
 | **Módulo Hackathon** | ✅ Live | Migrado de route group `(hackathon)` a `app/hackathon/` — rutas activas |
 
@@ -96,6 +97,29 @@ Estado actual del proyecto — última actualización: 2026-06-13
 - [ ] Eliminar `app/api/tipjar/route.ts` y `lib/blink.ts` tras configurar webhook en Blink dashboard.
 - [ ] Verificar que `tailwind.config.ts` tenga mapeadas correctamente las fuentes `vt323`, `fira-code`, `ibm-plex-serif`.
 - [ ] Testear `MatrixArcadeWhatsApp` en iOS Safari para confirmar deep-linking funcional.
+
+---
+
+## 🚀 Sprint Update: Directorio Soberano v2.0 (June 15, 2026)
+
+### ✅ Completed Tasks
+
+#### 1. Proveedores Directory Clean Slate
+- **Data Cleanup:** Eliminación de 9 proveedores ficticios de `data/proveedores.json`
+- **Asset Cleanup:** Borrado de 9 logos SVG obsoletos en `public/proveedores/`
+- **New Providers:** Integración de 4 proveedores reales verificados:
+  - Aureo Bitcoin (Exchange MXN)
+  - Bull Bitcoin (Exchange Internacional)
+  - La Bianca Tropical (Restaurante Italiano - Mérida)
+  - Padel Club (Distribuidora Deportiva - Mérida)
+
+#### 2. Visual Assets Refactoring
+- **Logos:** Reemplazo total por SVGs monocromáticos blancos (#FFFFFF) sobre fondo transparente
+- **Estética:** Alineación estricta con "Bitcoin Matrix" DS v2.0
+
+#### 3. ArcadeButton v2.0 Redesign
+- **3D Mechanical Effect:** Borde inferior grueso, fondo sólido, animación de presión
+- **DS Compliance:** Paleta restringida a Matrix Green + Bitcoin Orange, tipografía VT323
 
 ---
 
@@ -380,6 +404,7 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 
 | Hash | Mensaje |
 |------|---------|
+| `1a5c4b3` | feat(proveedores): directorio soberano v2.0 + rebrand ArcadeButton |
 | `1cf8f6c` | refactor(tipjar): migrate to serverless blink POS architecture (v2.1) |
 | `d8f857a` | docs: update documentation and finalize merchant onboarding form with Google Forms integration |
 | `0ecc2a7` | fix: remove duplicate Footer from page.tsx (handled in layout) |
