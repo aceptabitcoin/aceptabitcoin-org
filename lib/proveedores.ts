@@ -46,4 +46,51 @@ export const CATEGORIAS: { value: Categoria; label: string; icon: string }[] = [
   { value: "consultoria", label: "Consultoría", icon: "UserCog" },
 ];
 
-// ... resto del código (TIER_CONFIG, filterByCategory, getStats) se mantiene igual ...
+export const TIER_CONFIG: Record<Tier, {
+  label: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+}> = {
+  patrocinador: {
+    label: "Patrocinador",
+    color: "text-bitcoin",
+    bgColor: "bg-bitcoin/10",
+    borderColor: "border-bitcoin/30",
+  },
+  partner: {
+    label: "Partner",
+    color: "text-matrix",
+    bgColor: "bg-matrix/10",
+    borderColor: "border-matrix/30",
+  },
+  miembro: {
+    label: "Miembro",
+    color: "text-gray-300",
+    bgColor: "bg-white/5",
+    borderColor: "border-white/10",
+  },
+};
+
+export function filterByCategory(proveedores: Proveedor[], categoria: Categoria | "todos"): Proveedor[] {
+  if (categoria === "todos") return proveedores;
+  return proveedores.filter((proveedor) => proveedor.categoria === categoria);
+}
+
+export interface ProveedorStats {
+  total: number;
+  patrocinadores: number;
+  partners: number;
+  miembros: number;
+  categorias: number;
+}
+
+export function getStats(proveedores: Proveedor[]): ProveedorStats {
+  return {
+    total: proveedores.length,
+    patrocinadores: proveedores.filter((p) => p.tier === "patrocinador").length,
+    partners: proveedores.filter((p) => p.tier === "partner").length,
+    miembros: proveedores.filter((p) => p.tier === "miembro").length,
+    categorias: new Set(proveedores.map((p) => p.categoria)).size,
+  };
+}
