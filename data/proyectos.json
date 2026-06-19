@@ -1,5 +1,199 @@
 [
   {
+    "id": "kukul-vault",
+    "nombre": "Kukul Vault",
+    "tipo": "comunidad",
+    "descripcion": "Wallet de custodia propia multi-firma con descriptores BIP38x, timelocks BIP65/BIP68, y soporte completo para Signet, Testnet4 y Mainnet. Utiliza bitcoinjs-lib, bip32 y tiny-secp256k1 para generar descriptores válidos (wsh(sortedmulti(...))), conectando directamente a Mempool.space y Esplora para verificación de transacciones. Código abierto bajo licencia MIT con 56 commits y tests de miniscript.",
+    "descripcionCorta": "🔐 Wallet multi-firma soberana con descriptores BIP38x y timelocks nativos",
+    "url": null,
+    "repoUrl": "https://github.com/kukul-vault/kukul-vault",
+    "logo": "/proyectos/kukul-vault.svg",
+    "imagen": "/proyectos/kukul-vault-preview.jpg",
+    "stack": ["React", "TypeScript", "bitcoinjs-lib", "bip32", "tiny-secp256k1", "Tailwind CSS", "Mempool.space API", "Esplora API"],
+    "estado": "active",
+    "categoria": "Wallet",
+    "dificultad": "avanzado",
+    "duracion": "48 horas",
+    "premio": "🥇 1er Lugar — Custody UI Hackathon 2026",
+    "hackathon": {
+      "evento": "Custody UI Hackathon 2026",
+      "lugar": "winner",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "Kukul Vault Team", "rol": "Core Development & Cryptography", "ubicacion": "México" }
+    ],
+    "features": [
+      "Descriptores BIP38x: wsh(sortedmulti(...)) válidos y verificables",
+      "Timelocks nativos: BIP65 (CheckLockTimeVerify) y BIP68 (Sequence locks)",
+      "Multi-red: Signet, Testnet4, Mainnet con switch automático",
+      "Conexión directa a Mempool.space y Esplora para verificación en tiempo real",
+      "Tests de miniscript: validación automática de descriptores generados",
+      "Licencia MIT: código abierto y auditable",
+      "56 commits: desarrollo iterativo y documentado"
+    ],
+    "metricas": [
+      { "label": "Score del Juez", "valor": "85/100" },
+      { "label": "Commits", "valor": "56" },
+      { "label": "Redes soportadas", "valor": "3 (Signet/Testnet4/Mainnet)" }
+    ],
+    "review": {
+      "fortalezas": [
+        "El único proyecto con cripto real: usa bitcoinjs-lib, bip32 y tiny-secp256k1 correctamente",
+        "Descriptores válidos: wsh(sortedmulti(...)) implementados y verificados",
+        "Timelocks BIP65/BIP68: implementación técnica sólida y bien documentada",
+        "Conexión a Mempool.space y Esplora: verificación real de transacciones en la red",
+        "Código abierto MIT: auditable y construible sobre esta base",
+        "Tests de miniscript: validación automática de la lógica criptográfica"
+      ],
+      "oportunidades": [
+        "Agregar video demo: falta material visual para demostrar el flujo completo",
+        "Implementar Taproot: descriptores tr() y Schnorr signatures",
+        "Expandir miniscript: ir más allá de sortedmulti() hacia políticas complejas",
+        "Mejorar UI/UX: la interfaz actual es funcional pero no prioriza usabilidad"
+      ],
+      "impacto": "La única base técnica sobre la que se puede construir algo real en el ecosistema Bitcoin mexicano"
+    },
+    "notas": {
+      "nivel": "🔐 Técnico Avanzado — Criptografía Bitcoin real",
+      "estetica": "UI funcional/minimalista (prioriza funcionalidad criptográfica sobre estética)",
+      "publico_objetivo": "Desarrolladores Bitcoin avanzados, investigadores de criptografía, usuarios técnicos",
+      "diferenciador": "Único proyecto del hackathon con implementación real de bitcoinjs-lib y descriptores BIP38x",
+      "stack_alignment": "React + TypeScript alineado con Oracle System, pero prioriza funcionalidad cripto sobre estética"
+    },
+    "destacado": true,
+    "orden": 10,
+    "fecha": "2026-06-15"
+  },
+  {
+    "id": "uiinikey",
+    "nombre": "UiniKey",
+    "tipo": "comunidad",
+    "descripcion": "Wallet de Bitcoin con interfaz impecable y diseño profesional: promete PSBT, Taproot y miniscript en su feature set. Landing page clara y copy persuasivo. Sin embargo, el código es closed source ('Todos los derechos reservados'), lo que viola el principio del reto de self-custody auditable. Stack Vanilla JS para las funcionalidades prometidas genera dudas sobre la implementación real del WASM mencionado.",
+    "descripcionCorta": "💼 Wallet Bitcoin con diseño premium — pero closed source y no auditable",
+    "url": null,
+    "repoUrl": null,
+    "logo": "/proyectos/uiinikey.svg",
+    "imagen": "/proyectos/uiinikey-preview.jpg",
+    "stack": ["Vanilla JS", "HTML5", "CSS3", "WebAssembly (supuesto)", "Tailwind CSS"],
+    "estado": "active",
+    "categoria": "Wallet",
+    "dificultad": "intermedio",
+    "duracion": "48 horas",
+    "premio": "🥈 2do Lugar — Custody UI Hackathon 2026",
+    "hackathon": {
+      "evento": "Custody UI Hackathon 2026",
+      "lugar": "second",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "UiniKey Team", "rol": "Design & Frontend Development", "ubicacion": "México" }
+    ],
+    "features": [
+      "Landing page impecable: diseño profesional y copy claro",
+      "Feature set ambicioso: PSBT (Partially Signed Bitcoin Transactions)",
+      "Promete Taproot: soporte para Schnorr signatures y descriptores tr()",
+      "Promete miniscript: políticas de gasto complejas",
+      "WebAssembly mencionado: supuesta lógica cripto en WASM",
+      "Stack Vanilla JS: sin frameworks pesados para máxima compatibilidad",
+      "Interfaz de usuario premium: prioriza experiencia visual sobre funcionalidad"
+    ],
+    "metricas": [
+      { "label": "Score del Juez", "valor": "62/100" },
+      { "label": "Licencia", "valor": "Closed Source" },
+      { "label": "Features prometidos", "valor": "PSBT, Taproot, miniscript" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Mejor producto visual del hackathon: landing impecable y diseño profesional",
+        "Copy claro y persuasivo: comunica el valor de forma efectiva",
+        "Feature set ambicioso: PSBT, Taproot y miniscript son funcionalidades avanzadas",
+        "Stack ligero: Vanilla JS sin dependencias pesadas"
+      ],
+      "oportunidades": [
+        "Abrir el código bajo MIT: 'Todos los derechos reservados' viola el principio de self-custody auditable",
+        "Documentar la lógica cripto: sin código abierto, no hay forma de verificar que el WASM funcione",
+        "Validar implementación real: Vanilla JS para funcionalidades avanzadas genera dudas técnicas",
+        "Agregar tests y verificación: sin código abierto, no hay forma de auditar la seguridad"
+      ],
+      "impacto": "Una wallet no auditable no es self-custody seria: el diseño no compensa la falta de transparencia criptográfica"
+    },
+    "notas": {
+      "nivel": "💼 Diseño Premium — Pero closed source",
+      "estetica": "UI profesional/impecable (prioriza experiencia visual sobre funcionalidad real)",
+      "publico_objetivo": "Usuarios que valoran diseño sobre transparencia técnica",
+      "diferenciador": "Mejor diseño visual del hackathon, pero código cerrado viola principios de Bitcoin",
+      "stack_alignment": "Vanilla JS no alineado con Oracle System (Next.js + TS), prioriza compatibilidad sobre mantenibilidad"
+    },
+    "destacado": true,
+    "orden": 11,
+    "fecha": "2026-06-15"
+  },
+  {
+    "id": "ataraxia",
+    "nombre": "Ataraxia",
+    "tipo": "comunidad",
+    "descripcion": "Simulador educativo de wallet Bitcoin para usuarios hispanos principiantes. Generado en Google AI Studio, sin librerías Bitcoin reales en el package.json. Features como comisión del 3%, SMS y 'Magic Word' delatan que no es self-custody real, sino una simulación pedagógica. Tiene la mejor pedagogía de los tres finalistas y un enfoque claro al usuario hispano que está empezando en Bitcoin.",
+    "descripcionCorta": "🎓 Simulador educativo de wallet Bitcoin — pedagogía clara para principiantes hispanos",
+    "url": null,
+    "repoUrl": "https://github.com/ataraxia-wallet/ataraxia",
+    "logo": "/proyectos/ataraxia.svg",
+    "imagen": "/proyectos/ataraxia-preview.jpg",
+    "stack": ["React", "TypeScript", "Tailwind CSS", "Google AI Studio", "LocalStorage"],
+    "estado": "active",
+    "categoria": "Educativo",
+    "dificultad": "facil",
+    "duracion": "48 horas",
+    "premio": "🥉 3er Lugar — Custody UI Hackathon 2026",
+    "hackathon": {
+      "evento": "Custody UI Hackathon 2026",
+      "lugar": "third",
+      "año": 2026
+    },
+    "equipo": [
+      { "nombre": "Ataraxia Team", "rol": "Pedagogy & UX Design", "ubicacion": "México" }
+    ],
+    "features": [
+      "Simulación completa de wallet: balance, transacciones, historial",
+      "Pedagogía clara: explica conceptos Bitcoin en lenguaje simple",
+      "Enfoque hispano: contenido 100% en español con contexto mexicano",
+      "Interfaz amigable: prioriza usabilidad sobre complejidad técnica",
+      "Generado en Google AI Studio: desarrollo asistido por IA",
+      "Sin librerías Bitcoin reales: simulación con LocalStorage",
+      "Features de custodial: comisión del 3%, SMS, 'Magic Word'"
+    ],
+    "metricas": [
+      { "label": "Score del Juez", "valor": "38/100" },
+      { "label": "Enfoque", "valor": "Educativo/Simulación" },
+      { "label": "Idioma", "valor": "Español (México)" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Mejor pedagogía de los tres finalistas: explica Bitcoin de forma clara y accesible",
+        "Enfoque hispano claro: contenido diseñado específicamente para usuarios mexicanos principiantes",
+        "Interfaz amigable: reduce la barrera de entrada para usuarios no técnicos",
+        "Simulación sin riesgo: permite practicar sin usar fondos reales"
+      ],
+      "oportunidades": [
+        "Agregar librerías Bitcoin reales: sin bitcoinjs-lib o similar, no es self-custody real",
+        "Eliminar features de custodial: comisión del 3%, SMS y 'Magic Word' delatan que no es soberano",
+        "Documentar que es simulación: el README lo admite, pero la UI debería ser más clara",
+        "Integrar con wallets reales: permitir exportar a wallets self-custody reales"
+      ],
+      "impacto": "Excelente herramienta pedagógica para onboarding, pero no es una wallet real de custodia propia"
+    },
+    "notas": {
+      "nivel": "🎓 Educativo — Simulación pedagógica",
+      "estetica": "UI amigable/accesible (prioriza pedagogía sobre estética técnica)",
+      "publico_objetivo": "Usuarios hispanos principiantes que están empezando en Bitcoin",
+      "diferenciador": "Mejor pedagogía del hackathon, pero es simulación, no wallet real",
+      "stack_alignment": "React + TypeScript alineado con Oracle System, pero prioriza pedagogía sobre funcionalidad cripto"
+    },
+    "destacado": true,
+    "orden": 12,
+    "fecha": "2026-06-15"
+  },
+  {
     "id": "corriente-satoshi",
     "nombre": "Corriente Satoshi",
     "tipo": "comunidad",
@@ -12,7 +206,7 @@
     "stack": ["Next.js 14", "TypeScript", "Tailwind CSS", "Recharts", "CoinGecko API"],
     "estado": "active",
     "hackathon": {
-      "evento": "Hackathon Bitcoin México",
+      "evento": "Hackathon Bitcoin México 2026",
       "lugar": "participant",
       "año": 2026
     },
@@ -69,7 +263,7 @@
     "stack": ["Next.js", "TypeScript", "Tailwind CSS", "Lightning SDK", "BTC Map API"],
     "estado": "development",
     "hackathon": {
-      "evento": "Hackathon Bitcoin México",
+      "evento": "Hackathon Bitcoin México 2026",
       "lugar": "participant",
       "año": 2026
     },
@@ -114,59 +308,6 @@
     "fecha": "2026-05-07"
   },
   {
-    "id": "cuanto-btc-mx",
-    "nombre": "CuantoBTC",
-    "tipo": "comunidad",
-    "descripcion": "Comparador en tiempo real de exchanges de Bitcoin en México: ingresa un monto en pesos y descubre cuántos satoshis recibirías en cada plataforma, con precios actualizados desde APIs públicas. Incluye wizard personalizado que recomienda el exchange ideal según tu perfil (KYC, privacidad, Lightning, custodia) y sistema de sugerencias que abre PRs automáticos en GitHub.",
-    "descripcionCorta": "💹 Compara exchanges de Bitcoin en México — encuentra el mejor precio en segundos",
-    "url": "https://www.cuantobtc.lat",
-    "repoUrl": "https://github.com/p0x15/cuanto-btc-mx",
-    "logo": "/proyectos/cuanto-btc.svg",
-    "imagen": "/proyectos/cuanto-btc-preview.jpg",
-    "stack": ["Next.js 15", "React 19", "TypeScript 5", "Tailwind CSS v4", "Vercel"],
-    "estado": "active",
-    "hackathon": null,
-    "equipo": [
-      { "nombre": "p0x15 (Pedro Merino)", "rol": "Developer & Researcher", "ubicacion": "México" }
-    ],
-    "features": [
-      "Comparación en tiempo real de 10+ exchanges mexicanos y globales",
-      "Cálculo exacto de sats recibidos por monto en MXN",
-      "Wizard personalizado: recomienda exchange según perfil (KYC, privacidad, Lightning)",
-      "Filtros avanzados: nivel de verificación, custodia, método de pago, red Lightning",
-      "Sistema de sugerencias: abre PR automático en GitHub para agregar nuevos exchanges",
-      "Metodología transparente: conexión directa a APIs + estimaciones documentadas"
-    ],
-    "metricas": [
-      { "label": "Exchanges comparados", "valor": "10" },
-      { "label": "Actualización de precios", "valor": "45s cache" },
-      { "label": "Métodos de pago", "valor": "SPEI, Lightning, P2P" }
-    ],
-    "review": {
-      "fortalezas": [
-        "Utilidad práctica inmediata: resuelve una pregunta real de usuarios mexicanos",
-        "Transparencia metodológica: explica claramente cómo se calculan los precios",
-        "Stack técnico moderno y escalable, alineado con el Oracle System",
-        "Educación financiera aplicada: enseña sobre fees, custodia, KYC mediante uso real"
-      ],
-      "oportunidades": [
-        "Integrar modo visual 'Matrix' opcional para alineación con Oracle",
-        "Agregar alertas de precio vía Nostr o Telegram",
-        "Expandir a comparación de cajeros Bitcoin físicos en México"
-      ],
-      "impacto": "Herramienta esencial para onboarding práctico: convierte la teoría de 'compra barato' en acción concreta y medible"
-    },
-    "notas": {
-      "nivel": "💹 Utilidad Práctica — Comparador financiero",
-      "estetica": "UI limpia/funcional (Tailwind default, prioriza usabilidad)",
-      "publico_objetivo": "Usuarios mexicanos que quieren comprar Bitcoin, desde principiantes hasta avanzados",
-      "diferenciador": "Único comparador enfocado 100% en México con metodología transparente y wizard personalizado"
-    },
-    "destacado": true,
-    "orden": 2,
-    "fecha": "2026-05-07"
-  },
-  {
     "id": "billetera-quest",
     "nombre": "Billetera Quest",
     "tipo": "comunidad",
@@ -179,7 +320,7 @@
     "stack": ["React", "TypeScript", "Tailwind CSS", "Lightning SDK"],
     "estado": "active",
     "hackathon": {
-      "evento": "Hackathon Bitcoin México",
+      "evento": "Hackathon Bitcoin México 2026",
       "lugar": "participant",
       "año": 2026
     },
@@ -236,7 +377,7 @@
     "stack": ["React", "TypeScript", "Lightning SDK", "Unstoppable Domains API", "Replit"],
     "estado": "development",
     "hackathon": {
-      "evento": "Hackathon Bitcoin México",
+      "evento": "Hackathon Bitcoin México 2026",
       "lugar": "participant",
       "año": 2026
     },
@@ -280,6 +421,59 @@
     },
     "destacado": true,
     "orden": 4,
+    "fecha": "2026-05-07"
+  },
+  {
+    "id": "cuanto-btc-mx",
+    "nombre": "CuantoBTC",
+    "tipo": "comunidad",
+    "descripcion": "Comparador en tiempo real de exchanges de Bitcoin en México: ingresa un monto en pesos y descubre cuántos satoshis recibirías en cada plataforma, con precios actualizados desde APIs públicas. Incluye wizard personalizado que recomienda el exchange ideal según tu perfil (KYC, privacidad, Lightning, custodia) y sistema de sugerencias que abre PRs automáticos en GitHub.",
+    "descripcionCorta": "💹 Compara exchanges de Bitcoin en México — encuentra el mejor precio en segundos",
+    "url": "https://www.cuantobtc.lat",
+    "repoUrl": "https://github.com/p0x15/cuanto-btc-mx",
+    "logo": "/proyectos/cuanto-btc.svg",
+    "imagen": "/proyectos/cuanto-btc-preview.jpg",
+    "stack": ["Next.js 15", "React 19", "TypeScript 5", "Tailwind CSS v4", "Vercel"],
+    "estado": "active",
+    "hackathon": null,
+    "equipo": [
+      { "nombre": "p0x15 (Pedro Merino)", "rol": "Developer & Researcher", "ubicacion": "México" }
+    ],
+    "features": [
+      "Comparación en tiempo real de 10+ exchanges mexicanos y globales",
+      "Cálculo exacto de sats recibidos por monto en MXN",
+      "Wizard personalizado: recomienda exchange según perfil (KYC, privacidad, Lightning)",
+      "Filtros avanzados: nivel de verificación, custodia, método de pago, red Lightning",
+      "Sistema de sugerencias: abre PR automático en GitHub para agregar nuevos exchanges",
+      "Metodología transparente: conexión directa a APIs + estimaciones documentadas"
+    ],
+    "metricas": [
+      { "label": "Exchanges comparados", "valor": "10" },
+      { "label": "Actualización de precios", "valor": "45s cache" },
+      { "label": "Métodos de pago", "valor": "SPEI, Lightning, P2P" }
+    ],
+    "review": {
+      "fortalezas": [
+        "Utilidad práctica inmediata: resuelve una pregunta real de usuarios mexicanos",
+        "Transparencia metodológica: explica claramente cómo se calculan los precios",
+        "Stack técnico moderno y escalable, alineado con el Oracle System",
+        "Educación financiera aplicada: enseña sobre fees, custodia, KYC mediante uso real"
+      ],
+      "oportunidades": [
+        "Integrar modo visual 'Matrix' opcional para alineación con Oracle",
+        "Agregar alertas de precio vía Nostr o Telegram",
+        "Expandir a comparación de cajeros Bitcoin físicos en México"
+      ],
+      "impacto": "Herramienta esencial para onboarding práctico: convierte la teoría de 'compra barato' en acción concreta y medible"
+    },
+    "notas": {
+      "nivel": "💹 Utilidad Práctica — Comparador financiero",
+      "estetica": "UI limpia/funcional (Tailwind default, prioriza usabilidad)",
+      "publico_objetivo": "Usuarios mexicanos que quieren comprar Bitcoin, desde principiantes hasta avanzados",
+      "diferenciador": "Único comparador enfocado 100% en México con metodología transparente y wizard personalizado"
+    },
+    "destacado": true,
+    "orden": 2,
     "fecha": "2026-05-07"
   },
   {

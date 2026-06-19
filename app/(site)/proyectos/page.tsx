@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { type Proyecto } from "@/lib/proyectos";
 import ProyectosClient from "./ProyectosClient";
-import MatrixRain from "@/components/ui/MatrixRain";
 
 // Static import of JSON data (no runtime fetch)
 import proyectosRaw from '@/data/proyectos.json';
@@ -15,17 +14,17 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(baseUrl),
     title: 'Proyectos Bitcoin — Ecosistema de Desarrollo',
-    description: 'Software sovereign construido por y para la comunidad Bitcoin de México. Proyectos internos de Acepta Bitcoin y proyectos de la comunidad con stack técnico, estado y reviews.',
+    description: 'Acepta Bitcoin organiza 3 hackatones al año para impulsar el desarrollo de software Bitcoin en México. Creemos que tenemos el talento para escribir el futuro de Bitcoin. Descubre los proyectos ganadores y participantes.',
     openGraph: {
       title: 'Proyectos Bitcoin — Ecosistema de Desarrollo',
-      description: 'Descubre los proyectos Bitcoin construidos en México. BOB Hotel, Mesa Aceptabitcoin, Corriente Satoshi y más.',
+      description: '3 hackatones anuales. Software Bitcoin hecho en México. Código abierto, soberano, sin permiso.',
       images: [{ url: '/og/proyectos.svg', width: 1200, height: 630 }],
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
       title: 'Proyectos Bitcoin México',
-      description: 'Ecosistema de desarrollo sovereign. Código abierto, sin permiso, sin límites.',
+      description: '3 hackatones al año. Escribiendo el futuro de Bitcoin desde México.',
       images: ['/og/proyectos.svg'],
     },
   };
@@ -34,11 +33,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function ProyectosPage() {
   return (
     <>
-      {/* Efecto Matrix Rain de fondo (sutil, solo decorativo) */}
-      <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none">
-        <MatrixRain speed={0.3} opacity={0.08} />
-      </div>
-
       {/* Contenedor principal con fondo negro puro */}
       <main className="relative z-10 min-h-screen bg-black">
         
@@ -62,14 +56,19 @@ export default function ProyectosPage() {
                 Proyectos <span className="text-bitcoin">Bitcoin</span>
               </h1>
               
-              {/* Subtítulo - Mono técnico */}
-              <p className="mt-4 font-mono text-sm text-gray-400 md:text-base max-w-2xl mx-auto">
-                Software sovereign construido por y para la comunidad Bitcoin de México. 
-                <span className="text-matrix"> Código abierto, sin permiso, sin límites.</span>
+              {/* Subtítulo - Mono técnico con misión de hackatones */}
+              <p className="mt-4 font-mono text-sm text-gray-400 md:text-base max-w-3xl mx-auto">
+                Acepta Bitcoin organiza <span className="text-bitcoin font-bold">3 hackatones al año</span> para impulsar el desarrollo de software Bitcoin en México. 
+                <br className="hidden md:block" />
+                Creemos que tenemos el talento para <span className="text-matrix">escribir el futuro de Bitcoin</span>.
               </p>
               
               {/* Stats rápidas - Mono */}
-              <div className="mt-6 flex justify-center gap-4 font-mono text-xs">
+              <div className="mt-6 flex flex-wrap justify-center gap-4 font-mono text-xs">
+                <span className="text-gray-500">
+                  <span className="text-bitcoin">3</span> hackatones/año
+                </span>
+                <span className="text-gray-700">|</span>
                 <span className="text-gray-500">
                   <span className="text-bitcoin">{proyectosList.filter(p => p.tipo === 'interno').length}</span> internos
                 </span>
