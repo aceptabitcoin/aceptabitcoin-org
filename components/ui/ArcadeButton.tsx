@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils";
 
 interface ArcadeButtonProps {
   href?: string;
-  children: React.ReactNode; // Texto principal del botón
+  children: React.ReactNode;
   target?: string;
   className?: string;
   size?: "sm" | "md" | "lg";
   variant?: "bitcoin" | "matrix";
-  icon?: React.ReactNode; // Icono opcional (ej. el SVG de Bitcoin)
+  icon?: React.ReactNode;
   onClick?: () => void;
   disabled?: boolean;
 }
@@ -27,103 +27,120 @@ export default function ArcadeButton({
   onClick,
   disabled = false,
 }: ArcadeButtonProps) {
-
-  // 1. Configuración de Tamaños (Aspecto Terminal)
   const sizeClasses = {
-    sm: "px-6 py-2 text-xl tracking-widest", 
-    md: "px-8 py-3 text-2xl tracking-widest", 
-    lg: "px-12 py-4 text-3xl tracking-[0.2em]", 
+    sm: "px-6 py-2 text-xl tracking-widest",
+    md: "px-8 py-3 text-2xl tracking-widest",
+    lg: "px-12 py-4 text-3xl tracking-[0.2em]",
   };
 
-  // 2. Definición de Variantes (Colors & Glow)
-  // Usamos valores RGB para poder manipular la opacidad en las sombras arbitrarias
   const variantStyles = {
     bitcoin: {
-      bg: "bg-bitcoin",
-      text: "text-black", 
-      // RGB de #F7931A es 247, 147, 26
-      shadowColor: "247, 147, 26", 
-      borderDepth: "border-orange-700", // Borde inferior oscuro simulado
+      bg: "bg-[#F7931A]",
+      text: "text-black",
+      rgb: "247, 147, 26",
+      borderDepth: "#D97F00",
+      borderClass: "border-b-[#D97F00]",
     },
     matrix: {
-      bg: "bg-matrix",
-      text: "text-black", 
-      // RGB de #00FF41 es 0, 255, 65
-      shadowColor: "0, 255, 65", 
-      borderDepth: "border-green-800",
+      bg: "bg-[#00FF41]",
+      text: "text-black",
+      rgb: "0, 255, 65",
+      borderDepth: "#00CC33",
+      borderClass: "border-b-[#00CC33]",
     },
   };
 
-  const currentStyle = variantStyles[variant];
+  const style = variantStyles[variant];
 
-  // Clases base comunes para el botón físico
-  const buttonBaseClasses = cn(
-    // Layout & Tipografía Arcade
-    "relative flex items-center justify-center gap-3 font-vt323 font-bold uppercase rounded-sm",
-    
-    // Tamaño dinámico
-    sizeClasses[size],
-    
-    // Base Colors
-    currentStyle.bg,
-    currentStyle.text,
-    
-    // El borde inferior grueso simula la profundidad física del botón mecánico
-    "border-b-[6px]",
-    currentStyle.borderDepth,
+  // ✅ FIX 1: box-shadow dinámico vía inline style (Tailwind no resuelve var() en clases arbitrarias)
+  const dynamicShadow = {
+    boxShadow: disabled
+      ? "none"
+      : `0 0 15px rgba(${style.rgb}, 0.4), 0 0 30px rgba(${style.rgb}, 0.15)`,
+  };
 
-    // Transiciones Mecánicas
-    "transition-all duration-100 ease-out",
-    
-    // Cursor
+  const baseClasses = cn(
+    "relative flex items-center justify-center gap-3 font-vt323 font-bold uppercase rounded-sm overflow-hidden group",
+    "border-b-8 transition-all duration-150 ease-out",
     "cursor-pointer select-none",
-
-    // Estados Hover/Active
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+    sizeClasses[size],
+    style.bg,
+    style.text,
+    style.borderClass,
     !disabled && [
       "hover:-translate-y-1 hover:brightness-110",
-      // Sombra dinámica usando el RGB definido arriba
-      `hover:shadow-[0_0_25px_rgba(${currentStyle.shadowColor},0.6)]`,
-      
-      // Estado Active: Se "hunde" (reduce el borde inferior y traslada Y)
-      "active:translate-y-[4px] active:border-b-[2px] active:shadow-none"
+      "active:translate-y-[5px] active:border-b-[3px]",
     ],
-    
-    disabled && "opacity-50 cursor-not-allowed grayscale"
+    disabled && "opacity-50 cursor-not-allowed grayscale",
+    className
   );
 
   const content = (
     <>
-      {/* Icono opcional */}
-      {icon && <span className="pointer-events-none drop-shadow-md">{icon}</span>}
-      
-      {/* Texto */}
-      <span className="pointer-events-none drop-shadow-sm">{children}</span>
+      {icon && <span className="pointer-events-none drop-shadow-lg">{icon}</span>}
+      <span className="pointer-events-none drop-shadow-md relative z-10">{children}</span>
 
-      {/* Efecto "Scanline/Brillo" sutil encima para dar toque retro/plástico */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent opacity-0 hover:opacity-100 pointer-events-none transition-opacity rounded-sm" />
+      {/* Brillo plástico superior */}
+      <div className="absolute inset-0 bg-gradient-to-b from-white/40 via-transparent to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-200 pointer-events-none" />
+
+      {/* ✅ FIX 2: Scanline con keyframes definidos inline */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none overflow-hidden">
+        <div
+          className="absolute inset-0 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent"
+          style={{
+            animation: "arcade-scan 1.8s linear infinite",
+          }}
+        />
+      </div>
+
+      {/* Ring interior sutil */}
+      <div className="absolute inset-0 rounded-sm ring-1 ring-inset ring-white/20 opacity-40 group-hover:opacity-70 transition-opacity pointer-events-none" />
     </>
   );
 
+  // Keyframes inyectados una sola vez
+  const scanKeyframes = (
+    <style jsx>{`
+      @keyframes arcade-scan {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(400%); }
+      }
+    `}</style>
+  );
+
+  // Si no usas styled-jsx, usa esta alternativa:
+  // Inyecta esto en tu globals.css:
+  // @keyframes arcade-scan {
+  //   0% { transform: translateX(-150%); }
+  //   100% { transform: translateX(400%); }
+  // }
+
+  const buttonElement = href ? (
+    <Link
+      href={href}
+      target={target}
+      rel="noopener noreferrer"
+      className={baseClasses}
+      style={dynamicShadow}
+    >
+      {content}
+    </Link>
+  ) : (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={baseClasses}
+      style={dynamicShadow}
+    >
+      {content}
+    </button>
+  );
+
   return (
-    <div className={cn("relative inline-block", className)}>
-      {href ? (
-        <Link 
-          href={href} 
-          target={target} 
-          rel="noopener noreferrer"
-          className={buttonBaseClasses}
-        >
-          {content}
-        </Link>
-      ) : (
-        <button 
-          onClick={onClick}
-          disabled={disabled}
-          className={buttonBaseClasses}
-        >
-          {content}
-        </button>
-      )}
-    </div>
+    <>
+      {scanKeyframes}
+      <div className="relative inline-block">{buttonElement}</div>
+    </>
   );
 }

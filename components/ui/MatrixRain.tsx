@@ -2,25 +2,24 @@
 
 import { useEffect, useRef, useCallback, useState } from "react";
 
-// ============================================================
-// MATRIX RAIN — The Falling Code Effect (Optimized for Breathing Room)
-// Acepta Bitcoin México | Oracle System v2.0
-// ============================================================
-
 interface MatrixRainProps {
   className?: string;
-  speed?: number;        // Multiplicador de velocidad de caída (default: 1)
-  opacity?: number;      // Opacidad base para la estela (default: 0.08)
-  color?: string;        // Color del tema activo (ej: #F7931A, #00FF41)
+  speed?: number;        // 0.6 ~ 1.0 recomendado
+  opacity?: number;      // Opacidad base de la estela (0.05 - 0.12)
+  color?: string;        // Color principal de la lluvia (estela)
+  headColor?: string;    // Color de las cabezas brillantes
+  fadeRate?: number;     // Qué tan rápido se borra el fondo (más alto = estela más corta)
 }
 
 const CHARS = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>/=[]{}";
 
 export default function MatrixRain({
   className = "",
-  speed = 1,
-  opacity = 0.08, // Reducido por defecto para menos saturación
+  speed = 0.75,
+  opacity = 0.085,
   color = "#00FF41",
+  headColor = "#FFFFFF",
+  fadeRate = 0.12,
 }: MatrixRainProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
@@ -28,8 +27,7 @@ export default function MatrixRain({
   const [isMounted, setIsMounted] = useState(false);
 
   const initDrops = useCallback((columns: number) => {
-    // Inicializamos las gotas en posiciones aleatorias negativas para que no caigan todas de golpe
-    dropsRef.current = Array.from({ length: columns }, () => Math.random() * -100);
+    dropsRef.current = Array.from({ length: columns }, () => Math.random() * -150);
   }, []);
 
   useEffect(() => {
@@ -42,16 +40,15 @@ export default function MatrixRain({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
     let columns = 0;
-    // CAMBIO: Aumentamos el tamaño de fuente para espaciar las columnas (más "aire")
-    const fontSize = 18; 
+    const fontSize = 16; 
 
     const resize = () => {
       const parent = canvas.parentElement;
-      if (!parent) return;
+      if (!parent || parent.offsetWidth === 0) return;
       canvas.width = parent.offsetWidth;
       canvas.height = parent.offsetHeight;
       columns = Math.floor(canvas.width / fontSize);
@@ -62,8 +59,8 @@ export default function MatrixRain({
     window.addEventListener("resize", resize);
 
     const draw = () => {
-      // CAMBIO: Aumentamos la opacidad del "borrado" (0.15) para que el rastro sea más corto y limpio
-      ctx.fillStyle = `rgba(0, 0, 0, 0.15)`;
+      // Fondo con fade sutil → estela más persistente y elegante
+      ctx.fillStyle = `rgba(0, 0, 0, ${fadeRate})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       ctx.font = `${fontSize}px 'Fira Code', monospace`;
@@ -74,39 +71,30 @@ export default function MatrixRain({
         const y = dropsRef.current[i] * fontSize;
 
         if (y < 0) {
-          dropsRef.current[i] += speed * (0.5 + Math.random() * 0.5);
+          dropsRef.current[i] += speed * (0.6 + Math.random() * 0.6);
           continue;
         }
 
-        // Determinar si es la "cabeza" de la gota (el carácter más reciente)
-        const isHead = Math.random() > 0.95; 
-
-        if (isHead) {
-          // --- Cabecera Brillante ---
-          ctx.fillStyle = "#FFFFFF"; // Blanco puro para máximo contraste
-          ctx.shadowColor = color;
-          ctx.shadowBlur = 10;       // Glow intenso solo en la cabeza
-          ctx.globalAlpha = 1.0;
-        } else {
-          // --- Estela Tenue ---
-          ctx.fillStyle = color;
-          ctx.shadowBlur = 0;        // Sin glow en la estela para no saturar
-          ctx.globalAlpha = opacity; // Muy transparente
-        }
+        // CORRECCIÓN: Como solo dibujamos un carácter por columna por frame, 
+        // este carácter SIEMPRE es la cabeza de la gota.
+        // Usamos el headColor con opacidad 1 para que brille.
+        ctx.fillStyle = headColor;
+        ctx.shadowColor = color; // Brillo verde alrededor de la cabeza blanca
+        ctx.shadowBlur = 8;      // Glow solo en la cabeza (mucho más ligero que antes)
+        ctx.globalAlpha = 1;
 
         ctx.fillText(char, x, y);
 
-        // Resetear propiedades
+        // Reset de estado del canvas
         ctx.shadowBlur = 0;
         ctx.globalAlpha = 1.0;
 
-        // Reiniciar la gota al llegar al fondo con aleatoriedad
-        if (y > canvas.height && Math.random() > 0.975) {
-          dropsRef.current[i] = 0;
+        // Reinicio con más naturalidad
+        if (y > canvas.height && Math.random() > 0.96) {
+          dropsRef.current[i] = Math.random() * -50;
         }
 
-        // Progreso de caída
-        dropsRef.current[i] += speed * (0.5 + Math.random() * 0.5);
+        dropsRef.current[i] += speed * (0.4 + Math.random() * 0.8);
       }
 
       animationRef.current = requestAnimationFrame(draw);
@@ -118,13 +106,13 @@ export default function MatrixRain({
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationRef.current);
     };
-  }, [speed, opacity, color, initDrops, isMounted]);
+  }, [speed, opacity, color, headColor, fadeRate, initDrops, isMounted]);
 
   return (
     <canvas
       ref={canvasRef}
-      className={`absolute inset-0 pointer-events-none ${className}`}
-      style={{ zIndex: 0 }}
+      className={`absolute inset-0 pointer-events-none select-none ${className}`}
+      style={{ zIndex: 0, mixBlendMode: "screen" }}
     />
   );
 }

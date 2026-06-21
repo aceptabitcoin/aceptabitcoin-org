@@ -5,19 +5,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { QRCodeSVG } from 'qrcode.react';
 import { 
   Zap, Copy, Check, CreditCard, ExternalLink, Coins, 
-  Terminal, ShieldCheck 
+  Terminal, ShieldCheck, Banknote 
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import MatrixRain from "@/components/ui/MatrixRain";
+import ArcadeButton from "@/components/ui/ArcadeButton";
 
-// ============================================================
-// CONFIGURACIÓN DE INFRAESTRUCTURA EXTERNA
-// ============================================================
 const CONFIG = {
   blinkBasePos: "https://pay.blink.sv/aceptabitcoin",
-  lightningAddress: "aceptabitcoin@blink.sv", 
+  lightningAddress: "aceptabitcoin@blink.sv",
   onChainAddress: "bc1qg6r7xugjlr4yzrqu5nal526e757pe3hnkp2jlg",
-  mercadoPagoLink: "https://mpago.la/2wXyZz1", 
+  mercadoPagoLink: "https://mpago.la/2wXyZz1",
+  mercadoPagoAlias: "aceptabitcoin.mp",
 };
 
 const SERVICE_LABELS = {
@@ -34,43 +33,43 @@ type TabId = 'lightning' | 'onchain' | 'fiat';
 export default function TipJarSection() {
   const [isMounted, setIsMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>('lightning');
-  const [copied, setCopied] = useState(false);
-  
+  const [copied, setCopied] = useState<string | null>(null); // ← Ahora es string | null para múltiples botones
   const [selectedService, setSelectedService] = useState<ServiceType>('consultoria');
   const [amount, setAmount] = useState<string>("250");
   const [currency, setCurrency] = useState<"USD" | "SATS">("USD");
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  useEffect(() => { setIsMounted(true); }, []);
 
-  // Coordenadas dinámicas de color según la red seleccionada
   const getThemeColor = () => {
     switch (activeTab) {
       case 'lightning':
       case 'onchain':
         return {
-          hex: "#F7931A", // Bitcoin Orange
-          shadow: "rgba(247, 147, 26, 0.25)",
-          border: "border-orange-500/30",
+          hex: "#F7931A",
+          shadow: "rgba(247, 147, 26, 0.4)",
+          border: "border-orange-500/40",
           text: "text-bitcoin",
-          bg: "bg-orange-500"
+          // ✅ FIX 6: Clases de focus completas (Tailwind sí las detecta como strings literales)
+          focusBorder: "focus:border-bitcoin",
+          focusRing: "focus:ring-bitcoin/50",
         };
       case 'fiat':
         return {
-          hex: "#00F0FF", // Cian Cypherpunk / Terminal Blue
-          shadow: "rgba(0, 240, 255, 0.25)",
-          border: "border-cyan-500/30",
+          hex: "#00F0FF",
+          shadow: "rgba(0, 240, 255, 0.4)",
+          border: "border-cyan-400/40",
           text: "text-cyan-400",
-          bg: "bg-cyan-500"
+          focusBorder: "focus:border-cyan-400",
+          focusRing: "focus:ring-cyan-400/50",
         };
       default:
         return {
-          hex: "#00FF41", // Verde Matrix por defecto
-          shadow: "rgba(0, 255, 65, 0.25)",
-          border: "border-matrix/30",
+          hex: "#00FF41",
+          shadow: "rgba(0, 255, 65, 0.35)",
+          border: "border-matrix/40",
           text: "text-matrix",
-          bg: "bg-matrix"
+          focusBorder: "focus:border-matrix",
+          focusRing: "focus:ring-matrix/50",
         };
     }
   };
@@ -82,225 +81,238 @@ export default function TipJarSection() {
     return `${CONFIG.blinkBasePos}?amount=${amount}&currency=${currency === 'USD' ? 'USD' : 'BTC'}&memo=${encodeURIComponent(memo)}&display=${currency}`;
   };
 
-  const handleCopy = async (text: string) => {
+  const handleCopy = async (text: string, label: string) => {
     await navigator.clipboard.writeText(text);
-    setCopied(true);
-    if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate(30);
-    setTimeout(() => setCopied(false), 2000);
+    setCopied(label);
+    if (navigator.vibrate) navigator.vibrate(30);
+    setTimeout(() => setCopied(null), 1800);
   };
 
   if (!isMounted) return null;
 
+  // ✅ Inputs con tema reactivo (clases completas, Tailwind las detecta)
+  const inputClasses = `bg-black border border-white/20 rounded-2xl px-4 py-3 font-mono text-sm text-white outline-none transition-colors ${theme.focusBorder} ${theme.focusRing} focus:ring-1`;
+
+  // ✅ FIX 4: Componente CopyButton reutilizable
+  const CopyButton = ({ text, label, className = "" }: { text: string; label: string; className?: string }) => (
+    <button
+      onClick={() => handleCopy(text, label)}
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl font-mono text-xs border border-white/20 bg-white/5 hover:bg-white/10 transition-all ${className}`}
+    >
+      {copied === label ? (
+        <><Check size={14} className="text-green-400" /> <span className="text-green-400">COPIADO</span></>
+      ) : (
+        <><Copy size={14} /> <span className="text-gray-400">COPIAR</span></>
+      )}
+    </button>
+  );
+
   return (
     <section id="pagar-servicios" className="relative py-20 overflow-hidden bg-black scroll-mt-24">
-      {/* Lluvia Matrix Reactiva con Color Dinámico */}
-      <div className="absolute inset-0 transition-colors duration-700">
-        <MatrixRain className="opacity-10" speed={0.4} color={theme.hex} />
+      {/* Matrix Rain */}
+      <div className="absolute inset-0">
+        {/* ✅ FIX 2: opacity-8 → opacity-[0.08] */}
+        <MatrixRain
+          className="opacity-[0.08]"
+          speed={0.45}
+          opacity={0.09}
+          color={theme.hex}
+        />
       </div>
-      
+
       <div className="container relative z-10 px-4 max-w-4xl mx-auto">
-        
-        {/* Header Matrix */}
+        {/* Header */}
         <div className="text-center mb-12">
-          <div 
-            className={`inline-flex items-center gap-2 px-3 py-1 bg-black border ${theme.border} rounded-full font-mono text-[10px] ${theme.text} tracking-widest uppercase mb-4 transition-all duration-500`}
-            style={{ boxShadow: `0 0 10px ${theme.shadow}` }}
+          <div
+            className={`inline-flex items-center gap-2 px-4 py-1.5 bg-black/80 backdrop-blur-md border ${theme.border} rounded-full font-mono text-xs ${theme.text} tracking-[3px] uppercase mb-6`}
+            style={{ boxShadow: `0 0 15px ${theme.shadow}` }}
           >
-            <Terminal className="h-3 w-3" /> Terminal Multipasarela v2.1
+            {/* ✅ FIX 1: shadow dinámico vía inline style */}
+            <Terminal className="h-4 w-4" /> TERMINAL MULTIPASARELA v2.1
           </div>
-          <h2 className="font-serif text-4xl sm:text-5xl font-black text-white uppercase tracking-tight drop-shadow-lg">
-            Terminal de <span className={`${theme.text} transition-colors duration-500`}>Liquidación</span>
+
+          <h2 className="font-serif text-5xl sm:text-6xl font-black text-white tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+            TERMINAL DE <span className={`${theme.text} transition-colors duration-700`}>LIQUIDACIÓN</span>
           </h2>
-          <p className="mt-3 font-mono text-xs text-gray-500 uppercase tracking-wider">
-            Protocolo seguro enrutado externamente • Infraestructura Soberana
-          </p>
+          <p className="mt-4 font-mono text-sm text-gray-500 tracking-widest">INFRAESTRUCTURA SOBERANA • SIN CUSTODIA</p>
         </div>
 
-        {/* Contenedor Principal con Bordes e Iluminación Reactiva */}
-        <Card 
-          className="bg-neutral-900/90 backdrop-blur-xl border rounded-2xl overflow-hidden transition-all duration-700"
-          style={{ 
-            borderColor: theme.hex + "33",
-            boxShadow: `0 0 40px -10px ${theme.shadow}` 
+        {/* Card Principal */}
+        <Card
+          className="relative bg-black/90 backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-2xl"
+          style={{
+            boxShadow: `0 0 60px -15px ${theme.shadow}`,
+            borderColor: `${theme.hex}33`
           }}
         >
-          
-          {/* Tabs de Navegación Estilo Terminal */}
-          <div className="flex p-1.5 gap-1 bg-black/50 border-b border-white/5">
+          {/* ✅ FIX 3: animate-scanline (definida en tu tailwind.config.ts) */}
+          <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(255,255,255,0.03)_50%)] bg-[length:100%_4px] pointer-events-none animate-scanline" />
+
+          {/* Tabs */}
+          <div className="flex p-2 gap-1.5 bg-black/70 border-b border-white/10">
             {[
-              { id: 'lightning', label: 'LIGHTNING ⚡', icon: <Zap size={14} />, activeBg: 'bg-orange-500 text-black shadow-[0_0_15px_rgba(247,147,26,0.4)]' },
-              { id: 'onchain', label: 'ON-CHAIN 🟠', icon: <Coins size={14} />, activeBg: 'bg-orange-500 text-black shadow-[0_0_15px_rgba(247,147,26,0.4)]' },
-              { id: 'fiat', label: 'FIAT / SPEI 💳', icon: <CreditCard size={14} />, activeBg: 'bg-cyan-500 text-black shadow-[0_0_15px_rgba(0,240,255,0.4)]' },
+              { id: 'lightning' as TabId, label: 'LIGHTNING ⚡', icon: <Zap size={15} /> },
+              { id: 'onchain' as TabId, label: 'ON-CHAIN 🟠', icon: <Coins size={15} /> },
+              { id: 'fiat' as TabId, label: 'FIAT / SPEI 💳', icon: <CreditCard size={15} /> },
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as TabId)}
-                className={`relative flex-1 flex items-center justify-center gap-2 py-3 rounded-lg 
-                           font-mono text-xs font-bold transition-all duration-300 uppercase tracking-wider
-                           ${activeTab === tab.id 
-                             ? tab.activeBg 
-                             : 'text-gray-500 hover:text-white hover:bg-white/5'
-                           }`}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-vt323 text-lg font-bold tracking-wider transition-all duration-300
+                  ${activeTab === tab.id
+                    ? 'bg-black text-white border border-white/30'
+                    : 'text-gray-500 hover:text-white hover:bg-white/5'
+                  }`}
+                style={activeTab === tab.id ? { boxShadow: `0 0 25px ${theme.shadow}` } : undefined}
               >
+                {/* ✅ FIX 1: shadow dinámico vía inline style */}
                 {tab.icon}
-                <span className="hidden sm:inline">{tab.label}</span>
+                <span>{tab.label}</span>
               </button>
             ))}
           </div>
 
-          <div className="p-8 md:p-12 min-h-[420px] flex flex-col items-center justify-center">
+          <div className="p-8 md:p-14 min-h-[460px] flex flex-col items-center justify-center relative">
             <AnimatePresence mode="wait">
-              
-              {/* TAB 1: LIGHTNING NETWORK */}
+
+              {/* ═══════════ LIGHTNING TAB ═══════════ */}
               {activeTab === 'lightning' && (
-                <motion.div
-                  key="lightning"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="w-full max-w-md flex flex-col items-center"
-                >
-                  <div className="w-full mb-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      <select 
-                        value={selectedService}
-                        onChange={(e) => setSelectedService(e.target.value as ServiceType)}
-                        className="bg-black border border-white/20 rounded-lg px-3 py-2.5 font-mono text-xs text-white focus:border-orange-500/50 outline-none transition-all appearance-none cursor-pointer"
-                      >
-                        {Object.entries(SERVICE_LABELS).map(([key, label]) => (
-                          <option key={key} value={key}>{label.replace(/_/g, ' ')}</option>
-                        ))}
-                      </select>
-                      <div className="relative">
-                        <input
-                          type="number"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          className="w-full bg-black border border-white/20 rounded-lg px-3 py-2.5 font-mono text-xs text-white focus:border-orange-500/50 outline-none transition-all"
-                        />
-                        <span className="absolute right-3 top-3 text-[10px] text-gray-500 font-mono pointer-events-none">USD</span>
-                      </div>
+                <motion.div key="lightning" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-md flex flex-col items-center">
+                  <div className="w-full mb-8 grid grid-cols-2 gap-3">
+                    <select
+                      value={selectedService}
+                      onChange={(e) => setSelectedService(e.target.value as ServiceType)}
+                      className={inputClasses}
+                    >
+                      {Object.entries(SERVICE_LABELS).map(([key, label]) => (
+                        <option key={key} value={key}>{label.replace(/_/g, ' ')}</option>
+                      ))}
+                    </select>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className={inputClasses}
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">USD</span>
                     </div>
                   </div>
 
-                  <a
-                    href={getBlinkPosLink()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full mb-6 py-4 px-6 rounded-xl bg-bitcoin hover:bg-orange-500 text-black font-mono font-bold text-sm flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(247,147,26,0.35)] transition-all transform hover:-translate-y-1"
-                  >
-                    <Zap size={16} fill="currentColor" />
-                    ABRIR POS EN BLINK
-                    <ExternalLink size={14} />
-                  </a>
+                  <ArcadeButton href={getBlinkPosLink()} target="_blank" variant="bitcoin" size="lg" className="w-full mb-8">
+                    ABRIR POS BLINK ⚡
+                  </ArcadeButton>
 
-                  <div className="relative p-4 rounded-xl bg-white border-2 border-orange-500/40 shadow-[0_0_20px_rgba(247,147,26,0.15)] mb-6">
-                    <QRCodeSVG
-                      value={getBlinkPosLink()}
-                      size={160}
-                      level="H"
-                      includeMargin={false}
-                      fgColor="#000000"
-                      bgColor="#FFFFFF"
-                    />
-                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-orange-500 text-black text-[9px] font-mono font-bold px-2 py-0.5 rounded shadow-md whitespace-nowrap">
-                      ESCANEAR CON TU WALLET
-                    </div>
+                  <div className="relative p-6 bg-white rounded-2xl border-2 border-orange-500/50 mb-8" style={{ boxShadow: `0 0 40px rgba(247,147,26,0.25)` }}>
+                    <QRCodeSVG value={getBlinkPosLink()} size={180} level="H" fgColor="#000" bgColor="#fff" />
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-bitcoin text-black text-xs font-mono font-bold px-4 py-1 rounded shadow-md">ESCANEAR → WALLET</div>
                   </div>
 
-                  <button
-                    onClick={() => handleCopy(CONFIG.lightningAddress)}
-                    className="inline-flex items-center justify-between w-full px-4 py-3 rounded-lg 
-                               bg-white/5 border border-white/10 hover:border-orange-500/40
-                               font-mono text-[10px] text-gray-400 hover:text-orange-400 transition-all group"
-                  >
-                    <span className="truncate mr-2">{CONFIG.lightningAddress}</span>
-                    {copied ? <Check size={12} className="text-orange-400" /> : <Copy size={12} className="opacity-50 group-hover:opacity-100" />}
-                  </button>
+                  <CopyButton text={CONFIG.lightningAddress} label="lightning" />
+                  <p className="mt-2 font-mono text-xs text-gray-500">{CONFIG.lightningAddress}</p>
                 </motion.div>
               )}
 
-              {/* TAB 2: BITCOIN ON-CHAIN */}
+              {/* ═══════════ ON-CHAIN TAB ═══════════ */}
               {activeTab === 'onchain' && (
-                <motion.div
-                  key="onchain"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="w-full max-w-md text-center"
-                >
-                  <div className="mb-6 p-4 rounded-xl bg-black/50 border border-dashed border-orange-500/30">
-                    <p className="font-mono text-[10px] uppercase tracking-wider text-bitcoin font-bold mb-1 flex items-center justify-center gap-2">
-                      <ShieldCheck size={12} /> Liquidación Capa Base
-                    </p>
-                    <p className="font-mono text-[10px] text-gray-500 leading-relaxed">
-                      Recomendado para montos institucionales. 
-                      <br/>
-                      <span className="text-gray-400">Acreditación: 1 confirmación on-chain.</span>
-                    </p>
+                <motion.div key="onchain" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-md flex flex-col items-center">
+                  <div className="w-full mb-8 grid grid-cols-2 gap-3">
+                    <select
+                      value={selectedService}
+                      onChange={(e) => setSelectedService(e.target.value as ServiceType)}
+                      className={inputClasses}
+                    >
+                      {Object.entries(SERVICE_LABELS).map(([key, label]) => (
+                        <option key={key} value={key}>{label.replace(/_/g, ' ')}</option>
+                      ))}
+                    </select>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className={inputClasses}
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">USD</span>
+                    </div>
                   </div>
 
-                  <p className="font-mono text-[10px] text-gray-400 uppercase tracking-widest mb-3">
-                    Dirección Bitcoin Institucional:
-                  </p>
-                  
-                  <button
-                    onClick={() => handleCopy(CONFIG.onChainAddress)}
-                    className={`group relative w-full p-4 rounded-xl border transition-all duration-300 text-left
-                               ${copied 
-                                 ? 'border-orange-500 bg-orange-500/10' 
-                                 : 'border-white/10 bg-black hover:border-orange-500/50'
-                               }`}
-                  >
-                    <code className="font-mono text-xs text-bitcoin break-all block pr-8 font-medium">
-                      {CONFIG.onChainAddress}
-                    </code>
-                    
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                      {copied ? <Check size={14} className="text-orange-400" /> : <Copy size={14} className="text-gray-600 group-hover:text-bitcoin" />}
-                    </div>
-                  </button>
+                  <div className="relative p-6 bg-white rounded-2xl border-2 border-orange-500/50 mb-8" style={{ boxShadow: `0 0 40px rgba(247,147,26,0.25)` }}>
+                    <QRCodeSVG
+                      value={`bitcoin:${CONFIG.onChainAddress}?amount=${amount}&message=${SERVICE_LABELS[selectedService]}`}
+                      size={180} level="H" fgColor="#000" bgColor="#fff"
+                    />
+                    <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-bitcoin text-black text-xs font-mono font-bold px-4 py-1 rounded shadow-md">ESCANEAR → WALLET</div>
+                  </div>
+
+                  <div className="w-full bg-white/5 rounded-xl p-4 border border-white/10 mb-4">
+                    <p className="font-mono text-[10px] text-gray-500 uppercase mb-2">DIRECCIÓN ON-CHAIN (BTC)</p>
+                    <p className="font-mono text-xs text-white break-all select-all">{CONFIG.onChainAddress}</p>
+                  </div>
+
+                  <CopyButton text={CONFIG.onChainAddress} label="onchain" className="self-center" />
+
+                  <div className="mt-4 flex items-center gap-2 text-amber-500/70 text-xs font-mono">
+                    <ShieldCheck size={14} />
+                    <span>CONFIRMAR EN 10-60 MIN • FEES DE RED</span>
+                  </div>
                 </motion.div>
               )}
 
-              {/* TAB 3: FIAT (MERCADO PAGO) */}
+              {/* ═══════════ FIAT TAB ═══════════ */}
               {activeTab === 'fiat' && (
-                <motion.div
-                  key="fiat"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="w-full max-w-sm text-center"
-                >
-                  <div className="mb-8">
-                    <h4 className="font-serif text-xl text-white mb-2">
-                      Pasarela Fiat Coadyuvante
-                    </h4>
-                    <p className="font-mono text-xs text-gray-500 leading-relaxed">
-                      Soporte para Tarjetas de Crédito, Débito y transferencias bancarias SPEI vía Mercado Pago.
-                    </p>
+                <motion.div key="fiat" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="w-full max-w-md flex flex-col items-center">
+                  <div className="w-full mb-6 grid grid-cols-2 gap-3">
+                    <select
+                      value={selectedService}
+                      onChange={(e) => setSelectedService(e.target.value as ServiceType)}
+                      className={inputClasses}
+                    >
+                      {Object.entries(SERVICE_LABELS).map(([key, label]) => (
+                        <option key={key} value={key}>{label.replace(/_/g, ' ')}</option>
+                      ))}
+                    </select>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        className={inputClasses}
+                      />
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">MXN</span>
+                    </div>
                   </div>
 
-                  <a
+                  <ArcadeButton
                     href={CONFIG.mercadoPagoLink}
                     target="_blank"
-                    rel="noopener noreferrer"
-                    className="group relative inline-flex items-center justify-center gap-3 
-                               w-full py-4 px-6 rounded-xl overflow-hidden
-                               bg-[#009EE3] hover:bg-[#008bc9] text-white
-                               font-mono font-bold text-sm transition-all duration-300
-                               shadow-[0_0_25px_rgba(0,240,255,0.3)] hover:shadow-[0_0_35px_rgba(0,240,255,0.5)] transform hover:-translate-y-1"
+                    variant="matrix"
+                    size="lg"
+                    className="w-full mb-8"
                   >
-                    <span className="relative z-10 flex items-center gap-2 tracking-wide">
-                      REDIRIGIR A MERCADO PAGO
-                      <ExternalLink size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                    </span>
-                  </a>
+                    PAGAR CON MERCADO PAGO 💳
+                  </ArcadeButton>
 
-                  <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-center gap-5 opacity-40 grayscale hover:grayscale-0 transition-all">
-                    <span className="text-[10px] font-mono font-bold text-white tracking-widest">VISA</span>
-                    <span className="text-[10px] font-mono font-bold text-white tracking-widest">MASTERCARD</span>
-                    <span className="text-[10px] font-mono font-bold text-white tracking-widest">SPEI_BANCARIO</span>
+                  <div className="w-full space-y-3">
+                    <div className="bg-white/5 rounded-xl p-4 border border-cyan-400/20">
+                      <p className="font-mono text-[10px] text-gray-500 uppercase mb-2">MERCADO PAGO</p>
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-mono text-sm text-white">{CONFIG.mercadoPagoAlias}</p>
+                        <CopyButton text={CONFIG.mercadoPagoAlias} label="mp-alias" />
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 rounded-xl p-4 border border-cyan-400/20">
+                      <p className="font-mono text-[10px] text-gray-500 uppercase mb-2">LINK DIRECTO</p>
+                      <a href={CONFIG.mercadoPagoLink} target="_blank" rel="noopener noreferrer" className="font-mono text-sm text-cyan-400 hover:underline truncate flex items-center gap-1">
+                        mpago.la <ExternalLink size={12} />
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex items-center gap-2 text-cyan-400/70 text-xs font-mono">
+                    <Banknote size={14} />
+                    <span>PESO MXN • SIN FEES DE RED • INSTANTANEO</span>
                   </div>
                 </motion.div>
               )}
@@ -309,9 +321,7 @@ export default function TipJarSection() {
           </div>
         </Card>
 
-        <div className="text-center mt-6 font-mono text-[10px] text-gray-600 uppercase tracking-widest">
-          Transacción procesada externamente • Sin custodia local • Oracle System v2.1
-        </div>
+        <p className="text-center mt-8 font-mono text-xs text-gray-600 tracking-widest">ORACLE SYSTEM v2.1 • TRANSACCIÓN ENRUTADA EXTERNAMENTE</p>
       </div>
     </section>
   );
