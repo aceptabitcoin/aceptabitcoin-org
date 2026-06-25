@@ -1,13 +1,21 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, memo, useRef } from "react";
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { 
   Clock, Hash, Link as LinkIcon, Calendar, Zap, Users,
   Sprout, Store, ShoppingCart, Trophy, Coins, Palette, 
-  ClipboardList, MapPin, Rocket 
+  ClipboardList, MapPin, Rocket, ShieldCheck 
 } from "lucide-react";
+
+// Registrar plugin de ScrollTrigger solo en cliente
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // ============================================================
 // BITCOIN TIMECHAIN — Nuestra Historia
@@ -152,11 +160,16 @@ const CategoryIcon = ({ category }: { category: string }) => {
   return icons[category as keyof typeof icons] || <Hash className="h-6 w-6 text-gray-400" />;
 };
 
-// 🔹 Bloque memoizado para optimizar re-renders
-const TimechainBlock = ({ block, isMounted }: { 
+// 🔹 Bloque memoizado con ref para animaciones
+const TimechainBlock = memo(({ block, isMounted, index, totalBlocks }: { 
   block: TimechainBlock; 
   isMounted: boolean;
+  index: number;
+  totalBlocks: number;
 }) => {
+  const blockRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  
   const categoryStyle = useMemo(() => {
     switch (block.category) {
       case "genesis": return "border-matrix text-matrix bg-matrix/10 shadow-[0_0_15px_rgba(0,255,65,0.2)]";
@@ -167,8 +180,80 @@ const TimechainBlock = ({ block, isMounted }: {
     }
   }, [block.category]);
 
+  // Calcular confirmaciones
+  const confirmations = totalBlocks - block.height;
+
+  // Animación 3D con seguimiento de mouse
+  useGSAP(() => {
+    const element = blockRef.current;
+    if (!element) return;
+
+    // Efecto de flotación continua
+    gsap.to(element, {
+      y: -10,
+      duration: 2 + (index * 0.2),
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+      delay: index * 0.15,
+    });
+
+    // Efecto de perspectiva con mouse
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = element.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      
+      gsap.to(element, {
+        rotationY: x * 6,
+        rotationX: -y * 6,
+        duration: 0.8,
+        ease: "power2.out",
+        transformPerspective: 800,
+      });
+    };
+
+    const handleMouseLeave = () => {
+      gsap.to(element, {
+        rotationY: 0,
+        rotationX: 0,
+        duration: 1,
+        ease: "elastic.out(1, 0.5)",
+        transformPerspective: 800,
+      });
+    };
+
+    element.addEventListener('mousemove', handleMouseMove);
+    element.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      element.removeEventListener('mousemove', handleMouseMove);
+      element.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
+
+  // Efecto Glitch en título al hover
+  const handleTitleHover = () => {
+    if (!titleRef.current) return;
+    
+    gsap.to(titleRef.current, {
+      x: '+=3',
+      duration: 0.05,
+      yoyo: true,
+      repeat: 5,
+      ease: 'power1.inOut',
+      onComplete: () => {
+        gsap.set(titleRef.current, { x: 0 });
+      }
+    });
+  };
+
   return (
-    <div className={`group relative border-2 ${categoryStyle} bg-black/90 backdrop-blur-md rounded-2xl overflow-hidden hover:border-matrix/50 transition-all duration-500`}>
+    <div 
+      ref={blockRef}
+      className={`timechain-block group relative border-2 ${categoryStyle} bg-black/90 backdrop-blur-md rounded-2xl overflow-hidden hover:border-matrix/50 transition-all duration-500 will-change-transform`}
+      style={{ transformStyle: 'preserve-3d' }}
+    >
       {/* Block Header */}
       <div className="px-8 py-5 border-b border-white/10 flex items-center justify-between bg-black/50">
         <div className="flex items-center gap-4">
@@ -186,7 +271,11 @@ const TimechainBlock = ({ block, isMounted }: {
       <div className="p-8 space-y-6">
         <div>
           <div className="text-xs font-mono text-gray-500 uppercase">{block.quarter}</div>
-          <h3 className="font-serif text-3xl font-bold mt-1 text-white group-hover:text-matrix transition-colors">
+          <h3 
+            ref={titleRef}
+            onMouseEnter={handleTitleHover}
+            className="font-serif text-3xl font-bold mt-1 text-white group-hover:text-matrix transition-colors cursor-pointer"
+          >
             {block.title}
           </h3>
         </div>
@@ -206,18 +295,24 @@ const TimechainBlock = ({ block, isMounted }: {
           </div>
         </div>
 
-        <div className="text-[10px] font-mono text-gray-600 uppercase flex items-center gap-2 pt-2">
-          <Calendar className="h-3 w-3 flex-shrink-0" />
-          {isMounted ? (
-            new Date(block.timestamp).toLocaleDateString("es-MX", { 
-              timeZone: "America/Mexico_City",
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })
-          ) : (
-            "Cargando bloque..."
-          )}
+        <div className="flex items-center justify-between text-[10px] font-mono text-gray-600 uppercase pt-2">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-3 w-3 flex-shrink-0" />
+            {isMounted ? (
+              new Date(block.timestamp).toLocaleDateString("es-MX", { 
+                timeZone: "America/Mexico_City",
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })
+            ) : (
+              "Cargando bloque..."
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-matrix/60">
+            <ShieldCheck className="h-3 w-3 flex-shrink-0" />
+            {confirmations} {confirmations === 1 ? 'confirmación' : 'confirmaciones'}
+          </div>
         </div>
       </div>
 
@@ -226,15 +321,17 @@ const TimechainBlock = ({ block, isMounted }: {
       <div className="absolute bottom-4 left-4 w-6 h-6 border-b border-l border-current opacity-30" />
     </div>
   );
-};
+});
 
-// 🔹 Memoización del componente completo
 TimechainBlock.displayName = "TimechainBlock";
-const MemoizedBlock = memo(TimechainBlock);
 
 export default function NuestraHistoriaPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [timeUntilNext, setTimeUntilNext] = useState("10:00");
+  const [isMining, setIsMining] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const miningRef = useRef<HTMLDivElement>(null);
 
   // Guard de montaje para hidratación
   useEffect(() => {
@@ -262,26 +359,176 @@ export default function NuestraHistoriaPage() {
       const diff = next.getTime() - now.getTime();
       const mins = Math.floor(diff / 60000);
       const secs = Math.floor((diff % 60000) / 1000);
-      setTimeUntilNext(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
+      const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      
+      setTimeUntilNext(timeStr);
+      
+      // Detectar cuando llega a 00:00
+      if (timeStr === "00:00" && !isMining) {
+        setIsMining(true);
+        // Efecto de "bloque minado"
+        if (miningRef.current) {
+          gsap.to(miningRef.current, {
+            scale: 1.05,
+            boxShadow: '0 0 60px rgba(0,255,65,0.8)',
+            duration: 0.3,
+            yoyo: true,
+            repeat: 2,
+            ease: 'power2.inOut',
+            onComplete: () => {
+              setIsMining(false);
+            }
+          });
+        }
+      }
     };
 
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [isMounted]);
+  }, [isMounted, isMining]);
+
+  // 🔹 Animaciones principales con GSAP
+  useGSAP(() => {
+    if (!containerRef.current) return;
+
+    // 1. Animación de entrada del header
+    gsap.from(headerRef.current, {
+      opacity: 0,
+      y: -50,
+      duration: 1.2,
+      ease: "power3.out",
+    });
+
+    // 2. Animación del mining status (efecto holograma)
+    gsap.from(miningRef.current, {
+      opacity: 0,
+      scale: 0.8,
+      rotationX: 15,
+      duration: 1,
+      delay: 0.3,
+      ease: "back.out(1.7)",
+      transformPerspective: 600,
+    });
+
+    // 3. Animación de entrada de bloques con scroll
+    const blocks = document.querySelectorAll('.timechain-block');
+    
+    blocks.forEach((block, index) => {
+      gsap.from(block, {
+        opacity: 0,
+        y: 100,
+        rotationX: 15,
+        scale: 0.9,
+        duration: 1,
+        delay: 0.1 * index,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: block,
+          start: "top bottom-=100",
+          toggleActions: "play none none reverse",
+          markers: false,
+        },
+        transformPerspective: 800,
+      });
+    });
+
+    // 4. Animación de líneas conectoras
+    const connectorLines = document.querySelectorAll('.connector-line');
+    connectorLines.forEach((line) => {
+      gsap.from(line, {
+        scaleY: 0,
+        transformOrigin: 'top',
+        duration: 1.5,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: line,
+          start: 'top center',
+          toggleActions: 'play none none reverse',
+        }
+      });
+    });
+
+    // 5. Animación del background grid (movimiento infinito)
+    gsap.to(".bg-grid", {
+      y: "20%",
+      duration: 30,
+      repeat: -1,
+      ease: "linear",
+      modifiers: {
+        y: (y: string) => {
+          const value = parseFloat(y);
+          return (value % 50) + "px";
+        }
+      }
+    });
+
+    // 6. Efecto de partículas en el fondo (opcional)
+    const particles = document.querySelectorAll('.particle');
+    particles.forEach((particle, index) => {
+      gsap.to(particle, {
+        x: (index % 2 === 0 ? 50 : -50),
+        y: (index % 3 === 0 ? 30 : -30),
+        duration: 3 + (index * 0.5),
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        delay: index * 0.2,
+      });
+    });
+
+    // 7. Animación del CTA final
+    gsap.from(".cta-button", {
+      opacity: 0,
+      scale: 0.5,
+      rotationY: 180,
+      duration: 1.2,
+      delay: 1.5,
+      ease: "back.out(1.7)",
+      transformPerspective: 800,
+      scrollTrigger: {
+        trigger: ".cta-button",
+        start: "top bottom-=50",
+        toggleActions: "play none none reverse",
+      }
+    });
+
+    // Cleanup de ScrollTrigger
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    };
+  }, []);
 
   return (
     <>
       <Navbar />
       <div className="min-h-screen bg-black text-[#FAFAFA] relative overflow-hidden">
-        {/* Background Grid - Design System v2.0 Spec */}
-        <div className="absolute inset-0 bg-[radial-gradient(rgba(0,255,65,0.15)_1px,transparent_1px)] bg-[size:50px_50px] opacity-40 pointer-events-none" />
+        {/* Background Grid - con animación */}
+        <div 
+          className="bg-grid absolute inset-0 bg-[radial-gradient(rgba(0,255,65,0.15)_1px,transparent_1px)] bg-[size:50px_50px] opacity-40 pointer-events-none" 
+        />
+        
+        {/* Partículas flotantes */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="particle absolute w-1 h-1 bg-matrix/20 rounded-full"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDuration: `${3 + Math.random() * 5}s`,
+              }}
+            />
+          ))}
+        </div>
+
         <div className="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black pointer-events-none" />
 
-        <div className="container mx-auto px-4 py-16 relative z-10">
+        <div ref={containerRef} className="container mx-auto px-4 py-16 relative z-10">
           
-          {/* Header */}
-          <div className="text-center mb-20 space-y-6">
+          {/* Header con ref para animación */}
+          <div ref={headerRef} className="text-center mb-20 space-y-6">
             <div className="inline-flex items-center gap-3 bg-black/80 border border-matrix/30 px-6 py-2.5 rounded-full font-mono text-xs text-matrix tracking-[0.1em] uppercase">
               <Hash className="h-4 w-4" /> Bitcoin Timechain
             </div>
@@ -297,8 +544,8 @@ export default function NuestraHistoriaPage() {
             </p>
           </div>
 
-          {/* Mining Status - Glassmorphism Bunker */}
-          <div className="max-w-2xl mx-auto mb-24">
+          {/* Mining Status con ref para animación */}
+          <div ref={miningRef} className="max-w-2xl mx-auto mb-24">
             <div className="bg-black/80 border border-matrix/30 backdrop-blur-md rounded-3xl p-10 text-center space-y-4">
               <div className="uppercase tracking-[0.2em] text-xs text-matrix mb-2 flex items-center justify-center gap-2">
                 <Clock className="h-4 w-4 animate-pulse" /> Próximo Bloque
@@ -321,18 +568,23 @@ export default function NuestraHistoriaPage() {
           <div className="max-w-4xl mx-auto space-y-12">
             {timechainBlocks.map((block, idx) => (
               <div key={block.height} className="relative">
-                {/* Línea conectora vertical - oculta en mobile */}
+                {/* Línea conectora vertical animada - oculta en mobile */}
                 {idx < timechainBlocks.length - 1 && (
-                  <div className="absolute left-8 md:left-12 top-24 bottom-0 w-px bg-gradient-to-b from-matrix/50 to-transparent hidden md:block" />
+                  <div className="connector-line absolute left-8 md:left-12 top-24 bottom-0 w-px bg-gradient-to-b from-matrix/50 to-transparent hidden md:block" />
                 )}
 
-                <MemoizedBlock block={block} isMounted={isMounted} />
+                <TimechainBlock 
+                  block={block} 
+                  isMounted={isMounted} 
+                  index={idx}
+                  totalBlocks={timechainBlocks.length}
+                />
               </div>
             ))}
           </div>
 
-          {/* Final CTA - ArcadeButton Style */}
-          <div className="mt-28 text-center space-y-6">
+          {/* Final CTA con clase para animación */}
+          <div className="cta-button mt-28 text-center space-y-6">
             <div className="inline-flex items-center gap-2 bg-bitcoin/10 border border-bitcoin/30 px-6 py-3 rounded-full font-mono text-xs text-bitcoin tracking-[0.1em] uppercase">
               <Users className="h-4 w-4" /> Mina el siguiente bloque
             </div>

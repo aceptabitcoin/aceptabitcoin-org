@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
-import { getSystemPrompt } from '@/lib/prompts/bob-agent';
-// ⚠️ Asegúrate que esta ruta existe en tu proyecto o ajusta el import según tu estructura vectorial
+import { getSystemPrompt, getRAGFilter, isValidContext } from '@/lib/prompts/bob-agent';
 import { searchWhitepaper } from '@/lib/vector/search';
 
-export const runtime = 'edge';
+// ⚠️ SIN runtime = 'edge' → Corre en Node.js por defecto
+// El Map en memoria funciona correctamente en este runtime
 
-// Move instantiation inside POST to avoid build-time errors when GROQ_API_KEY is missing
-const getGroqClient = () => new Groq({ apiKey: process.env.GROQ_API_KEY || 'stub_key' });
+const getGroqClient = () => {
+  if (!process.env.GROQ_API_KEY) {
+    throw new Error('GROQ_API_KEY no configurada en variables de entorno');
+  }
+  return new Groq({ apiKey: process.env.GROQ_API_KEY });
+};
 
-// ─── Rate Limiter (in-memory) ─────────────────────────────────────────────────
+// ─── Rate Limiter en memoria (Node.js runtime) ───────────────────────────────
 interface RateEntry {
   count: number;
   resetAt: number;
@@ -17,8 +21,20 @@ interface RateEntry {
 
 const RATE_LIMIT = 100;
 const RATE_WINDOW_MS = 60_000;
-
 const rateMap = new Map<string, RateEntry>();
+
+let lastCleanup = Date.now();
+
+function cleanupRateMap() {
+  const now = Date.now();
+  // Limpieza perezosa cada 5 minutos para ahorrar CPU
+  if (now - lastCleanup > 300_000) {
+    rateMap.forEach((entry, key) => {
+      if (now >= entry.resetAt) rateMap.delete(key);
+    });
+    lastCleanup = now;
+  }
+}
 
 function getClientIp(req: NextRequest): string {
   return (
@@ -29,6 +45,7 @@ function getClientIp(req: NextRequest): string {
 }
 
 function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
+  cleanupRateMap();
   const now = Date.now();
   const entry = rateMap.get(ip);
 
@@ -52,17 +69,10 @@ async function searchWithTimeout(query: string, timeoutMs = 2000) {
   );
   try {
     const results = await Promise.race([searchWhitepaper(query, 3), timeout]);
-    return results as any[];
+    return (results || []) as any[];
   } catch {
     return [];
   }
-}
-
-function formatRAGContext(docs: any[]): string {
-  if (!docs?.length) return '';
-  return '\n\n📚 Referencia del Protocolo:\n' + docs
-    .map((d, i) => `[${i + 1}] ${(d.metadata?.text || d.text || '').slice(0, 350)}`)
-    .join('\n');
 }
 
 export async function POST(req: NextRequest) {
@@ -77,17 +87,57 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { message, context = 'fundamentos', lang = 'es', useRAG = true } = await req.json();
-    if (!message || typeof message !== 'string') {
-      return NextResponse.json({ error: 'Message required' }, { status: 400 });
+    const { 
+      message, 
+      messages = [], 
+      context = 'fundamentos', 
+      lang = 'es', 
+      useRAG = true 
+    } = await req.json();
+
+    // Validar contexto
+    let contextValid = context;
+    if (!isValidContext(context)) {
+      console.warn(`[BOB-API] Contexto inválido: ${context}, usando 'fundamentos'`);
+      contextValid = 'fundamentos';
     }
 
-    let systemPrompt = getSystemPrompt(context, lang);
+    const currentMessage = message || messages[messages.length - 1]?.content;
 
+    if (!currentMessage || typeof currentMessage !== 'string') {
+      return NextResponse.json({ error: 'Message text or messages history required' }, { status: 400 });
+    }
+
+    // 1. System prompt cypherpunk de B.O.B.
+    const systemPromptBase = getSystemPrompt(contextValid, lang);
+
+    // 2. RAG con timeout y filtro específico del contexto
+    let ragContextText = '';
     if (useRAG) {
-      const docs = await searchWithTimeout(message.slice(0, 150));
-      if (docs.length) {
-        systemPrompt += formatRAGContext(docs);
+      const ragFilter = getRAGFilter(contextValid);
+      const queryWithFilter = `${currentMessage.slice(0, 150)} ${ragFilter}`;
+      
+      const docs = await searchWithTimeout(queryWithFilter);
+      if (docs && docs.length > 0) {
+        ragContextText = '\n\n[CONTEXTO TÉCNICO ADICIONAL DEL WHITEPAPER]:\n' + docs
+          .map((d, i) => `[Doc ${i + 1}] ${(d.metadata?.text || d.text || '').slice(0, 350)}`)
+          .join('\n');
+      }
+    }
+
+    // 3. Formatear historial de mensajes
+    let formattedMessages = messages.length > 0
+      ? messages.map((m: any) => ({
+          role: m.role === 'user' ? 'user' : 'assistant',
+          content: m.content
+        }))
+      : [{ role: 'user', content: currentMessage }];
+
+    // Inyección de RAG en el último mensaje de usuario
+    if (ragContextText && formattedMessages.length > 0) {
+      const lastIdx = formattedMessages.length - 1;
+      if (formattedMessages[lastIdx].role === 'user') {
+        formattedMessages[lastIdx].content += `\n\nResponde usando preferencialmente esta información si es pertinente:${ragContextText}`;
       }
     }
 
@@ -95,11 +145,11 @@ export async function POST(req: NextRequest) {
     const completion = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: message },
+        { role: 'system', content: systemPromptBase },
+        ...formattedMessages,
       ],
-      temperature: 0.6,
-      max_tokens: 500,
+      temperature: 0.5,
+      max_tokens: 600,
     });
 
     return NextResponse.json({
@@ -108,7 +158,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error('[BOB-API] Error:', err);
     return NextResponse.json(
-      { response: '⚠️ Error de conexión. B.O.B. se está reiniciando... Intenta de nuevo.' },
+      { response: '⚠️ Error de conexión en el nodo B.O.B. Intenta de nuevo en unos momentos.' },
       { status: 500 }
     );
   }

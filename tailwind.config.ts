@@ -78,6 +78,7 @@ const config = {
       boxShadow: {
         'matrix': '0 0 15px rgba(0,255,65,0.2)',
         'matrix-hover': '0 0 25px rgba(0,255,65,0.4), 0 0 50px rgba(0,255,65,0.2)',
+        'matrix-strong': '0 0 40px rgba(0,255,65,0.6)',
         'bitcoin': '0 0 20px rgba(247,147,26,0.4)',
         'bitcoin-hover': '0 0 35px rgba(247,147,26,0.6)',
         'orange': '0 0 15px rgba(249,115,22,0.3)',
@@ -137,6 +138,31 @@ const config = {
           "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        // 🆕 Efecto holográfico para QR codes (TipJar)
+        scan: {
+          "0%": { 
+            transform: "translateY(-100%)",
+            opacity: "0"
+          },
+          "50%": {
+            opacity: "1"
+          },
+          "100%": { 
+            transform: "translateY(100%)",
+            opacity: "0"
+          },
+        },
+        // 🆕 Efecto de "mining" para bloques (Nuestra Historia)
+        "mining-pulse": {
+          "0%, 100%": {
+            transform: "scale(1)",
+            boxShadow: "0 0 15px rgba(0, 255, 65, 0.2)"
+          },
+          "50%": {
+            transform: "scale(1.05)",
+            boxShadow: "0 0 60px rgba(0, 255, 65, 0.8)"
+          },
+        },
       },
       
       animation: {
@@ -148,6 +174,9 @@ const config = {
         loading: "loading 1.5s ease-in-out infinite",
         "ping-soft": "ping-soft 1.2s cubic-bezier(0, 0, 0.2, 1) infinite",
         "fade-in": "fade-in 0.3s ease-out",
+        // 🆕 Nuevas animaciones
+        scan: "scan 2s ease-in-out infinite",
+        "mining-pulse": "mining-pulse 0.6s ease-in-out",
       },
       
       // 🎨 Background Utilities

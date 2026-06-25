@@ -1,11 +1,12 @@
 /* ============================================
-   app/globals.css — Design System v2.0 (UPDATED)
+   app/globals.css — Design System v2.1 (UPDATED)
    ============================================
    ✅ Fuentes Importadas (VT323, IBM Plex, Fira Code)
    ✅ Variables en :root directo
    ✅ Keyframes globales fuera de layers
    ✅ Utilidades organizadas por propósito
    ✅ Fix: Regla button permite fuentes custom (Arcade)
+   ✅ NEW: Keyframe 'scan' para efecto holográfico QR
    ============================================ */
 
 @tailwind base;
@@ -81,7 +82,7 @@
    ============================================ */
 @keyframes scanline {
   0% { transform: translateY(-100%); }
-   100% { transform: translateY(100vh); }
+  100% { transform: translateY(100vh); }
 }
 
 @keyframes blink {
@@ -103,6 +104,33 @@
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
+}
+
+/* 🆕 Efecto holográfico para QR codes (TipJar) */
+@keyframes scan {
+  0% { 
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+/* 🆕 Efecto de "mining" para bloques (Nuestra Historia) */
+@keyframes mining-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 60px rgba(0, 255, 65, 0.8);
+  }
 }
 
 /* ============================================
@@ -265,6 +293,16 @@
   /* Float animation for decorative elements */
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+  
+  /* 🆕 Scan animation for QR holographic effect */
+  .animate-scan {
+    animation: scan 2s ease-in-out infinite;
+  }
+  
+  /* 🆕 Mining pulse animation for blocks */
+  .animate-mining-pulse {
+    animation: mining-pulse 0.6s ease-in-out;
   }
   
   /* Scanline effect (Matrix style) */
@@ -446,6 +484,8 @@
   .scanline::after,
   .animate-pulse-glow,
   .animate-float,
+  .animate-scan,
+  .animate-mining-pulse,
   .hover-lift,
   .hover-lift-sm {
     animation: none !important;
