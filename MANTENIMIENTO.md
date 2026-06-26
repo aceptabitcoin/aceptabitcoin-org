@@ -1,6 +1,6 @@
-# Mantenimiento: Acepta Bitcoin México (Oracle System v2.0)
+# Mantenimiento: Acepta Bitcoin México (Design System v2.1)
 
-Estado actual del proyecto — última actualización: 2026-06-13
+Estado actual del proyecto — última actualización: 2026-06-25
 
 ---
 
@@ -8,7 +8,7 @@ Estado actual del proyecto — última actualización: 2026-06-13
 
 | Área | Estado | Notas |
 |------|--------|-------|
-| **Build (npm run build)** | ✅ Pasando | 0 errores TypeScript, 0 warnings de hidratación |
+| **Build (npm run build)** | ✅ Pasando | Sin errores TypeScript, hidratación limpia |
 | **Tipado (TypeScript strict)** | ✅ Sin errores | `tsconfig.json` en modo estricto |
 | **Linting** | ⚠️ Sin configuración | ESLint pendiente de configuración inicial |
 | **Tests (Vitest)** | ✅ Pasando | `app/api/tipjar/route.test.ts`, `lib/proveedores.test.ts` |
@@ -18,38 +18,237 @@ Estado actual del proyecto — última actualización: 2026-06-13
 
 ---
 
-## 🚀 Sprint Update: Bitcoin Only Infrastructure & Matrix UI Refinement (v2.1)
+## 🚀 Sprint Update: Design System v2.1 — GSAP Animations & Cypherpunk Terminal (June 25, 2026)
+
+### 🆕 Clases de Utilidad Nuevas
+- `.animate-scan` → Holográfico QR (TipJar)
+- `.animate-mining-pulse` → Bloque minado (NuestraHistoria)
+- `.shadow-matrix-strong` → Glow verde intenso
+
+---
 
 ### ✅ Completed Tasks
 
-#### 1. TipJar Section — Serverless Payment Architecture (v2.1)
-- **Refactor:** Eliminación completa del backend `/api/tipjar`. Migración a enlaces directos de Blink POS con memos dinámicos estructurados (`SERVICIO_MONTO_DIVISA`).
-- **UI/UX:** Implementación de tabs reactivas (Lightning / On-Chain / Fiat) con transiciones suaves.
-- **Visuals:** Integración de `MatrixRain` con color dinámico (`theme.hex`) que cambia entre Naranja Bitcoin y Cian Cypherpunk según la pestaña activa. Efecto de "cabeza blanca brillante" en la lluvia matrix para realismo CRT.
-- **DS Compliance:** Uso estricto de `font-serif` para títulos, `font-mono` para datos técnicos, y tokens de color semánticos.
-- **Files Modified:** `components/sections/TipJarSection.tsx`, `components/ui/MatrixRain.tsx`, `TIPJAR.md`.
+#### 1. ⚡ TipJarSection v2.2
+**Archivo:** `components/sections/TipJarSection.tsx`
 
-#### 2. Partners Carousel & Card — Sovereign Node Aesthetic
-- **Data Structure:** Refactorización de `data/partners.ts`. Eliminación de prop `color` dinámica. Adición de metadatos técnicos: `protocol` y `status`.
-- **PartnerCard Component:** Rediseño como "Módulo de Hardware". Contenedor de icono con borde matrix, punto de estado parpadeante, footer técnico con protocolo y status. Botón CTA estilo arcade mini con `font-vt323`.
-- **Carousel:** Animación automática respetando `prefers-reduced-motion`. Badge "Infraestructura Bitcoin Only" con `ShieldCheck` y glow naranja. Dots indicadores estilizados con sombra activa.
-- **DS Compliance:** Eliminación total de colores no aprobados (cian/púrpura). Paleta restringida a Matrix Green + Bitcoin Orange. Jerarquía tipográfica institucional/técnica/retro aplicada correctamente.
-- **Files Modified:** `components/ui/PartnerCard.tsx`, `components/sections/PartnersCarousel.tsx`, `data/partners.ts`.
+**Cambios Principales**
+- **Simplificación de flujo:**
+  - ❌ Removida integración con caja registradora (complejidad innecesaria)
+  - ✅ Modo "Donación pura" — solo tipjar
+- **Infraestructura propia:**
+  - Nueva dirección on-chain: `bc1q4kfrqsm60jxx8xva9p6erx6pp6zqaazy00nhrk`
+  - BTCPay Server propio (sin intermediarios Blink para on-chain)
+  - Lightning Address: `aceptabitcoin@blink.sv` (Blink POS)
+- **Mejoras estéticas:**
+  - Efecto holográfico en QR codes (GSAP timeline infinito)
+  - Badge "BTCPAY SERVER • ONLINE" con punto verde pulsante
+  - Mensaje simplificado: "Con tu apoyo crecemos la red"
+  - MercadoPago actualizado: https://link.mercadopago.com.mx/skinlabclothingclub
+- **Decisiones Técnicas:**
+  - Framer Motion + GSAP híbrido: Framer para transiciones entre tabs, GSAP para efectos continuos
+  - Memoización: Componentes pesados con `memo()` para evitar re-renders
+  - Guard de hidratación: `isMounted` state para prevenir mismatches SSR/client
 
-#### 3. ArcadeButton & MatrixArcadeWhatsApp — Hardware Metaphor
-- **ArcadeButton:** Reparación de problema de texto encimado. Implementación de metáfora "chasis + tapa mecánica" con elevación `-translate-y-2` y acople en active. Scanline optimizada usando `animate-scanline` de globals.css.
-- **WhatsApp Widget:** Reposicionamiento de label debajo del switch para legibilidad. Integración de status badge dentro del label. Icono de teléfono cyberpunk optimizado para nitidez en tamaños pequeños.
-- **Files Modified:** `components/ui/ArcadeButton.tsx`, `components/ui/MatrixArcadeWhatsApp.tsx`.
+#### 2. 📜 NuestraHistoria — GSAP Timechain
+**Archivo:** `app/nuestra-historia/page.tsx`
 
-### 🔧 Technical Debt Addressed
-- Eliminación de deuda técnica en pagos: cero API keys en repo, cero endpoints de facturación.
-- Limpieza de código obsoleto: marcado `route.ts` y `lib/blink.ts` como deprecated (pendiente de eliminación tras confirmar webhooks).
-- Accesibilidad: Todos los componentes nuevos respetan `prefers-reduced-motion` y tienen focus states visibles con `ring-matrix`.
+**Animaciones Implementadas**
+- **3D Mouse Tracking en bloques:**
+  - ScrollTrigger: Entrada con `rotationX: 15`, `scale: 0.9`
+  - Líneas conectoras animadas (`scaleY: 0 → 1`)
+  - Stagger de 0.1s entre bloques
+- **Efectos interactivos:**
+  - Glitch en títulos al hover (shake horizontal)
+  - Mining pulse cuando timer llega a 00:00
+  - Contador de confirmaciones por bloque
 
-### 🎨 Design System v2.0 Enforcement
-- **Colores:** Prohibición explícita de cian/púrpura en componentes públicos. Solo Matrix Green (#00FF41) y Bitcoin Orange (#F7931A) permitidos.
-- **Tipografía:** Serif = autoridad, Mono = sistema, VT323 = acción retro. Regla aplicada en todos los componentes modificados.
-- **Efectos:** Glow semántico por contexto (naranja para valor, verde para infraestructura). Grid background matrix en tarjetas técnicas.
+**Performance Notes**
+- MatrixRain desactivado en esta página (los bloques ya tienen 3D)
+- Cleanup de ScrollTrigger en `useEffect` return
+- Partículas limitadas a 20 elementos con `will-change-transform`
+
+**Estructura de Datos**
+- 10 bloques totales (Q4 2021 → Q2 2025)
+
+#### 3. 💰 PriceConverter — Oracle Terminal
+**Archivo:** `components/sections/PriceConverter.tsx`
+
+**Mejoras Estéticas**
+- Header terminal: Ícono con glow + indicador "LIVE" pulsante
+- Tipografía VT323 para labels técnicos (BTC, USD, MXN, SATS)
+- Scanline effect animado en el fondo
+- Corner accents en las esquinas (especificación design system)
+- Status footer con "Auto-rotate: 45s" y "Coingecko API"
+
+**Jerarquía Visual**
+- Bitcoin Orange para conversiones BTC↔USD y BTC↔MXN
+- Matrix Green para SATS↔MXN (Lightning Network)
+- Glow effects en hover: `shadow-[0_0_30px_rgba(247,147,26,0.3)]`
+
+**Lógica de Conversión**
+- Fuente única de verdad: `btcAmount` state
+- Cálculos derivados en render (evita estados duplicados)
+- Fetch cada 45s con fallback a valores de respaldo
+
+#### 4. 🤖 B.O.B. Chat — Cypherpunk Personality
+**Archivos Modificados**
+
+| Archivo | Cambio |
+|---------|--------|
+| `components/widgets/bob-chat/BobChatWidget.tsx` | UI terminal + corner accents |
+| `app/api/chat/route.ts` | Removido `runtime='edge'` |
+| `lib/prompts/bob-agent.ts` | Personalidad contextual + RAG filters |
+
+**UI Terminal Style**
+- Header: Badge "ONLINE" con ícono Wifi
+- Context chips: Bordes gruesos + glow en hover
+- Chat bubbles: Glow pronunciado (usuario: orange, asistente: green)
+- Empty state: Ícono terminal con contenedor + mensaje de bienvenida
+- Corner accents: En todas las esquinas del widget
+
+**API — Decisiones Críticas**
+- ❌ **Removido:** `runtime = 'edge'`
+  - **Razón:** Costo no autorizado de Redis/Upstash para rate limiting distribuido.
+  - **Trade-off aceptado:**
+    - ✅ Rate limiter funciona en Node.js runtime (`Map` en memoria)
+    - ✅ Sin costos adicionales
+    - ⚠️ Se resetea en cold starts (~5 min inactividad)
+    - ⚠️ No persiste entre regiones (aceptable para etapa actual)
+
+**RAG Integration**
+- Filtros contextuales ahora se pasan al modelo
+- Timeout de 2s en búsqueda vectorial
+- Inyección en último mensaje (no altera historial visible)
+
+**Personalidad Cypherpunk**
+
+| Contexto | Personalidad | RAG Filter |
+|----------|--------------|------------|
+| `fundamentos` | Educador cypherpunk | `general` |
+| `mining` | Experto PoW | `mining` |
+| `custodia` | Defensor autocustodia | `seed` |
+| `impuestos` | Asesor fiscal MX | `taxes` |
+| `verificacion` | Técnico de nodos | `verification` |
+
+**Reglas Estrictas**
+- Máximo 300 palabras (3 párrafos)
+- NO consejos financieros
+- NO promoción de servicios centralizados
+- NO markdown (texto plano)
+- Integrar RAG naturalmente: "Según el whitepaper..."
+
+#### 5. 🎠 PartnersCarousel — Terminal Navigation
+**Archivo:** `components/ui/PartnersCarousel.tsx`
+
+**Mejoras**
+- Botones de navegación: `h-12 w-12` con glow pronunciado
+- Dots activos: Más largos (`w-8`) con efecto pulse
+- Status footer: "Auto-rotate: 6s" + "Hover to pause"
+- Background grid: Pattern sutil (opacity-40)
+- Tipografía VT323 para metadata
+
+---
+
+### 📦 Dependencias Agregadas
+
+- `gsap` — Animaciones cinematográficas
+- `@gsap/react` — Integración de GSAP con React
+
+> **Nota:** Licencia GSAP gratuita para proyectos open-source (AGPL-3.0 compatible).
+
+---
+
+### 🐛 Bugs Corregidos
+
+#### Hidratación
+- ✅ `isMounted` guards en todos los componentes con animaciones
+- ✅ `suppressHydrationWarning` en elementos dinámicos
+- ✅ QR codes renderizados client-only
+
+#### Performance
+- ✅ `memo()` en `TimechainBlock` y `CategoryIcon`
+- ✅ `useCallback` en handlers de B.O.B.
+- ✅ Cleanup de intervals y event listeners
+
+#### Rate Limiter
+- ✅ Limpieza perezosa cada 5 min (ahorra CPU)
+- ✅ Fallback a `127.0.0.1` si no hay IP
+- ✅ `Retry-After` header en respuesta 429
+
+---
+
+### 🎯 Próximos Pasos Sugeridos
+
+**Corto Plazo (Sprint Actual)**
+- Testing de B.O.B. con usuarios reales
+- Monitoreo de rate limiter en producción
+- Optimizar imágenes del hackathon (WebP)
+
+**Mediano Plazo (Q3 2026)**
+- Streaming en B.O.B. API (mejor UX)
+- Validación con Zod en todos los endpoints
+- Integración de Nostr para donaciones
+- Analytics de uso de contextos en B.O.B.
+
+**Largo Plazo (Q4 2026)**
+- Migración a Upstash Redis si el tráfico crece
+- PWA offline para PriceConverter
+- Multi-language support (EN/ES/PT)
+- Lightning Address custom (@aceptabitcoin.com)
+
+---
+
+### 📚 Referencias Técnicas
+
+**Design System**
+- `design-system.md` — Paleta, tipografía, efectos visuales
+- `map.md` — Arquitectura de rutas y componentes
+
+**APIs Externas**
+- Blink.sv: GraphQL para Lightning (TipJar)
+- Coingecko: Precios BTC/USD/MXN (PriceConverter)
+- Groq: LLM para B.O.B. (`llama-3.3-70b-versatile`)
+
+**Herramientas**
+- GSAP: Animaciones cinematográficas
+- Framer Motion: Transiciones entre componentes
+- ScrollTrigger: Animaciones on-scroll
+
+---
+
+### 🏁 Checklist de Deploy
+
+- [x] Build pasa sin errores de TypeScript
+- [x] Build pasa sin errores de hidratación
+- [ ] Rate limiter probado localmente
+- [x] B.O.B. responde correctamente en todos los contextos
+- [x] QR codes se renderizan en cliente
+- [x] Animaciones GSAP no bloquean interacciones
+- [ ] Deploy a Vercel (pendiente)
+- [ ] Monitoreo de errores en Sentry (post-deploy)
+- [ ] Testing de performance en Lighthouse (post-deploy)
+
+---
+
+### 💬 Notas de la Sesión
+
+**Decisiones Arquitectónicas Clave**
+- GSAP + Framer Motion híbrido: Cada librería en su fortaleza
+- Node.js runtime sobre Edge: Costo vs. funcionalidad
+- BTCPay Server propio: Soberanía sobre custodia de terceros
+- MatrixRain como fondo sutil: No como protagonista (performance)
+
+**Trade-offs Aceptados**
+- Rate limiter en memoria (no distribuido) — aceptable para tráfico actual
+- Sin streaming en B.O.B. — UX sacrificada por simplicidad
+- Sin persistencia de historial en B.O.B. — Privacidad sobre conveniencia
+
+**Filosofía Aplicada**
+> "Sovereign Infrastructure, Terminal UI, High Contrast"
+> — Design System Bitcoin Matrix v2.1
+
+Todos los cambios respetan la estética cypherpunk, la narrativa Bitcoin, y la soberanía técnica del proyecto.
 
 ---
 
@@ -404,6 +603,7 @@ Se realizó una revisión y refactorización profunda de los componentes clave:
 
 | Hash | Mensaje |
 |------|---------|
+| `2252281` | feat(design-system): v2.1 — GSAP animations, terminal aesthetics & B.O.B. cypherpunk upgrade |
 | `1a5c4b3` | feat(proveedores): directorio soberano v2.0 + rebrand ArcadeButton |
 | `1cf8f6c` | refactor(tipjar): migrate to serverless blink POS architecture (v2.1) |
 | `d8f857a` | docs: update documentation and finalize merchant onboarding form with Google Forms integration |

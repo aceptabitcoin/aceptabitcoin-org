@@ -14,8 +14,7 @@ import MatrixRain from "@/components/ui/MatrixRain";
 import ArcadeButton from "@/components/ui/ArcadeButton";
 
 const CONFIG = {
-  blinkBasePos: "https://pay.blink.sv/aceptabitcoin",
-  lightningAddress: "aceptabitcoin@blink.sv",
+  btcpayPosUrl: "https://btcpay-c092a-u74190.vm.elestio.app/apps/mnLQVtSbPYp5TAXFm7rGqWPWvGt/pos",
   onChainAddress: "bc1q4kfrqsm60jxx8xva9p6erx6pp6zqaazy00nhrk",
   mercadoPagoLink: "https://link.mercadopago.com.mx/skinlabclothingclub",
   mercadoPagoAlias: "aceptabitcoin.mp",
@@ -29,6 +28,7 @@ export default function TipJarSection() {
   const [copied, setCopied] = useState<string | null>(null);
   const [amount, setAmount] = useState<string>("21");
   const [currency, setCurrency] = useState<"USD" | "MXN">("USD");
+  const [bootComplete, setBootComplete] = useState(false);
 
   // Refs para GSAP
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -37,6 +37,9 @@ export default function TipJarSection() {
 
   useEffect(() => { 
     setIsMounted(true); 
+    // Boot sequence timer
+    const timer = setTimeout(() => setBootComplete(true), 1500);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -51,7 +54,7 @@ export default function TipJarSection() {
 
   // ═══════════ GSAP ANIMATIONS ═══════════
 
-  // 1. Animación cinematográfica del título
+  // 1. Animación cinematográfica del título (FIX: flexbox con gap)
   useGSAP(() => {
     if (!titleRef.current) return;
     
@@ -100,7 +103,7 @@ export default function TipJarSection() {
 
   // 3. Boot sequence del BTCPay Server
   useGSAP(() => {
-    if (!bootTextRef.current) return;
+    if (!bootTextRef.current || !bootComplete) return;
     
     const bootElements = bootTextRef.current.querySelectorAll('.boot-item');
     
@@ -149,10 +152,7 @@ export default function TipJarSection() {
 
   const theme = getThemeColor();
 
-  const getBlinkPosLink = () => {
-    const memo = `DONACION_${amount}${currency}`;
-    return `${CONFIG.blinkBasePos}?amount=${amount}&currency=USD&memo=${encodeURIComponent(memo)}&display=USD`;
-  };
+  const getBtcpayPosLink = () => CONFIG.btcpayPosUrl;
 
   const handleCopy = async (text: string, label: string) => {
     await navigator.clipboard.writeText(text);
@@ -196,20 +196,20 @@ export default function TipJarSection() {
             className={`inline-flex items-center gap-2 px-4 py-1.5 bg-black/80 backdrop-blur-md border ${theme.border} rounded-full font-mono text-xs ${theme.text} tracking-[3px] uppercase mb-6`}
             style={{ boxShadow: `0 0 15px ${theme.shadow}` }}
           >
-            <Terminal className="h-4 w-4" /> DONACIÓN v2.2
+            <Terminal className="h-4 w-4" /> TIPJAR V 2.3
           </div>
 
-          {/* Título con animación GSAP */}
+          {/* Título con animación GSAP - FIX: flexbox con gap */}
           <h2 
             ref={titleRef}
-            className="font-serif text-5xl sm:text-6xl font-black text-white tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]"
+            className="font-serif text-5xl sm:text-6xl font-black text-white tracking-tighter drop-shadow-[0_0_30px_rgba(255,255,255,0.1)] flex flex-wrap justify-center gap-x-3 gap-y-2"
           >
-            <span className="title-word inline-block">CON </span>
-            <span className="title-word inline-block">TU </span>
-            <span className="title-word inline-block">APOYO </span>
-            <span className={`title-word inline-block ${theme.text} transition-colors duration-700`}>CRECEMOS </span>
-            <span className={`title-word inline-block ${theme.text} transition-colors duration-700`}>LA </span>
-            <span className={`title-word inline-block ${theme.text} transition-colors duration-700`}>RED</span>
+            <span className="title-word">CON</span>
+            <span className="title-word">TU</span>
+            <span className="title-word">APOYO</span>
+            <span className={`title-word ${theme.text} transition-colors duration-700`}>CRECEMOS</span>
+            <span className={`title-word ${theme.text} transition-colors duration-700`}>LA</span>
+            <span className={`title-word ${theme.text} transition-colors duration-700`}>RED</span>
           </h2>
           
           <p className="mt-4 font-mono text-sm text-gray-400 max-w-md mx-auto">
@@ -257,26 +257,41 @@ export default function TipJarSection() {
               {activeTab === 'lightning' && (
                 <motion.div key="lightning" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="w-full flex flex-col items-center">
                   
+                  {/* Indicador de Estado BTCPay Server con Boot Sequence */}
+                  <div ref={bootTextRef} className="flex items-center gap-2 mb-4 px-4 py-2 bg-black/60 backdrop-blur-sm border border-matrix/30 rounded-full">
+                    <div className="boot-item h-2 w-2 rounded-full bg-matrix animate-pulse" style={{ boxShadow: '0 0 8px rgba(0,255,65,0.6)' }} />
+                    <span className="boot-item font-mono text-xs text-matrix tracking-wider">BTCPAY SERVER</span>
+                    <span className="boot-item font-mono text-xs text-gray-500">•</span>
+                    <span className="boot-item font-mono text-xs text-matrix tracking-wider">ONLINE</span>
+                  </div>
+
+                  {/* Texto explicativo */}
+                  <p className="font-mono text-xs text-gray-400 text-center mb-6 max-w-sm">
+                    Ingresa el monto que desees donar directamente en nuestro POS soberano. Lightning Network con liquidación instantánea.
+                  </p>
+
+                  {/* Input como sugerencia */}
                   <div className="flex flex-col items-center mb-6 w-full">
-                    <label className="font-mono text-[10px] text-gray-500 uppercase mb-2">Monto del Donativo</label>
+                    <label className="font-mono text-[10px] text-gray-500 uppercase mb-2">Sugerencia (ingresa en el POS)</label>
                     <div className="relative w-40">
                       <input
                         type="number"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
                         className={`${inputClasses} w-full pr-12`}
+                        placeholder="21"
                       />
                       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-500 font-mono">USD</span>
                     </div>
                   </div>
 
-                  <ArcadeButton href={getBlinkPosLink()} target="_blank" variant="bitcoin" size="lg" className="w-full mb-6">
-                    ABRIR POS BLINK ⚡
+                  <ArcadeButton href={getBtcpayPosLink()} target="_blank" variant="bitcoin" size="lg" className="w-full mb-6">
+                    ABRIR POS BTCPAY ⚡
                   </ArcadeButton>
 
-                  {/* QR con Efecto Holográfico GSAP */}
+                  {/* QR con máximo contraste - Negro sobre Blanco */}
                   <div className="relative p-4 bg-white rounded-2xl border-2 border-orange-500/50 mb-6 group overflow-hidden" style={{ boxShadow: `0 0 30px rgba(247,147,26,0.25)` }}>
-                    <QRCodeSVG value={getBlinkPosLink()} size={160} level="H" fgColor="#000" bgColor="#fff" />
+                    <QRCodeSVG value={getBtcpayPosLink()} size={160} level="H" fgColor="#000000" bgColor="#FFFFFF" />
                     {/* Línea de escaneo animada con GSAP */}
                     <div 
                       ref={qrScanLineRef}
@@ -286,8 +301,8 @@ export default function TipJarSection() {
                     <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-bitcoin text-black text-[10px] font-mono font-bold px-3 py-0.5 rounded shadow-md whitespace-nowrap">ESCANEAR CON WALLET</div>
                   </div>
 
-                  <CopyButton text={CONFIG.lightningAddress} label="lightning" />
-                  <p className="mt-2 font-mono text-xs text-gray-500">{CONFIG.lightningAddress}</p>
+                  <CopyButton text={CONFIG.btcpayPosUrl} label="btcpay-pos" />
+                  <p className="mt-2 font-mono text-xs text-gray-500 truncate max-w-xs">{CONFIG.btcpayPosUrl}</p>
                 </motion.div>
               )}
 
@@ -303,11 +318,16 @@ export default function TipJarSection() {
                     <span className="boot-item font-mono text-xs text-matrix tracking-wider">ONLINE</span>
                   </div>
 
-                  {/* QR con Efecto Holográfico GSAP */}
+                  {/* Texto explicativo */}
+                  <p className="font-mono text-xs text-gray-400 text-center mb-6 max-w-sm">
+                    Donación directa a nuestra wallet on-chain. Sin intermediarios, liquidación inmediata en tu nodo.
+                  </p>
+
+                  {/* QR con máximo contraste - Negro sobre Blanco */}
                   <div className="relative p-4 bg-white rounded-2xl border-2 border-orange-500/50 mb-6 group overflow-hidden" style={{ boxShadow: `0 0 30px rgba(247,147,26,0.25)` }}>
                     <QRCodeSVG
                       value={`bitcoin:${CONFIG.onChainAddress}?label=AceptaBitcoin&message=Donacion`}
-                      size={160} level="H" fgColor="#000" bgColor="#fff"
+                      size={160} level="H" fgColor="#000000" bgColor="#FFFFFF"
                     />
                     {/* Línea de escaneo animada con GSAP */}
                     <div 
@@ -378,7 +398,7 @@ export default function TipJarSection() {
           </div>
         </Card>
 
-        <p className="text-center mt-8 font-mono text-xs text-gray-600 tracking-widest">ORACLE SYSTEM v2.2 • GRACIAS POR TU SOPORTE</p>
+        <p className="text-center mt-8 font-mono text-xs text-gray-600 tracking-widest">ORACLE SYSTEM v2.3 • GRACIAS POR TU SOPORTE</p>
       </div>
     </section>
   );
